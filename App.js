@@ -2,7 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import Posting from './Posting.js';
 //import Icon from "react-native-vector-icons/FontAwesome";
+// "react-native-gesture-handler": "^1.5.0",
 import Icon from 'react-native-vector-icons/MaterialIcons'
 Icon.loadFont();
 
@@ -19,7 +21,8 @@ class PostingScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Postings screen </Text>
+        <Text> This is my Postings screen</Text>
+        <Posting title="die" desc="test"></Posting>
       </View>
     );
   }
@@ -39,7 +42,7 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Profile screen </Text>
+        <Text>this is a cry for help</Text>
       </View>
     );
   }
