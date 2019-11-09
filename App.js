@@ -14,8 +14,7 @@ export default class App extends React.Component {
 
   constructor(props){
     super(props);
-    this.name = "test";
-    this.state = {isLoggedIn: false};
+    this.state = {isLoggedIn: false, name: "test"};
   }
   signInWithFacebook = async () => {
     try {
@@ -29,19 +28,20 @@ export default class App extends React.Component {
         permissions: ['public_profile'],
       });
       if (type === 'success') {
-        this.setState({isLoggedIn: true});
+        
         // Get the user's name using Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+        var myname=(await response.json()).name;
+        Alert.alert('Logged in!', `Hi ${myname}!`);
+        this.setState({isLoggedIn: true, name: myname});
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
-        const facebookProfileData = await firebase.auth().signInAndRetrieveDataWithCredential(credential);  // Sign in with Facebook credential
         firebase.auth().currentUser.getIdToken(true);
-        return name;
-      } else {
+        
+      }
+      else {
         // type === 'cancel'
         this.setState({isLoggedIn: false});
-        return "hi";
       }
     } catch ({ message }) {
       alert(`Facebook Login Error: ${message}`);
@@ -51,17 +51,19 @@ export default class App extends React.Component {
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     return (
-      <Login isLoggedIn={this.state.isLoggedIn}/>
+      //<Login isLoggedIn={this.state.isLoggedIn}/>
+  <Login signInWithFacebook={this.signInWithFacebook} isLoggedIn={this.state.isLoggedIn}/>
+
     );
   }
 
 }
 function Login(props) {
-  const isLoggedIn = props.isLoggedIn;
+  isLoggedIn = props.isLoggedIn;
   if (isLoggedIn) {
     return <AppContainer />;
   }
-  return <LoginScreen signInWithFacebook={this.signInWithFacebook} />;
+  return <LoginScreen signInWithFacebook={props.signInWithFacebook} />;
 }
 
 // Postings, Chat, Profile, Login
@@ -91,7 +93,7 @@ class ProfileScreen extends React.Component {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
         <Text>This is my Profile screen</Text>
-        <Text> Logged in as: ${this.props.name} </Text>
+        <Text> Logged in as: {this.props.name} </Text>
       </View>
     );
   }
