@@ -3,10 +3,8 @@ import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
-import firebase from './firebase'
+import firebase from './firebase.js'
 import * as Facebook from 'expo-facebook';
-//import Icon from "react-native-vector-icons/FontAwesome";
-// "react-native-gesture-handler": "^1.5.0",
 import Icon from 'react-native-vector-icons/MaterialIcons'
 Icon.loadFont();
 
@@ -56,7 +54,6 @@ export default class App extends React.Component {
 
     );
   }
-
 }
 function Login(props) {
   isLoggedIn = props.isLoggedIn;
