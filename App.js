@@ -46,12 +46,16 @@ export default class App extends React.Component {
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     return (
-      <Fragment>
-        <LoginScreen signInWithFacebook={this.signInWithFacebook} />
-        <AppContainer />
-      </Fragment>
+      <Login isLoggedIn={this.state.isLoggedIn}/>
     );
   }
+}
+function Login(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <AppContainer />;
+  }
+  return <LoginScreen signInWithFacebook={this.signInWithFacebook} />;
 }
 
 // Postings, Chat, Profile, Login
