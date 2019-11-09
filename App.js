@@ -3,10 +3,8 @@ import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
-import firebase from './firebase'
+import firebase from './firebase.js'
 import * as Facebook from 'expo-facebook';
-//import Icon from "react-native-vector-icons/FontAwesome";
-// "react-native-gesture-handler": "^1.5.0",
 import Icon from 'react-native-vector-icons/MaterialIcons'
 Icon.loadFont();
 
@@ -35,13 +33,10 @@ export default class App extends React.Component {
         Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
-        const facebookProfileData = await firebase.auth().signInAndRetrieveDataWithCredential(credential);  // Sign in with Facebook credential
         firebase.auth().currentUser.getIdToken(true);
-        return name;
       } else {
         // type === 'cancel'
         this.setState({isLoggedIn: false});
-        return "hi";
       }
     } catch ({ message }) {
       alert(`Facebook Login Error: ${message}`);
@@ -58,7 +53,6 @@ export default class App extends React.Component {
     );
   }
 }
-
 
 // Postings, Chat, Profile, Login
 class PostingsScreen extends React.Component {
