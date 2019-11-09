@@ -24,7 +24,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "host.exp.Exponent"
+    },
+    "extra": {
+      "firebase": {
+        "apiKey": "AIzaSyChoXhq5uu2vIbOxLpNbbKAF6Yc7hBnqfs",
+        "authDomain": "study-buddy-eebd0.firebaseapp.com",
+        "databaseURL": "https://study-buddy-eebd0.firebaseio.com",
+        "projectId": "study-buddy-eebd0",
+        "storageBucket": "study-buddy-eebd0.appspot.com",
+        "messagingSenderId": "672115778656"
+      },
+      "facebook":{
+        "facebookScheme" : "fb791644631286317",
+        "facebookAppId": "791644631286317",
+        "facebookDisplayName":"StudyBuddy"
+      }
     }
-  }
+}
 }
