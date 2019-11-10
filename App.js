@@ -85,12 +85,13 @@ class ChatScreen extends React.Component {
   }
 }
 
-class ProfileScreen extends React.Component {
+class PostingsScreen extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text>This is my Profile screen</Text>
-        <Text> Logged in as: {this.props.name} </Text>
+      <View style={{flex: 1, flexDirection:'column', justifyContent: 'center', alignItems: 'stretch', backgroundColor: '#d0d0d0', width:"100%"}}>
+        {/* <Text> This is my Postings screen</Text> */}
+        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
+        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
       </View>
     );
   }
