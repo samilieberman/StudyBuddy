@@ -64,16 +64,7 @@ function Login(props) {
 }
 
 // Postings, Chat, Profile, Login
-class PostingsScreen extends React.Component {
-  render() {
-    return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Postings screen</Text>
-        <Posting title="<Title>" desc="<Description>"></Posting>
-      </View>
-    );
-  }
-}
+
 
 class ChatScreen extends React.Component {
   render() {
@@ -92,6 +83,16 @@ class PostingsScreen extends React.Component {
         {/* <Text> This is my Postings screen</Text> */}
         <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
         <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
+      </View>
+    );
+  }
+}
+
+class ProfileScreen extends React.Component {
+  render() {
+    return(
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
+        <Text>this is a cry for help</Text>
       </View>
     );
   }
