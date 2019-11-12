@@ -1,9 +1,9 @@
 import * as firebase from 'firebase'  // Should not be used elsewhere in the project
 import firebaseData from './app.json';
-import config from './config.js';
+import apiData from './config.json';
 
 firebase.initializeApp({
-    apiKey: config.apiKey,
+    apiKey: apiData.config.apiKey,
     authDomain: firebaseData.expo.extra.firebase.authDomain,
     databaseURL: firebaseData.expo.extra.firebase.databaseURL,
     projectId: firebaseData.expo.extra.firebase.projectId,
