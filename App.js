@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, SafeAreaView } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -64,16 +64,7 @@ function Login(props) {
 }
 
 // Postings, Chat, Profile, Login
-class PostingsScreen extends React.Component {
-  render() {
-    return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Postings screen</Text>
-        <Posting title="<Title>" desc="<Description>"></Posting>
-      </View>
-    );
-  }
-}
+
 
 class ChatScreen extends React.Component {
   render() {
@@ -85,12 +76,23 @@ class ChatScreen extends React.Component {
   }
 }
 
+class PostingsScreen extends React.Component {
+  render() {
+    return(
+      <View style={{flex: 1, flexDirection:'column', justifyContent: 'center', alignItems: 'stretch', backgroundColor: '#d0d0d0', width:"100%"}}>
+        {/* <Text> This is my Postings screen</Text> */}
+        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
+        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
+      </View>
+    );
+  }
+}
+
 class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text>This is my Profile screen</Text>
-        <Text> Logged in as: {this.props.name} </Text>
+        <Text>this is a cry for help</Text>
       </View>
     );
   }
