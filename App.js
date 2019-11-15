@@ -1,13 +1,20 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  GraphRequest,
+  GraphRequestManager,
+} = FBSDK;
 Icon.loadFont();
 import firebase from './firebase.js';
+
 
 export default class App extends React.Component {
 
@@ -15,8 +22,10 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      isLoggedIn: false,
-      name: "test"
+      isLoggedIn: false, 
+      data: [],
+      ppurl:"null"
+
     };
   }
 
@@ -32,9 +41,12 @@ export default class App extends React.Component {
 
         // Get the user's name using Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        var myname=(await response.json()).name;
-        Alert.alert('Logged in!', `Hi ${myname}!`);
-
+        //var rjson=await response.json();
+        //Alert.alert('Logged in!', `Hi ${rjson.name}!`);
+        //this.setState({name: rjson.name, ppurl: "null"});
+        const response2 = await fetch(`https://graph.facebook.com/me/picture?access_token=${token}`);
+        console.log(response2.url);
+        this.setState({ppurl: response2.url});
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
         firebase.auth().signInWithCredential(credential).catch((error) => {
           // Handle Errors here.
@@ -44,10 +56,9 @@ export default class App extends React.Component {
         
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
-              //firebase.auth.user.getIdToken(true);
-              userName = user.providerData[0].displayName;
-              this.setState({isLoggedIn: true, name: userName});
-              
+              console.log(user);
+              this.setState({data:user.providerData[0]});
+              this.setState({isLoggedIn: true});
           }
         });
       }
@@ -71,7 +82,8 @@ export default class App extends React.Component {
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     if (isLoggedIn) {
-      return <AppContainer />;
+      //console.log(this.state.data);
+      return <AppContainer screenProps={this.state}/>;
     }
     else{
     return <LoginScreen signInWithFacebook={this.signInWithFacebook}/>;
@@ -126,7 +138,7 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text>profile page</Text>
+        <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}{this.props.screenProps.ppurl}</Text>
         <Button
           onPress={this.props.signOutWithFacebook}
           title="Logout of Facebook" 
@@ -167,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 60,
     textAlign: 'center',
     flexDirection: 'column',
-    fontFamily: 'San Francisco'
+    
   },
   icon:{
     textAlign: 'center',
@@ -206,6 +218,7 @@ const bottomTabNavigator = createBottomTabNavigator(
     },
     Profile: {
       screen: ProfileScreen,
+      props:{name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
           <Icon name="person" size={25} color={tintColor} />
