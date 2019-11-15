@@ -4,21 +4,19 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import firebase from './firebase.js'
 Icon.loadFont();
-
-
 
 export default class Posting extends React.Component {
     render() {
         return (
-
-
             <TouchableOpacity style={{backgroundColor:'pink'}}>
             <SafeAreaView style={styles.container}>
                 <TouchableOpacity style={styles.pic}/>
                 <View styles={{paddingLeft:100}}>
                 <Text style={styles.author}>{this.props.title}</Text>
-                <Text style={styles.message}>{this.props.profef}</Text>
+                <Text style={styles.message}>{this.props.professor}</Text>
+                <Text style={styles.message}>{this.props.description}</Text>
                 <Text style={styles.message}>{this.props.days}</Text>
                 <Text style={styles.message}>{this.props.time}</Text>
                 <Text style={styles.message}>{this.props.user}</Text>

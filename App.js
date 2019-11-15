@@ -3,20 +3,19 @@ import { StyleSheet, Text, View, Button, Alert, TouchableOpacity } from 'react-n
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
-import firebase from './firebase.js'
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/MaterialIcons';
 Icon.loadFont();
+import firebase from './firebase.js';
 
 export default class App extends React.Component {
 
   constructor(props){
     super(props);
-    var username;
 
     this.state = {
-      isLoggedIn: false, 
+      isLoggedIn: false,
       name: "test"
     };
   }
@@ -45,11 +44,8 @@ export default class App extends React.Component {
         
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
-              console.log(user);
               //firebase.auth.user.getIdToken(true);
               userName = user.providerData[0].displayName;
-              //firebase.auth().set
-              username = userName;
               this.setState({isLoggedIn: true, name: userName});
               
           }
@@ -97,12 +93,30 @@ class ChatScreen extends React.Component {
 }
 
 class PostingsScreen extends React.Component {
+
+  state = {
+    posts: []
+  }
+
+  componentDidMount() {
+    let postsRef = firebase.database().ref("posts/");
+    postsRef.on('value',snapshot => {  
+      console.log("here " + snapshot.val());
+      this.setState({ posts:snapshot.val() });
+  },
+  (error) => {
+    console.log(error)
+  })
+}
+
   render() {
     return(
       <View style={{flex: 1, flexDirection:'column', justifyContent: 'center', alignItems: 'stretch', backgroundColor: '#d0d0d0', width:"100%"}}>
         {/* <Text> This is my Postings screen</Text> */}
-        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
-        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
+        {/* {this.state.posts.map(post => ( */}
+          {/* <Posting title={post.title} desc={post.description} professor={post.professor} days={post.days} time={post.time} user="die"></Posting>
+        ))} */}
+        <Posting title={this.state.posts.title} description={this.state.posts.description} professor={this.state.posts.professor} days={this.state.posts.days} time={this.state.posts.time} user="die"></Posting>
       </View>
     );
   }
