@@ -1,9 +1,10 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
 import firebase from './firebase.js'
+import data from './app.json';
 import * as Facebook from 'expo-facebook';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 Icon.loadFont();
@@ -12,45 +13,69 @@ export default class App extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {isLoggedIn: false, name: "test"};
+    var username;
+
+    this.state = {
+      isLoggedIn: false, 
+      name: "test"
+    };
   }
+
   signInWithFacebook = async () => {
     try {
       const {
         type,
-        token,
-        expires,
-        permissions,
-        declinedPermissions,
-      } = await Facebook.logInWithReadPermissionsAsync('791644631286317', {
+        token 
+      } = await Facebook.logInWithReadPermissionsAsync(data.expo.extra.facebook.facebookAppId, {
         permissions: ['public_profile'],
       });
       if (type === 'success') {
-        
+
         // Get the user's name using Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
         var myname=(await response.json()).name;
         Alert.alert('Logged in!', `Hi ${myname}!`);
-        this.setState({isLoggedIn: true, name: myname});
-        await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
-        firebase.auth().currentUser.getIdToken(true);
+        firebase.auth().signInWithCredential(credential).catch((error) => {
+          // Handle Errors here.
+          alert(`Facebook Login Error: ${message}`);
+        });
+        await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         
+        firebase.auth().onAuthStateChanged(user => {
+          if (user != null) {
+              console.log(user);
+              //firebase.auth.user.getIdToken(true);
+              userName = user.providerData[0].displayName;
+              //firebase.auth().set
+              username = userName;
+              this.setState({isLoggedIn: true, name: userName});
+              
+          }
+        });
       }
-      else {
-        // type === 'cancel'
-        this.setState({isLoggedIn: false});
+      else { // type === 'cancel'
+        this.setState({isLoggedIn: false, name: ""});
       }
     } catch ({ message }) {
       alert(`Facebook Login Error: ${message}`);
     }
   }
 
+  signOutWithFacebook = async () => {  
+    // not sure what to do here yet
+    // need to clear token
+  }
+
+  getCurrentUser(){
+    return this.username;
+  }
+
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     return (
-      //<Login isLoggedIn={this.state.isLoggedIn}/>
-  <Login signInWithFacebook={this.signInWithFacebook} isLoggedIn={this.state.isLoggedIn}/>
+      <Login signInWithFacebook={this.signInWithFacebook} isLoggedIn={this.state.isLoggedIn} name={this.state.name}/>
 
     );
   }
@@ -92,7 +117,13 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text>this is a cry for help</Text>
+        <Text>profile page</Text>
+        <Button
+          onPress={this.props.signOutWithFacebook}
+          title="Logout of Facebook" 
+          color="#3c50e8"
+        />
+        {/* <Text>{App.getCurrentUser()}</Text> */}
       </View>
     );
   }
@@ -101,16 +132,50 @@ class ProfileScreen extends React.Component {
 class LoginScreen extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text>Study Buddy</Text>
-        <Button 
-          onPress={this.props.signInWithFacebook}
-          title="Login with Facebook" 
-        />
-      </View>
+      // <View style={styles.container}>
+      //   <Text>Study Buddy</Text>
+      //   <Button
+      //     onPress={this.props.signInWithFacebook}
+      //     title="Login with Facebook" 
+      //     color="#3c50e8"
+      //   />
+      // </View>
+      <View style={styles.container}>
+        <Text style={styles.titleText}> Study Buddy </Text>
+        <Icon style={styles.icon} name="school" size={60} />
+       <TouchableOpacity
+         style={styles.button}
+         onPress={this.props.signInWithFacebook}>
+         <Text style={{color: 'white'}}> Login with Facebook </Text>
+       </TouchableOpacity>
+       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  titleText:{
+    fontSize: 60,
+    textAlign: 'center',
+    flexDirection: 'column',
+    fontFamily: 'San Francisco'
+  },
+  icon:{
+    textAlign: 'center',
+    flexDirection: 'column'
+  },
+  button:{
+    alignItems: 'center',
+    backgroundColor: '#3b5998',
+    padding: 10,
+    flexDirection: 'column'
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 10
+  }
+})
 
 const bottomTabNavigator = createBottomTabNavigator(
   {
@@ -142,7 +207,7 @@ const bottomTabNavigator = createBottomTabNavigator(
   {
     initialRouteName: 'Postings',
     tabBarOptions: {
-      activeTintColor: '#3da3eb'
+      activeTintColor: '#3b5998'
     }
   }
 );
