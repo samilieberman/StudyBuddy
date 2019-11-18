@@ -118,8 +118,19 @@ class PostingsScreen extends React.Component {
 class ProfileScreen extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}{this.props.screenProps.ppurl}</Text>
+      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+        <View style = {{height: 40, flexDirection: "row", marginTop: 46, marginLeft: 21}}>
+          <Icon name="arrow-back" style={{color: "black", fontSize: 40}} />
+          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 55}}>{this.props.screenProps.data.displayName}</Text>
+        </View>
+        <View style={{width: 400, height: 1, backgroundColor: "black", marginTop: 24}} />
+        <View style = {{height: 118, flexDirection: "row", marginTop: 52, marginLeft: 41, marginRight: 136}}>
+          <Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>             
+          <View style={{width: 123, marginLeft: 22, marginTop: 30, marginBottom: 29}}>
+            <Text style = {{fontSize: 20}}>Major:</Text>
+            <Text style = {{fontSize: 20}}>Grad year:</Text>
+          </View>
+        </View>  
         <Button
           onPress={this.props.signOutWithFacebook}
           title="Logout of Facebook" 
