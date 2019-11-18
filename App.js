@@ -115,7 +115,7 @@ class PostingsScreen extends React.Component {
   }
 }
 
-class ProfileScreen extends React.Component {
+class UserProfile extends React.Component {
   render() {
     return(
       <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
@@ -148,7 +148,7 @@ class ProfileScreen extends React.Component {
         <TextInput
           placeholder="Tell us about yourself.."
           keyboardAppearance="dark"
-          style={styles.textInput}
+          style={styles.textInput
           multiline={true}
         />
         <TouchableOpacity
@@ -327,7 +327,7 @@ const bottomTabNavigator = createBottomTabNavigator(
       }
     },
     Profile: {
-      screen: ProfileScreen,
+      screen: UserProfile,
       props:{name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
