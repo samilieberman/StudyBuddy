@@ -22,7 +22,7 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      isLoggedIn: true, 
+      isLoggedIn: false,
       data: [],
       ppurl:"null"
 
@@ -73,6 +73,8 @@ export default class App extends React.Component {
   signOutWithFacebook = async () => {  
     // not sure what to do here yet
     // need to clear token
+    this.setState({isLoggedIn: false});
+    console.log("logged out...");
   }
 
   getCurrentUser(){
@@ -199,11 +201,9 @@ class ProfileScreen extends React.Component {
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
         <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}</Text>
         <Button
-          onPress={this.props.signOutWithFacebook}
           title="Logout of Facebook" 
           color="#3c50e8"
         />
-        {/* <Text>{App.getCurrentUser()}</Text> */}
       </View>
     );
   }
