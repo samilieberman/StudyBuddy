@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput, ScrollView, Picker } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -118,7 +118,7 @@ class PostingsScreen extends React.Component {
 class UserProfile extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
         <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
           <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
         </View>
@@ -148,7 +148,7 @@ class UserProfile extends React.Component {
         <TextInput
           placeholder="Tell us about yourself.."
           keyboardAppearance="dark"
-          style={styles.textInput
+          style={styles.textInput}
           multiline={true}
         />
         <TouchableOpacity
@@ -156,8 +156,95 @@ class UserProfile extends React.Component {
           style={styles.logoutButton}
           title="Logout of Facebook"
           color="#3c50e8">
-          <Text style={{color: 'white'}}> Login with Facebook </Text>
+          <Text style={{color: 'white'}}> Logout </Text>
         </TouchableOpacity>
+        {/* <Text>{App.getCurrentUser()}</Text> */}
+        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
+      </ScrollView>
+    );
+  }
+}
+
+class OtherProfile extends React.Component {
+  render() {
+    return(
+      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+        <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>Other</Text>
+        </View>
+        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+        <View style={styles.imageRow}>
+          <Image
+            source={{uri: this.props.screenProps.ppurl}}
+            resizeMode="contain"
+            style={styles.image}
+          />
+          <View style={styles.majorRowColumn}>
+            <View style={styles.majorRow}>
+              <Text style={styles.major}>Major:</Text>
+              
+            </View>
+            <View style={styles.gradYearStack}>
+              <Text style={styles.gradYear}>Grad year:</Text>
+              
+            </View>
+          </View>
+        </View>
+        <Text style={styles.biography}>Biography</Text>
+        
+        <Text style={styles.textInput}>
+       According to all known laws
+of aviation,
+
+  
+there is no way a bee
+should be able to fly.
+
+  
+Its wings are too small to get
+its fat little body off the ground.
+
+  
+The bee, of course, flies anyway
+
+  
+because bees don't care
+what humans think is impossible.
+
+  
+Yellow, black. Yellow, black.
+Yellow, black. Yellow, black.
+        </Text>
+        
+        {/* <Text>{App.getCurrentUser()}</Text> */}
+        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
+      </ScrollView>
+    );
+  }
+}
+
+class PostingsCreation extends React.Component {
+     state = {clas: ''}
+   updateClas = (clas) => {
+      this.setState({ clas: clas })
+   }
+  render() {
+    return(
+      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+        <View style={styles.iconRow}>
+          <Icon name="arrow-back" style={styles.backIcon} />
+          <TextInput placeholder="Assignment" textBreakStrategy="simple" style={styles.postingTextInput} />
+        </View>
+        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+          <ScrollView>
+            <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
+            <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
+              <Picker.Item label = "HCI" value = "HCI" />
+              <Picker.Item label = "Eco" value = "ECO" />
+              <Picker.Item label = "Ethics" value = "Ethics" />
+            </Picker>
+            <Text>Choice: {this.state.clas}</Text>
+          </ScrollView>
         {/* <Text>{App.getCurrentUser()}</Text> */}
         {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
       </View>
@@ -209,7 +296,7 @@ const styles = StyleSheet.create({
   logoutButton:{
     alignItems: 'center',
     backgroundColor: '#3b5998',
-    padding: 10,
+    padding: 10
   },
   container: {
     flex: 1,
@@ -305,7 +392,25 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     marginTop: 258,
     alignSelf: "center"
-  }
+  },
+  iconRow: {
+    height: 40,
+    flexDirection: "row",
+    marginTop: 39,
+    marginLeft: 15,
+    marginRight: 108
+  },
+  backIcon: {
+    color: "rgba(128,128,128,1)",
+    fontSize: 40
+  },
+  postingTextInput: {
+    width: 158,
+    height: 39,
+    color: "#121212",
+    fontSize: 30,
+    marginLeft: 54
+  },
 })
 
 const bottomTabNavigator = createBottomTabNavigator(
@@ -327,7 +432,7 @@ const bottomTabNavigator = createBottomTabNavigator(
       }
     },
     Profile: {
-      screen: UserProfile,
+      screen: PostingsCreation,
       props:{name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
