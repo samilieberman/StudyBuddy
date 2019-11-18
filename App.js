@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -123,13 +123,34 @@ class ProfileScreen extends React.Component {
           <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
         </View>
         <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
-        <View style = {{height: 118, flexDirection: "row", marginTop: 52, marginLeft: 41, marginRight: 136}}>
-          <Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>
-          <View style={{width: 123, marginLeft: 22, marginTop: 30, marginBottom: 29}}>
-            <Text style = {{fontSize: 20}}>Major:</Text>
-            <Text style = {{fontSize: 20}}>Grad year:</Text>
+        <View style={styles.imageRow}>
+          <Image
+            source={{uri: this.props.screenProps.ppurl}}
+            resizeMode="contain"
+            style={styles.image}
+          />
+          <View style={styles.majorRowColumn}>
+            <View style={styles.majorRow}>
+              <Text style={styles.major}>Major:</Text>
+              <TextInput
+                placeholder="Major.."
+                textBreakStrategy="simple"
+                style={styles.textInput3}
+              />
+            </View>
+            <View style={styles.gradYearStack}>
+              <Text style={styles.gradYear}>Grad year:</Text>
+              <TextInput placeholder="Year.." style={styles.textInput4} />
+            </View>
           </View>
         </View>
+        <Text style={styles.biography}>Biography</Text>
+        <TextInput
+          placeholder="Tell us about yourself.."
+          keyboardAppearance="dark"
+          style={styles.textInput}
+          multiline={true}
+        />
         <TouchableOpacity
           onPress={this.props.signOutWithFacebook}
           style={styles.logoutButton}
@@ -194,6 +215,96 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 10
+  },
+  name: {
+    color: "#121212",
+    fontSize: 30,
+    lineHeight: 14,
+    marginTop: 62,
+    alignSelf: "center"
+  },
+  rect: {
+    width: 350,
+    height: 1,
+    backgroundColor: "rgba(0,0,0,1)",
+    marginTop: 21,
+    marginLeft: 12
+  },
+  image: {
+    width: 94,
+    height: 118,
+    borderRadius: 100,
+    borderColor: "#000000",
+    borderWidth: 0
+  },
+  major: {
+    color: "#121212",
+    marginTop: 7
+  },
+  textInput3: {
+    width: 139,
+    height: 27,
+    color: "#121212",
+    marginLeft: 10
+  },
+  majorRow: {
+    height: 27,
+    flexDirection: "row",
+    marginRight: 16
+  },
+  gradYear: {
+    top: 7,
+    left: 0,
+    color: "#121212",
+    position: "absolute",
+  },
+  textInput4: {
+    top: 0,
+    left: 73,
+    width: 131,
+    height: 27,
+    color: "#121212",
+    position: "absolute",
+  },
+  gradYearStack: {
+    width: 204,
+    height: 27,
+    marginTop: 18
+  },
+  majorRowColumn: {
+    width: 204,
+    marginLeft: 26,
+    marginTop: 32,
+    marginBottom: 14
+  },
+  imageRow: {
+    height: 118,
+    flexDirection: "row",
+    marginTop: 18,
+    marginLeft: 37,
+    marginRight: 14
+  },
+  biography: {
+    color: "#121212",
+    marginTop: 47,
+    marginLeft: 37
+  },
+  textInput: {
+    width: 271,
+    height: 168,
+    color: "#121212",
+    borderRadius: 13,
+    borderColor: "#000000",
+    borderWidth: 2,
+    marginTop: 13,
+    marginLeft: 37
+  },
+  logOut: {
+    color: "#121212",
+    fontSize: 30,
+    lineHeight: 14,
+    marginTop: 258,
+    alignSelf: "center"
   }
 })
 
