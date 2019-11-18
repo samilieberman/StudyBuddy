@@ -24,8 +24,8 @@ export default class App extends React.Component {
     this.state = {
       isLoggedIn: false, 
       data: [],
-      ppurl:"null"
-
+      ppurl:"null",
+      signOut:this.signOutWithFacebook
     };
   }
 
@@ -71,8 +71,8 @@ export default class App extends React.Component {
   }
 
   signOutWithFacebook = async () => {  
-    // not sure what to do here yet
-    // need to clear token
+    this.setState({isLoggedIn: false});
+    this.render();
   }
 
   getCurrentUser(){
@@ -207,7 +207,7 @@ class ProfileScreen extends React.Component {
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
         <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}</Text>
         <Button
-          onPress={this.props.signOutWithFacebook}
+          onPress={this.props.screenProps.signOut}
           title="Logout of Facebook" 
           color="#3c50e8"
         />
