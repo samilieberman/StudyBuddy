@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -7,6 +7,7 @@ import firebase from './firebase.js'
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import EntypoIcon from "react-native-vector-icons/Entypo";
 const FBSDK = require('react-native-fbsdk');
 const {
   GraphRequest,
@@ -43,7 +44,7 @@ export default class App extends React.Component {
         //var rjson=await response.json();
         //Alert.alert('Logged in!', `Hi ${rjson.name}!`);
         //this.setState({name: rjson.name, ppurl: "null"});
-        const response2 = await fetch(`https://graph.facebook.com/me/picture?access_token=${token}`);
+        const response2 = await fetch(`https://graph.facebook.com/me/picture?width=9999&access_token=${token}`);
         console.log(response2.url);
         this.setState({ppurl: response2.url});
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
@@ -70,8 +71,7 @@ export default class App extends React.Component {
   }
 
   signOutWithFacebook = async () => {
-    // not sure what to do here yet
-    // need to clear token
+
   }
 
   getCurrentUser(){
@@ -118,7 +118,7 @@ class PostingsScreen extends React.Component {
 class UserProfile extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
         <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
           <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
         </View>
@@ -147,20 +147,37 @@ class UserProfile extends React.Component {
         <Text style={styles.biography}>Biography</Text>
         <TextInput
           placeholder="Tell us about yourself.."
-          keyboardAppearance="dark"
-          style={styles.textInput
+          returnKeyType="done"
+          style={styles.textInput}
+          blurOnSubmit={true}
+          enablesReturnKeyAutomatically={true}
           multiline={true}
         />
+        <Text style={styles.classes}>Classes:</Text>
+        <View style={styles.textAddedRow}>
+          <Text style={styles.textAdded}>Class 1</Text>
+            <EntypoIcon name="cross" style={styles.entoIcon} />
+        </View>
+        <View style={styles.textInput7Row}>
+        <TextInput
+          placeholder="Search for class.."
+          editable={false}
+          secureTextEntry={false}
+          spellCheck={true}
+          style={styles.textInput7}
+        />
+        <EntypoIcon name="plus" style={styles.entoIcon2} />
+        </View>
+        {/* <Text>{App.getCurrentUser()}</Text> */}
+        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
         <TouchableOpacity
           onPress={this.props.signOutWithFacebook}
           style={styles.logoutButton}
-          title="Logout of Facebook"
+          title="Logout"
           color="#3c50e8">
-          <Text style={{color: 'white'}}> Login with Facebook </Text>
+          <Text style={{color: 'white'}}> Logout </Text>
         </TouchableOpacity>
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -305,7 +322,60 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     marginTop: 258,
     alignSelf: "center"
-  }
+  },
+  classes: {
+   color: "#121212",
+   marginTop: 39,
+   marginLeft: 36
+ },
+ textAdded: {
+   width: 120,
+   height: 27,
+   backgroundColor: "#3c50e8",
+   color: "#121212",
+   borderRadius: 8,
+   borderColor: "#3c50e8",
+   borderWidth: 4,
+   lineHeight: 26,
+   letterSpacing: 1,
+   textAlign: "center",
+   marginTop: 7
+ },
+ entoIcon: {
+   color: "rgba(128,128,128,1)",
+   fontSize: 40,
+   marginLeft: 11
+ },
+ textAddedRow: {
+   height: 40,
+   flexDirection: "row",
+   marginTop: 14,
+   marginLeft: 37,
+   marginRight: 167
+ },
+ textInput7: {
+   width: 120,
+   height: 27,
+   backgroundColor: "#3c50e8",
+   color: "#121212",
+   borderRadius: 8,
+   borderColor: "#3c50e8",
+   borderWidth: 4,
+   borderStyle: "solid",
+   marginTop: 7
+ },
+ entoIcon2: {
+   color: "rgba(128,128,128,1)",
+   fontSize: 40,
+   marginLeft: 11
+ },
+ textInput7Row: {
+   height: 40,
+   flexDirection: "row",
+   marginTop: 6,
+   marginLeft: 37,
+   marginRight: 167
+ },
 })
 
 const bottomTabNavigator = createBottomTabNavigator(
