@@ -22,7 +22,7 @@ export default class App extends React.Component {
     var username;
 
     this.state = {
-      isLoggedIn: false, 
+      isLoggedIn: false,
       data: [],
       ppurl:"null"
     };
@@ -32,7 +32,7 @@ export default class App extends React.Component {
     try {
       const {
         type,
-        token 
+        token
       } = await Facebook.logInWithReadPermissionsAsync(data.expo.extra.facebook.facebookAppId, {
         permissions: ['public_profile'],
       });
@@ -52,7 +52,7 @@ export default class App extends React.Component {
           alert(`Facebook Login Error: ${message}`);
         });
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        
+
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
               console.log(user);
@@ -69,7 +69,7 @@ export default class App extends React.Component {
     }
   }
 
-  signOutWithFacebook = async () => {  
+  signOutWithFacebook = async () => {
     // not sure what to do here yet
     // need to clear token
   }
@@ -119,24 +119,26 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
-        <View style = {{height: 40, flexDirection: "row", marginTop: 46, marginLeft: 21}}>
-          <Icon name="arrow-back" style={{color: "black", fontSize: 40}} />
-          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 55}}>{this.props.screenProps.data.displayName}</Text>
+        <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
         </View>
-        <View style={{width: 400, height: 1, backgroundColor: "black", marginTop: 24}} />
+        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
         <View style = {{height: 118, flexDirection: "row", marginTop: 52, marginLeft: 41, marginRight: 136}}>
-          <Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>             
+          <Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>
           <View style={{width: 123, marginLeft: 22, marginTop: 30, marginBottom: 29}}>
             <Text style = {{fontSize: 20}}>Major:</Text>
             <Text style = {{fontSize: 20}}>Grad year:</Text>
           </View>
-        </View>  
-        <Button
+        </View>
+        <TouchableOpacity
           onPress={this.props.signOutWithFacebook}
-          title="Logout of Facebook" 
-          color="#3c50e8"
-        />
+          style={styles.logoutButton}
+          title="Logout of Facebook"
+          color="#3c50e8">
+          <Text style={{color: 'white'}}> Login with Facebook </Text>
+        </TouchableOpacity>
         {/* <Text>{App.getCurrentUser()}</Text> */}
+        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
       </View>
     );
   }
@@ -149,7 +151,7 @@ class LoginScreen extends React.Component {
       //   <Text>Study Buddy</Text>
       //   <Button
       //     onPress={this.props.signInWithFacebook}
-      //     title="Login with Facebook" 
+      //     title="Login with Facebook"
       //     color="#3c50e8"
       //   />
       // </View>
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     fontSize: 60,
     textAlign: 'center',
     flexDirection: 'column',
-    
+
   },
   icon:{
     textAlign: 'center',
@@ -182,6 +184,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b5998',
     padding: 10,
     flexDirection: 'column'
+  },
+  logoutButton:{
+    alignItems: 'center',
+    backgroundColor: '#3b5998',
+    padding: 10,
   },
   container: {
     flex: 1,
