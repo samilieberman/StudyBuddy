@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image , FlatList} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -105,33 +105,100 @@ class ChatScreen extends React.Component {
 }
 
 class PostingsScreen extends React.Component {
+mount=false;
+  constructor(props){
+    super(props);
 
-  state = {
-    posts: []
+    this.state = {
+      posts:[]
+    };
   }
-
-  componentDidMount() {
+  delete(key){
+    console.log(key);
+    let postsRef = firebase.database().ref("posts/"+key);
+    postsRef.remove();
+  }
+  componentDidMount= async () =>{
     let postsRef = firebase.database().ref("posts/");
+    this.mount=true;
+
+
     postsRef.on('value',snapshot => {  
-      console.log("here " + snapshot.val());
-      this.setState({ posts:snapshot.val() });
+      const fbObject = snapshot.val();
+      const newArr = Object.keys(fbObject).map((key) => {
+        fbObject[key].id = key;
+        return fbObject[key];
+      });
+      
+      this.setState({
+        posts:newArr
+      });
+
+      {/*for(var p in snapshot.val())
+      {
+        console.log(p);
+        if(this.mount)
+        {
+      this.setState({
+        posts: [{
+          title: snapshot.val()[p].title, description:snapshot.val()[p].description, days:snapshot.val()[p].days, professor:snapshot.val()[p].professor, time:snapshot.val()[p].time, user:snapshot.val()[p].user}
+        ]
+      });
+    }
+
+      console.log(this.state.posts);
+  }
+    */}
+  
   },
   (error) => {
     console.log(error)
   })
 }
+componentWillUnmount(){
+  this.mount=false;
+}
+addpost()
+{
+  let postsRef = firebase.database().ref("posts/");
+  var newitem = postsRef.push({title: "Digital Logic",descrption:"abc",days:"MWF",time:"evening",professor:"ruiz",user:"sami"}).getKey();
+  console.log("nice");
+  console.log(newitem);
+
+}
 
   render() {
-    return(
-      <View style={{flex: 1, flexDirection:'column', justifyContent: 'center', alignItems: 'stretch', backgroundColor: '#d0d0d0', width:"100%"}}>
-        {/* <Text> This is my Postings screen</Text> */}
-        {/* {this.state.posts.map(post => ( */}
-          {/* <Posting title={post.title} desc={post.description} professor={post.professor} days={post.days} time={post.time} user="die"></Posting>
-        ))} */}
-        <Posting title={this.state.posts.title} description={this.state.posts.description} professor={this.state.posts.professor} days={this.state.posts.days} time={this.state.posts.time} user="die"></Posting>
-      </View>
+    if(this.state.posts.length==0)
+    
+      return <TouchableOpacity onPress={()=>this.addpost()} style={{
+          width: 80,
+          height: 80,
+          borderRadius: 40,
+          backgroundColor: 'grey',
+  
+      }}/>
+      
+    
+    else{
+      console.log(this.state.posts);
+    return (
+      <Fragment>
+      <FlatList
+      data={this.state.posts}
+      extraData={this.state}
+      renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
+      />
+      <TouchableOpacity onPress={()=>this.addpost()} style={{
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'grey',
+
+    }}/>
+    </Fragment>
     );
   }
+}
 }
 
 class ProfileScreen extends React.Component {
