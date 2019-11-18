@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image , FlatList} from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image , FlatList, ImageBackground} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -22,7 +22,7 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      isLoggedIn: false, 
+      isLoggedIn: true, 
       data: [],
       ppurl:"null"
 
@@ -134,21 +134,6 @@ mount=false;
         posts:newArr
       });
 
-      {/*for(var p in snapshot.val())
-      {
-        console.log(p);
-        if(this.mount)
-        {
-      this.setState({
-        posts: [{
-          title: snapshot.val()[p].title, description:snapshot.val()[p].description, days:snapshot.val()[p].days, professor:snapshot.val()[p].professor, time:snapshot.val()[p].time, user:snapshot.val()[p].user}
-        ]
-      });
-    }
-
-      console.log(this.state.posts);
-  }
-    */}
   
   },
   (error) => {
@@ -162,7 +147,6 @@ addpost()
 {
   let postsRef = firebase.database().ref("posts/");
   var newitem = postsRef.push({title: "Digital Logic",descrption:"abc",days:"MWF",time:"evening",professor:"ruiz",user:"sami"}).getKey();
-  console.log("nice");
   console.log(newitem);
 
 }
@@ -189,12 +173,20 @@ addpost()
       renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
       />
       <TouchableOpacity onPress={()=>this.addpost()} style={{
-        width: 80,
-        height: 80,
+        width: 60,
+        height: 60,
         borderRadius: 40,
-        backgroundColor: 'grey',
-
-    }}/>
+        backgroundColor: 'green',
+        alignItems: 'center',
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 30,
+        bottom: 30
+    }}>
+      <Icon style={styles.icon} name='add' size={60}/>
+    </TouchableOpacity>
+    
     </Fragment>
     );
   }
@@ -262,7 +254,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 10
-  }
+  },
+  ImageIconStyle: {
+    padding: 10,
+    margin: 5,
+    height: 25,
+    width: 25,
+    resizeMode: 'stretch',
+  },
 })
 
 const bottomTabNavigator = createBottomTabNavigator(

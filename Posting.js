@@ -10,7 +10,7 @@ Icon.loadFont();
 export default class Posting extends React.Component {
     render() {
         return (
-            <TouchableOpacity style={{backgroundColor:'pink', borderBottomWidth: 1}}>
+            <TouchableOpacity style={{backgroundColor:'#D0D0D0', borderBottomWidth: 1}}>
             <SafeAreaView style={styles.container}>
                 <TouchableOpacity style={styles.pic}/>
                 <View styles={{paddingLeft:100}}>
@@ -21,7 +21,11 @@ export default class Posting extends React.Component {
                 <Text style={styles.message}>Time: {this.props.time}</Text>
                 <Text style={styles.message}>User: {this.props.user}</Text>
                 </View>
-                <TouchableOpacity style={styles.deleteIcon} onPress={this.props.delete}/>
+                <View style={{paddingLeft:100,paddingTop:10}}>
+                <TouchableOpacity style={styles.deleteIcon} onPress={this.props.delete}>
+                    <Icon style={styles.icon} name='delete' size={40}/>
+                </TouchableOpacity>
+                </View>
             </SafeAreaView>
             </TouchableOpacity>
 
@@ -38,10 +42,10 @@ const styles = StyleSheet.create({
 
     },
     deleteIcon:{
-        width: 80,
-        height: 80,
+        width: 40,
+        height: 40,
         borderRadius: 30,
-        backgroundColor: 'grey',
+        backgroundColor: 'red',
 
     },
     container: {
