@@ -110,7 +110,8 @@ mount=false;
     super(props);
 
     this.state = {
-      posts:[]
+      posts:[],
+      isPosting:false
     };
   }
   delete(key){
@@ -148,11 +149,20 @@ addpost()
   let postsRef = firebase.database().ref("posts/");
   var newitem = postsRef.push({title: "Digital Logic",descrption:"abc",days:"MWF",time:"evening",professor:"ruiz",user:"sami"}).getKey();
   console.log(newitem);
-
+  this.setState({
+    isPosting:false
+  });
+  Alert.alert("successfully posted");
 }
-
+makepost()
+{
+  this.setState({
+    isPosting:true
+  });
+  
+}
   render() {
-    if(this.state.posts.length==0)
+    if(this.state.posts.length==0 && !this.state.isPosting)
     
       return <TouchableOpacity onPress={()=>this.addpost()} style={{
           width: 80,
@@ -163,7 +173,7 @@ addpost()
       }}/>
       
     
-    else{
+    else if (!this.state.isPosting){
       console.log(this.state.posts);
     return (
       <Fragment>
@@ -172,7 +182,7 @@ addpost()
       extraData={this.state}
       renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
       />
-      <TouchableOpacity onPress={()=>this.addpost()} style={{
+      <TouchableOpacity onPress={()=>this.makepost()} style={{
         width: 60,
         height: 60,
         borderRadius: 40,
@@ -190,6 +200,8 @@ addpost()
     </Fragment>
     );
   }
+  else
+    return<Button title="heyyo" onPress={()=>this.addpost()}/>
 }
 }
 
