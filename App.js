@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, ImageBackground, SafeAreaView} from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -8,6 +8,7 @@ import * as Facebook from 'expo-facebook';
 //import Icon from 'react-native-vector-icons/MaterialIcons';
 import t from 'tcomb-form-native';
 import { Button, Icon, Avatar, Text, SearchBar } from 'react-native-elements';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 const Form = t.form.Form;
 
@@ -108,11 +109,42 @@ export default class App extends React.Component {
 
 
 class ChatScreen extends React.Component {
+  state = {
+    messages: [],
+  }
+  componentWillMount() {
+    this.setState({
+      messages: [
+        {
+          _id: 1,
+          text: 'Hello developer',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+        },
+      ],
+    })
+  }
+
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Chat screen </Text>
-      </View>
+    <KeyboardAvoidingView style={{flex:1}}>
+     <GiftedChat 
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+     />
+     </KeyboardAvoidingView>
     );
   }
 }
@@ -353,7 +385,8 @@ const bottomTabNavigator = createBottomTabNavigator(
   {
     initialRouteName: 'Postings',
     tabBarOptions: {
-      activeTintColor: '#3b5998'
+      activeTintColor: '#3b5998',
+      keyboardHidesTabBar: false
     }
   }
 );
