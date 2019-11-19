@@ -1,19 +1,32 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image , FlatList, ImageBackground} from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, ImageBackground, SafeAreaView} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+//import Icon from 'react-native-vector-icons/MaterialIcons';
+import t from 'tcomb-form-native';
+import { Button, Icon, Avatar, Text, SearchBar } from 'react-native-elements';
+
+const Form = t.form.Form;
 
 const FBSDK = require('react-native-fbsdk');
 const {
   GraphRequest,
   GraphRequestManager,
 } = FBSDK;
-Icon.loadFont();
+//Icon.loadFont();
 import firebase from './firebase.js';
+// import { NPN_ENABLED } from 'constants';
+
+const Post = t.struct({
+  title: t.String,
+  description: t.String,
+  professor: t.String,
+  days: t.String,
+  time: t.String
+});
 
 
 export default class App extends React.Component {
@@ -144,10 +157,10 @@ mount=false;
 componentWillUnmount(){
   this.mount=false;
 }
-addpost()
+addpost(newTitle,newProfessor,newDays,newTime,newDescription)
 {
   let postsRef = firebase.database().ref("posts/");
-  var newitem = postsRef.push({title: "Digital Logic",descrption:"abc",days:"MWF",time:"evening",professor:"ruiz",user:"sami"}).getKey();
+  var newitem = postsRef.push({title:newTitle,description:newDescription,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName}).getKey();
   console.log(newitem);
   this.setState({
     isPosting:false
@@ -158,13 +171,18 @@ makepost()
 {
   this.setState({
     isPosting:true
+  }); 
+}
+goBack()
+{
+  this.setState({
+    isPosting:false
   });
-  
 }
   render() {
     if(this.state.posts.length==0 && !this.state.isPosting)
     
-      return <TouchableOpacity onPress={()=>this.addpost()} style={{
+      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
           width: 80,
           height: 80,
           borderRadius: 40,
@@ -177,31 +195,37 @@ makepost()
       console.log(this.state.posts);
     return (
       <Fragment>
+        <View style={{marginTop:50}}>
+          <SearchBar round lightTheme 
+          placeholder='Type Here...'
+          />
+        </View>
       <FlatList
       data={this.state.posts}
       extraData={this.state}
       renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
       />
-      <TouchableOpacity onPress={()=>this.makepost()} style={{
-        width: 60,
-        height: 60,
-        borderRadius: 40,
-        backgroundColor: 'green',
-        alignItems: 'center',
-        position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
-        right: 30,
-        bottom: 30
-    }}>
-      <Icon style={styles.icon} name='add' size={60}/>
-    </TouchableOpacity>
+      <Icon reverse
+            name='add' 
+            color="green"
+            onPress={()=>this.makepost()}
+      />
     
     </Fragment>
     );
   }
   else
-    return<Button title="heyyo" onPress={()=>this.addpost()}/>
+    return(
+    <SafeAreaView>
+      <Text style={styles.paragraph}>New Post</Text> 
+      <View style={styles.form}>
+        <Form type={Post} ref={c => this._form = c}/>
+      </View>
+      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().description)}/>
+      <Text></Text>
+      <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '5'}} onPress={()=>this.goBack()}/>
+    </SafeAreaView>
+    );
 }
 }
 
@@ -209,11 +233,21 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}</Text>
+        {/* <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}</Text> */}
+        <Avatar style={styles.pic}
+          large
+          rounded
+          //title="SL"
+          source={{uri: this.props.screenProps.ppurl}}
+          activeOpacity={0.7}
+        />
+        <Text></Text>
+        <Text h2>{this.props.screenProps.data.displayName}</Text>
+        <Text></Text>
         <Button
           onPress={this.props.screenProps.signOut}
           title="Logout of Facebook" 
-          color="#3c50e8"
+          buttonStyle={{backgroundColor: '#397BE2'}}
         />
       </View>
     );
@@ -223,22 +257,14 @@ class ProfileScreen extends React.Component {
 class LoginScreen extends React.Component {
   render() {
     return(
-      // <View style={styles.container}>
-      //   <Text>Study Buddy</Text>
-      //   <Button
-      //     onPress={this.props.signInWithFacebook}
-      //     title="Login with Facebook" 
-      //     color="#3c50e8"
-      //   />
-      // </View>
       <View style={styles.container}>
         <Text style={styles.titleText}> Study Buddy </Text>
         <Icon style={styles.icon} name="school" size={60} />
-       <TouchableOpacity
-         style={styles.button}
-         onPress={this.props.signInWithFacebook}>
-         <Text style={{color: 'white'}}> Login with Facebook </Text>
-       </TouchableOpacity>
+       <Button
+         title="Login with Facebook"
+         onPress={this.props.signInWithFacebook}
+         buttonStyle={{backgroundColor: '#397BE2'}}>
+       </Button>
        </View>
     );
   }
@@ -255,12 +281,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexDirection: 'column'
   },
-  button:{
-    alignItems: 'center',
-    backgroundColor: '#3b5998',
-    padding: 10,
-    flexDirection: 'column'
-  },
+  // button:{
+  //   alignItems: 'center',
+  //   backgroundColor: '#3b5998',
+  //   padding: 10,
+  //   flexDirection: 'column'
+  // },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -273,6 +299,27 @@ const styles = StyleSheet.create({
     width: 25,
     resizeMode: 'stretch',
   },
+  form: {
+    justifyContent: 'center',
+    marginTop: 50,
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  paragraph:{
+    margin:24,
+    fontSize:30,
+    fontWeight:'bold',
+    textAlign:'center'
+  },
+  cancel:{
+    backgroundColor: 'red',
+  },
+  pic:{
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow:'hidden'
+  }
 })
 
 const bottomTabNavigator = createBottomTabNavigator(
