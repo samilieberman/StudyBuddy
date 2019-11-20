@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker} from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
@@ -22,12 +22,28 @@ import firebase from './firebase.js';
 import { ScrollView } from 'react-native-gesture-handler';
 // import { NPN_ENABLED } from 'constants';
 
+var groupSize = t.enums({
+  "Small": 'Small Group (< 4)',
+  "Big": 'Big Group (≥ 4)',
+  "No Preference": 'No Preference'
+});
+var time = t.enums({
+  "Morning": 'Morning',
+  "Afternoon": 'Afternoon',
+  "Evening": 'Evening',
+  "Any Time": 'Any Time'
+});
+
 const Post = t.struct({
   title: t.String,
   //description: t.String,
+  class: t.String,
   professor: t.String,
   days: t.String,
-  time: t.String
+  time: time,
+  groupSize: groupSize,
+  meetingSpot: t.String,
+  description: t.String,
 });
 
 //console.log("test");
@@ -185,72 +201,110 @@ class PostingsScreen extends React.Component {
         dataSource: newArr,
       });
       this.arrayholder = newArr;
-    },
-    (error) => {
-      console.log(error)
-    })
-  }
-  componentWillUnmount(){
-    this.mount=false;
-  }
-  addpost(newTitle,newProfessor,newDays,newTime,newDescription){
-    let postsRef = firebase.database().ref("posts/");
-    var newitem = postsRef.push({title:newTitle,description:newDescription,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl}).getKey();
-    console.log(newitem);
-    this.setState({
-      isPosting:false
-    });
-    Alert.alert("Successfully Posted");
-  }
-  makepost(){
-    this.setState({
-      isPosting:true
-    });
-  }
-  details(){
-    this.setState({
-      gettingDetails:true
-    });
-  }
-  goBack(){
-    this.setState({
-      isPosting:false,
-      gettingDetails:false
-    });
-  }
+  
+  },
+  (error) => {
+    console.log(error)
+  })
+}
+componentWillUnmount(){
+  this.mount=false;
+}
+addpost(newTitle,newClass,newProfessor,newDays,newTime,newGroupSize,newMeetingSpot,newDescription)
+{
+  let postsRef = firebase.database().ref("posts/");
+  var newitem = postsRef.push({title:newTitle,class:newClass,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: newGroupSize, meetingSpot: newMeetingSpot,description:newDescription}).getKey();
+  console.log(newitem);
+  this.setState({
+    isPosting:false
+  });
+  Alert.alert("Successfully Posted");
+}
+makepost()
+{
+  this.setState({
+    isPosting:true
+  }); 
+}
+goBack()
+{
+  this.setState({
+    isPosting:false
+  });
+}
 
-  search = text => {
-    console.log(text);
-  };
-  clear = () => {
-    this.search.clear();
-  };
-  SearchFilterFunction(text) {
-    //passing the inserted text in textinput
-      const newData = this.arrayholder.filter(function(item) {
-        //applying filter for the inserted text in search bar
-        const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-    });
-    this.setState({
-      //setting the filtered newData on datasource
-      //After setting the data it will automatically re-render the view
-      dataSource: newData,
-      search: text,
-    });
-  }
+search = text => {
+  console.log(text);
+};
+clear = () => {
+  this.search.clear();
+};
+SearchFilterFunction(text) {
+  //passing the inserted text in textinput
+    const newData = this.arrayholder.filter(function(item) {
+      //applying filter for the inserted text in search bar
+      const itemData = (item.class ? item.class.toUpperCase() : ''.toUpperCase());
+      const itemData2 = (item.title ? item.title.toUpperCase() : ''.toUpperCase());
+      const itemData3 = (item.professor ? item.professor.toUpperCase() : ''.toUpperCase());
+      const itemData4 = (item.days ? item.days.toUpperCase() : ''.toUpperCase());
+      const itemData5 = (item.time ? item.time.toUpperCase() : ''.toUpperCase());
+      const itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase() : ''.toUpperCase());
+      const itemData7 = (item.groupSize ? item.groupSize.toUpperCase() : ''.toUpperCase());
+      const itemData8 = (item.user ? item.user.toUpperCase() : ''.toUpperCase());
 
-  deleteicon(postuser, id)
-  {
+      const textData = text.toUpperCase();
+      return (itemData.indexOf(textData) > -1) || 
+        (itemData2.indexOf(textData) > -1) || 
+        (itemData3.indexOf(textData) > -1) || 
+        (itemData4.indexOf(textData) > -1) || 
+        (itemData5.indexOf(textData) > -1) || 
+        (itemData6.indexOf(textData) > -1) || 
+        (itemData7.indexOf(textData) > -1) ||
+        (itemData8.indexOf(textData) > -1);
+  });
+  this.setState({
+    //setting the filtered newData on datasource
+    //After setting the data it will automatically re-render the view
+    dataSource: newData,
+    search: text,
+  });
+}
+
+deleteicon(postuser, id)
+{
   if(postuser==this.props.screenProps.data.displayName)
-  return <Icon
-  name='delete'
-  color='#f50'
-  onPress={() => this.delete(id)} />
-  else
+    return <Icon
+      name='delete'
+      color='#f50'
+      onPress={() => this.delete(id)} />
+  else 
     return<View/>;
-  }
+}
+
+renderItem = ({ item }) => (
+  <ListItem
+    onPress={()=>{Alert.alert(item.url)}}
+    title={item.title}
+    subtitle={ 
+  <View>
+    <Text>Class: {item.class} ({item.professor})</Text>
+    <Text>Days: {item.days}</Text>
+    <Text>Time: {item.time}</Text>
+    <Text>Group Size: {item.groupSize}</Text>
+    <Text>Meeting Spot: {item.meetingSpot}</Text>
+    <Text>Description: {item.description}</Text>
+    <Text>User: {item.user}</Text>
+  </View>}
+leftAvatar={{
+  source: { uri: item.img },
+}}
+rightIcon={
+  this.deleteicon(item.user, item.id)
+}
+bottomDivider
+chevron
+/>
+)
 
   renderItem = ({ item }) => (
     <ListItem
@@ -293,32 +347,33 @@ class PostingsScreen extends React.Component {
 
     else if (!this.state.isPosting){
       console.log(this.state.posts);
-      return (
-        <Fragment>
-          <SafeAreaView>
-            <SearchBar round lightTheme
-              placeholder='Search by title'
-              value={this.state.search}
-              onChangeText={text => this.SearchFilterFunction(text)}
-              onClear={text => this.SearchFilterFunction('')}
-            />
-         </SafeAreaView>
+    return (
+      <Fragment>
+        <SafeAreaView>
+          <SearchBar lightTheme round
+            platform = 'ios'
+            placeholder='Search by class'
+            value={this.state.search}
+            onChangeText={text => this.SearchFilterFunction(text)}
+            onClear={text => this.SearchFilterFunction('')}
+          />
+       </SafeAreaView>
 
-        <FlatList
+      <FlatList
         data={this.state.dataSource}
         extraData={this.state}
         renderItem={ this.renderItem}
-        />
-        <TouchableOpacity style={{
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          position: 'absolute',
-          bottom: 10,
-          right: 5
-        }}>
-          <Icon reverse
-            name='add'
+      />
+      <TouchableOpacity style={{
+              width: 60,  
+              height: 60,   
+              borderRadius: 30,                                   
+              position: 'absolute',                                          
+              bottom: 10,
+              right: 5                                   
+          }}>
+        <Icon reverse
+            name='add' 
             color="green"
             onPress={()=>this.makepost()}
           />
@@ -396,6 +451,24 @@ class PostingsScreen extends React.Component {
       </ScrollView>
       );
   }
+  else
+    return(
+    <ScrollView>
+    <SafeAreaView>
+      <SafeAreaView style={styles.backButton}>
+        <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+      </SafeAreaView>
+      <Text style={styles.paragraph}>New Post</Text> 
+      <View style={styles.form}>
+        <Form type={Post} ref={c => this._form = c}/>
+      </View>
+      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
+      <Text></Text>
+      <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '2'}} onPress={()=>this.goBack()}/>
+    </SafeAreaView>
+    </ScrollView>
+    );
+}
 }
 
 class ProfileScreen extends React.Component {
@@ -794,12 +867,13 @@ const styles = StyleSheet.create({
   },
   form: {
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: 8,
     padding: 20,
     backgroundColor: '#ffffff',
   },
   paragraph:{
     margin:24,
+    marginBottom: 10,
     fontSize:30,
     fontWeight:'bold',
     textAlign:'center'
@@ -852,6 +926,10 @@ const styles = StyleSheet.create({
     width: 400,
     height: 400,
     marginTop: 5
+  },
+  backButton:{
+    marginLeft: 15,
+    flexDirection: 'row'
   }
 })
 
