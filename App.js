@@ -275,8 +275,8 @@ goBack()
 class ProfileScreen extends React.Component {
   render() {
     return(
-      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
       <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
         <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
       </View>
