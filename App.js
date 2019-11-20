@@ -24,13 +24,13 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 const Post = t.struct({
   title: t.String,
-  description: t.String,
+  //description: t.String,
   professor: t.String,
   days: t.String,
   time: t.String
 });
 
-
+//console.log("test");
 export default class App extends React.Component {
 
   constructor(props){
@@ -85,7 +85,7 @@ export default class App extends React.Component {
     }
   }
 
-  signOutWithFacebook = async () => {  
+  signOutWithFacebook = async () => {
     this.setState({isLoggedIn: false});
     console.log("logged out...");
   }
@@ -138,7 +138,7 @@ class ChatScreen extends React.Component {
   render() {
     return(
     <KeyboardAvoidingView style={{flex:1}}>
-     <GiftedChat 
+     <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
         user={{
@@ -151,14 +151,14 @@ class ChatScreen extends React.Component {
 }
 
 class PostingsScreen extends React.Component {
-mount=false;
+  mount=false;
 
   constructor(props){
     super(props);
-
     this.state = {
       posts:[],
       isPosting:false,
+      gettingDetails:false,
       search: ''
     };
     this.arrayholder = [];
@@ -172,7 +172,7 @@ mount=false;
     let postsRef = firebase.database().ref("posts/");
     this.mount=true;
 
-    postsRef.on('value',snapshot => {  
+    postsRef.on('value',snapshot => {
       const fbObject = snapshot.val();
       if(fbObject==null)
         return 0;
@@ -180,164 +180,222 @@ mount=false;
         fbObject[key].id = key;
         return fbObject[key];
       });
-      
       this.setState({
         posts:newArr,
         dataSource: newArr,
       });
       this.arrayholder = newArr;
-  
-  },
-  (error) => {
-    console.log(error)
-  })
-}
-componentWillUnmount(){
-  this.mount=false;
-}
-addpost(newTitle,newProfessor,newDays,newTime,newDescription)
-{
-  let postsRef = firebase.database().ref("posts/");
-  var newitem = postsRef.push({title:newTitle,description:newDescription,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl}).getKey();
-  console.log(newitem);
-  this.setState({
-    isPosting:false
-  });
-  Alert.alert("Successfully Posted");
-}
-makepost()
-{
-  this.setState({
-    isPosting:true
-  }); 
-}
-goBack()
-{
-  this.setState({
-    isPosting:false
-  });
-}
+    },
+    (error) => {
+      console.log(error)
+    })
+  }
+  componentWillUnmount(){
+    this.mount=false;
+  }
+  addpost(newTitle,newProfessor,newDays,newTime,newDescription){
+    let postsRef = firebase.database().ref("posts/");
+    var newitem = postsRef.push({title:newTitle,description:newDescription,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl}).getKey();
+    console.log(newitem);
+    this.setState({
+      isPosting:false
+    });
+    Alert.alert("Successfully Posted");
+  }
+  makepost(){
+    this.setState({
+      isPosting:true
+    });
+  }
+  details(){
+    this.setState({
+      gettingDetails:true
+    });
+  }
+  goBack(){
+    this.setState({
+      isPosting:false,
+      gettingDetails:false
+    });
+  }
 
-search = text => {
-  console.log(text);
-};
-clear = () => {
-  this.search.clear();
-};
-SearchFilterFunction(text) {
-  //passing the inserted text in textinput
-    const newData = this.arrayholder.filter(function(item) {
-      //applying filter for the inserted text in search bar
-      const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-      const textData = text.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-  });
-  this.setState({
-    //setting the filtered newData on datasource
-    //After setting the data it will automatically re-render the view
-    dataSource: newData,
-    search: text,
-  });
-}
+  search = text => {
+    console.log(text);
+  };
+  clear = () => {
+    this.search.clear();
+  };
+  SearchFilterFunction(text) {
+    //passing the inserted text in textinput
+      const newData = this.arrayholder.filter(function(item) {
+        //applying filter for the inserted text in search bar
+        const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      search: text,
+    });
+  }
 
-deleteicon(postuser, id)
-{
-if(postuser==this.props.screenProps.data.displayName)
-return <Icon
-name='delete'
-color='#f50'
-onPress={() => this.delete(id)} />
-else 
-  return<View/>;
-}
+  deleteicon(postuser, id)
+  {
+  if(postuser==this.props.screenProps.data.displayName)
+  return <Icon
+  name='delete'
+  color='#f50'
+  onPress={() => this.delete(id)} />
+  else
+    return<View/>;
+  }
 
-renderItem = ({ item }) => (
-  <ListItem
-    onPress={()=>{Alert.alert(item.url)}}
-    title={item.title}
-    subtitle={ 
-  <View>
-    <Text>Professor: {item.professor}</Text>
-    <Text>Description: {item.description}</Text>
-    <Text>Days: {item.days}</Text>
-    <Text>Time: {item.time}</Text>
-    <Text>User: {item.user}</Text>
-  </View>}
-leftAvatar={{
-  source: { uri: item.img },
-}}
-rightIcon={
-  this.deleteicon(item.user, item.id)
-}
-bottomDivider
-chevron
-/>
-)
-
+  renderItem = ({ item }) => (
+    <ListItem
+      onPress={()=>this.details()/*Alert.alert(item.user)*/}
+      title={item.title}
+      subtitle={
+        <View>
+          <Text>Professor: {item.professor}</Text>
+          <Text>Class: {item.description}</Text>
+          <Text>Days: {item.days}</Text>
+          <Text>Time: {item.time}</Text>
+          <Text>User: {item.user}</Text>
+        </View>
+      }
+      leftAvatar={{
+        source: { uri: item.img },
+      }}
+      rightIcon={
+        this.deleteicon(item.user, item.id)
+      }
+      bottomDivider
+      chevron
+    />
+  )
+  state = {clas: ''}
+  updateClas = (clas) => {
+   this.setState({ clas: clas })
+  }
   render() {
     if(this.state.posts.length==0 && !this.state.isPosting)
-    
+
       return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
           width: 80,
           height: 80,
           borderRadius: 40,
           backgroundColor: 'grey',
-  
+
       }}/>
-      
-    
+
+
     else if (!this.state.isPosting){
       console.log(this.state.posts);
-    return (
-      <Fragment>
-        <SafeAreaView>
-          <SearchBar round lightTheme 
-            placeholder='Search by title'
-            value={this.state.search}
-            onChangeText={text => this.SearchFilterFunction(text)}
-            onClear={text => this.SearchFilterFunction('')}
-          />
-       </SafeAreaView>
+      return (
+        <Fragment>
+          <SafeAreaView>
+            <SearchBar round lightTheme
+              placeholder='Search by title'
+              value={this.state.search}
+              onChangeText={text => this.SearchFilterFunction(text)}
+              onClear={text => this.SearchFilterFunction('')}
+            />
+         </SafeAreaView>
 
-      <FlatList
-      data={this.state.dataSource}
-      extraData={this.state}
-      renderItem={ this.renderItem}
-      />
-      <TouchableOpacity style={{
-              width: 60,  
-              height: 60,   
-              borderRadius: 30,                                   
-              position: 'absolute',                                          
-              bottom: 10,
-              right: 5                                   
-          }}>
-        <Icon reverse
-            name='add' 
+        <FlatList
+        data={this.state.dataSource}
+        extraData={this.state}
+        renderItem={ this.renderItem}
+        />
+        <TouchableOpacity style={{
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          position: 'absolute',
+          bottom: 10,
+          right: 5
+        }}>
+          <Icon reverse
+            name='add'
             color="green"
             onPress={()=>this.makepost()}
-            
-      />
-      </TouchableOpacity>
-    
-    </Fragment>
-    );
+          />
+        </TouchableOpacity>
+
+      </Fragment>
+      );
+    }
+    else if(this.state.gettingDetails == true){
+      return(
+        <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+          <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+            <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>Other</Text>
+          </View>
+          <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+          <View style={styles.imageRow}>
+            <Image
+              source={{uri: this.props.screenProps.ppurl}}
+              resizeMode="contain"
+              style={styles.image}
+            />
+            <View style={styles.majorRowColumn}>
+              <View style={styles.majorRow}>
+                <Text style={styles.major}>Major:</Text>
+
+              </View>
+              <View style={styles.gradYearStack}>
+                <Text style={styles.gradYear}>Grad year:</Text>
+
+              </View>
+            </View>
+          </View>
+          <Text style={styles.biography}>Biography</Text>
+
+          <Text style={styles.textInput}>
+         According to all known laws
+        of aviation,
+        there is no way a bee
+        should be able to fly.
+        Its wings are too small to get
+        its fat little body off the ground.
+        The bee, of course, flies anyway
+        because bees don't care
+        what humans think is impossible.
+          </Text>
+          <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+
+          {/* <Text>{App.getCurrentUser()}</Text> */}
+          {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
+        </ScrollView>
+      );
+    }
+    else
+      return(
+      <ScrollView>
+      <SafeAreaView>
+        <Text style={styles.paragraph}>New Post</Text>
+        <View style={styles.form}>
+          <Form type={Post} ref={c => this._form = c}/>
+          <Text>test</Text>
+          <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
+          <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
+            <Picker.Item label = "HCI" value = "HCI" />
+            <Picker.Item label = "Eco" value = "Eco" />
+            <Picker.Item label = "Ethics" value = "Ethics" />
+          </Picker>
+          <Text>Choice: {this.state.clas}</Text>
+        </View>
+        <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={
+          ()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this.state.clas)
+        }/>
+        <Text></Text>
+        <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+      </SafeAreaView>
+      </ScrollView>
+      );
   }
-  else
-    return(
-    <ScrollView>
-    <SafeAreaView>
-      <Text style={styles.paragraph}>New Post</Text> 
-      <View style={styles.form}>
-        <Form type={Post} ref={c => this._form = c}/>
-      </View>
-      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().description)}/>
-      <Text></Text>
-      <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '5'}} onPress={()=>this.goBack()}/>
-    </SafeAreaView>
-    </ScrollView>
-    );
-}
 }
 
 class ProfileScreen extends React.Component {
@@ -358,64 +416,64 @@ class ProfileScreen extends React.Component {
   render() {
     return(
       <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-      <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
-        <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
-      </SafeAreaView>
-      <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-        <SafeAreaView style={styles.imageRow}>
-        <Avatar style={styles.pic}
-          large
-          rounded
-          source={{uri: this.props.screenProps.ppurl}}
-          activeOpacity={0.7}
-        />
-        <SafeAreaView style={styles.majorRowColumn}>
-          <SafeAreaView style={styles.majorRow}>
-          <Input
-            placeholder="Major..."
-            label="Major: "
-         />
+        <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+        <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
+          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
         </SafeAreaView>
-        <SafeAreaView style={styles.gradYearStack}>
-          <Input 
-            placeholder="Year..." 
-            label="Graduation Year: "
-          />
-        </SafeAreaView>
-        </SafeAreaView>
-        </SafeAreaView>
-        <SafeAreaView style={styles.bio}>
-        <Input
-            placeholder="Tell us about yourself.."
-            label="Biography: "
-            returnKeyType="done"
-            blurOnSubmit={true}
-            enablesReturnKeyAutomatically={true}
-            multiline={true}
-         />
-        <SafeAreaView style={{marginTop:30}}>
-        <Input 
-          disabled 
-          label = "Classes (seperate by comma to add a new class)"
-          inputContainerStyle={{borderBottomWidth: 0}}
-          />
-        
-        <TagInput
-          updateState={this.updateTagState}
-          tags={this.state.tags}
-          keysForTag={','}
-          placeholder="Tags..."
-        />   
-        </SafeAreaView>
-        </SafeAreaView>
-        
-        <Button
-          onPress={this.props.screenProps.signOut}
-          title="Logout of Facebook" 
-          buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
-        />
-        </SafeAreaView>
+        <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+          <SafeAreaView style={styles.imageRow}>
+            <Avatar style={styles.pic}
+              large
+              rounded
+              source={{uri: this.props.screenProps.ppurl}}
+              activeOpacity={0.7}
+            />
+            <SafeAreaView style={styles.majorRowColumn}>
+              <SafeAreaView style={styles.majorRow}>
+              <Input
+                placeholder="Major..."
+                label="Major: "
+             />
+            </SafeAreaView>
+            <SafeAreaView style={styles.gradYearStack}>
+              <Input
+                placeholder="Year..."
+                label="Graduation Year: "
+              />
+            </SafeAreaView>
+            </SafeAreaView>
+            </SafeAreaView>
+            <SafeAreaView style={styles.bio}>
+            <Input
+                placeholder="Tell us about yourself.."
+                label="Biography: "
+                returnKeyType="done"
+                blurOnSubmit={true}
+                enablesReturnKeyAutomatically={true}
+                multiline={true}
+             />
+            <SafeAreaView style={{marginTop:30}}>
+            <Input
+              disabled
+              label = "Classes (seperate by comma to add a new class)"
+              inputContainerStyle={{borderBottomWidth: 0}}
+              />
+
+            <TagInput
+              updateState={this.updateTagState}
+              tags={this.state.tags}
+              keysForTag={','}
+              placeholder="Class code"
+            />
+            </SafeAreaView>
+            </SafeAreaView>
+
+            <Button
+              onPress={this.props.screenProps.signOut}
+              title="Logout of Facebook"
+              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
+            />
+          </SafeAreaView>
         </ScrollView>
     );
   }
@@ -450,26 +508,14 @@ class OtherProfile extends React.Component {
 
         <Text style={styles.textInput}>
        According to all known laws
-of aviation,
-
-
-there is no way a bee
-should be able to fly.
-
-
-Its wings are too small to get
-its fat little body off the ground.
-
-
-The bee, of course, flies anyway
-
-
-because bees don't care
-what humans think is impossible.
-
-
-Yellow, black. Yellow, black.
-Yellow, black. Yellow, black.
+      of aviation,
+      there is no way a bee
+      should be able to fly.
+      Its wings are too small to get
+      its fat little body off the ground.
+      The bee, of course, flies anyway
+      because bees don't care
+      what humans think is impossible.
         </Text>
 
         {/* <Text>{App.getCurrentUser()}</Text> */}
@@ -790,13 +836,13 @@ const styles = StyleSheet.create({
       marginTop: 18,
       marginLeft: 37,
       marginRight: 14
-    }, 
+    },
   pic:{
       width: 100,
       height: 100,
       borderRadius: 50,
       overflow:'hidden',
-    },   
+    },
   bio:{
     width: 400,
     height: 400,
