@@ -292,33 +292,33 @@ class ProfileScreen extends React.Component {
     return(
       <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-      <View style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
+      <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
         <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
-      </View>
-      <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-        <View style={styles.imageRow}>
+      </SafeAreaView>
+      <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+        <SafeAreaView style={styles.imageRow}>
         <Avatar style={styles.pic}
           large
           rounded
           source={{uri: this.props.screenProps.ppurl}}
           activeOpacity={0.7}
         />
-        <View style={styles.majorRowColumn}>
-          <View style={styles.majorRow}>
+        <SafeAreaView style={styles.majorRowColumn}>
+          <SafeAreaView style={styles.majorRow}>
           <Input
             placeholder="Major..."
             label="Major: "
          />
-        </View>
-        <View style={styles.gradYearStack}>
+        </SafeAreaView>
+        <SafeAreaView style={styles.gradYearStack}>
           <Input 
             placeholder="Year..." 
             label="Graduation Year: "
           />
-        </View>
-        </View>
-        </View>
-        <View style={styles.bio}>
+        </SafeAreaView>
+        </SafeAreaView>
+        </SafeAreaView>
+        <SafeAreaView style={styles.bio}>
         <Input
             placeholder="Tell us about yourself.."
             label="Biography: "
@@ -327,7 +327,7 @@ class ProfileScreen extends React.Component {
             enablesReturnKeyAutomatically={true}
             multiline={true}
          />
-        <View style={{marginTop:30}}>
+        <SafeAreaView style={{marginTop:30}}>
         <Input 
           disabled 
           label = "Classes (seperate by comma to add a new class)"
@@ -337,12 +337,11 @@ class ProfileScreen extends React.Component {
         <TagInput
           updateState={this.updateTagState}
           tags={this.state.tags}
-          labelStyle={{color: '#397BE2'}}
           keysForTag={','}
           placeholder="Tags..."
         />   
-        </View>
-        </View>
+        </SafeAreaView>
+        </SafeAreaView>
         
         <Button
           onPress={this.props.screenProps.signOut}
