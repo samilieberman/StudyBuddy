@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import t from 'tcomb-form-native';
 import { Button, Icon, Avatar, Text, SearchBar, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
+import TagInput from 'react-native-tags-input';
 
 const Form = t.form.Form;
 
@@ -272,12 +273,26 @@ goBack()
 }
 }
 
-class UserProfile extends React.Component {
+class ProfileScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tags: {
+        tag: '',
+        tagsArray: []
+      },
+    };
+  }
+  updateTagState = (state) => {
+    this.setState({
+      tags: state
+    })
+  };
   render() {
     return(
       <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-      <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+      <View style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
         <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
       </View>
       <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
@@ -291,13 +306,13 @@ class UserProfile extends React.Component {
         <View style={styles.majorRowColumn}>
           <View style={styles.majorRow}>
           <Input
-            placeholder="Major.."
+            placeholder="Major..."
             label="Major: "
          />
         </View>
         <View style={styles.gradYearStack}>
           <Input 
-            placeholder="Year.." 
+            placeholder="Year..." 
             label="Graduation Year: "
           />
         </View>
@@ -312,7 +327,23 @@ class UserProfile extends React.Component {
             enablesReturnKeyAutomatically={true}
             multiline={true}
          />
-         </View>
+        <View style={{marginTop:30}}>
+        <Input 
+          disabled 
+          label = "Classes (seperate by comma to add a new class)"
+          inputContainerStyle={{borderBottomWidth: 0}}
+          />
+        
+        <TagInput
+          updateState={this.updateTagState}
+          tags={this.state.tags}
+          labelStyle={{color: '#397BE2'}}
+          keysForTag={','}
+          placeholder="Tags..."
+        />   
+        </View>
+        </View>
+        
         <Button
           onPress={this.props.screenProps.signOut}
           title="Logout of Facebook" 
@@ -703,7 +734,12 @@ const styles = StyleSheet.create({
   bio:{
     width: 400,
     height: 400,
-    marginTop: 30
+    marginTop: 40
+  },
+  tag:{
+    width: 400,
+    height: 400,
+    marginTop: 5
   }
 })
 
