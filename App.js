@@ -316,52 +316,31 @@ bottomDivider
 chevron
 />
 )
+state = {
+  clas: ''
+}
+updateClas = (clas) => {
+  this.setState({ clas: clas })
+}
+render() {
+  if(this.state.posts.length==0 && !this.state.isPosting)
 
-  renderItem = ({ item }) => (
-    <ListItem
-      onPress={()=>/*this.details()*/Alert.alert(item.user)}
-      title={item.title}
-      subtitle={
-        <View>
-          <Text>Professor: {item.professor}</Text>
-          <Text>Class: {item.description}</Text>
-          <Text>Days: {item.days}</Text>
-          <Text>Time: {item.time}</Text>
-          <Text>User: {item.user}</Text>
-        </View>
-      }
-      leftAvatar={{
-        source: { uri: item.img },
-      }}
-      rightIcon={
-        this.deleteicon(item.user, item.id)
-      }
-      bottomDivider
-      chevron
-    />
-  )
-  state = {clas: ''}
-  updateClas = (clas) => {
-   this.setState({ clas: clas })
-  }
-  render() {
-    if(this.state.posts.length==0 && !this.state.isPosting)
+  return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'grey',
 
-      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
-          width: 80,
-          height: 80,
-          borderRadius: 40,
-          backgroundColor: 'grey',
-
-      }}/>
+  }}/>
 
 
-    else if (!this.state.isPosting){
-      console.log(this.state.posts);
-    return (
-      <Fragment>
-        <SafeAreaView>
-          <SearchBar lightTheme round
+  else if (!this.state.isPosting){
+    console.log(this.state.posts);
+  
+  return (
+    <Fragment>
+      <SafeAreaView>
+        <SearchBar lightTheme round
             platform = 'ios'
             placeholder='Search...'
             value={this.state.search}
