@@ -201,7 +201,7 @@ class PostingsScreen extends React.Component {
         dataSource: newArr,
       });
       this.arrayholder = newArr;
-  
+
   },
   (error) => {
     console.log(error)
@@ -224,7 +224,7 @@ makepost()
 {
   this.setState({
     isPosting:true
-  }); 
+  });
 }
 goBack()
 {
@@ -253,12 +253,12 @@ SearchFilterFunction(text) {
       const itemData8 = (item.user ? item.user.toUpperCase() : ''.toUpperCase());
 
       const textData = text.toUpperCase();
-      return (itemData.indexOf(textData) > -1) || 
-        (itemData2.indexOf(textData) > -1) || 
-        (itemData3.indexOf(textData) > -1) || 
-        (itemData4.indexOf(textData) > -1) || 
-        (itemData5.indexOf(textData) > -1) || 
-        (itemData6.indexOf(textData) > -1) || 
+      return (itemData.indexOf(textData) > -1) ||
+        (itemData2.indexOf(textData) > -1) ||
+        (itemData3.indexOf(textData) > -1) ||
+        (itemData4.indexOf(textData) > -1) ||
+        (itemData5.indexOf(textData) > -1) ||
+        (itemData6.indexOf(textData) > -1) ||
         (itemData7.indexOf(textData) > -1) ||
         (itemData8.indexOf(textData) > -1);
   });
@@ -277,7 +277,7 @@ deleteicon(postuser, id)
       name='delete'
       color='#f50'
       onPress={() => this.delete(id)} />
-  else 
+  else
     return<View/>;
 }
 
@@ -285,7 +285,7 @@ renderItem = ({ item }) => (
   <ListItem
     onPress={()=>{Alert.alert(item.url)}}
     title={item.title}
-    subtitle={ 
+    subtitle={
   <View>
     <Text>Class: {item.class} ({item.professor})</Text>
     <Text>Days: {item.days}</Text>
@@ -308,7 +308,7 @@ chevron
 
   renderItem = ({ item }) => (
     <ListItem
-      onPress={()=>this.details()/*Alert.alert(item.user)*/}
+      onPress={()=>/*this.details()*/Alert.alert(item.user)}
       title={item.title}
       subtitle={
         <View>
@@ -365,15 +365,15 @@ chevron
         renderItem={ this.renderItem}
       />
       <TouchableOpacity style={{
-              width: 60,  
-              height: 60,   
-              borderRadius: 30,                                   
-              position: 'absolute',                                          
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              position: 'absolute',
               bottom: 10,
-              right: 5                                   
+              right: 5
           }}>
         <Icon reverse
-            name='add' 
+            name='add'
             color="green"
             onPress={()=>this.makepost()}
           />
@@ -382,75 +382,6 @@ chevron
       </Fragment>
       );
     }
-    else if(this.state.gettingDetails == true){
-      return(
-        <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
-          <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
-            <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>Other</Text>
-          </View>
-          <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
-          <View style={styles.imageRow}>
-            <Image
-              source={{uri: this.props.screenProps.ppurl}}
-              resizeMode="contain"
-              style={styles.image}
-            />
-            <View style={styles.majorRowColumn}>
-              <View style={styles.majorRow}>
-                <Text style={styles.major}>Major:</Text>
-
-              </View>
-              <View style={styles.gradYearStack}>
-                <Text style={styles.gradYear}>Grad year:</Text>
-
-              </View>
-            </View>
-          </View>
-          <Text style={styles.biography}>Biography</Text>
-
-          <Text style={styles.textInput}>
-         According to all known laws
-        of aviation,
-        there is no way a bee
-        should be able to fly.
-        Its wings are too small to get
-        its fat little body off the ground.
-        The bee, of course, flies anyway
-        because bees don't care
-        what humans think is impossible.
-          </Text>
-          <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
-
-          {/* <Text>{App.getCurrentUser()}</Text> */}
-          {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
-        </ScrollView>
-      );
-    }
-    else
-      return(
-      <ScrollView>
-      <SafeAreaView>
-        <Text style={styles.paragraph}>New Post</Text>
-        <View style={styles.form}>
-          <Form type={Post} ref={c => this._form = c}/>
-          <Text>test</Text>
-          <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
-          <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
-            <Picker.Item label = "HCI" value = "HCI" />
-            <Picker.Item label = "Eco" value = "Eco" />
-            <Picker.Item label = "Ethics" value = "Ethics" />
-          </Picker>
-          <Text>Choice: {this.state.clas}</Text>
-        </View>
-        <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={
-          ()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this.state.clas)
-        }/>
-        <Text></Text>
-        <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
-      </SafeAreaView>
-      </ScrollView>
-      );
-  }
   else
     return(
     <ScrollView>
@@ -458,7 +389,7 @@ chevron
       <SafeAreaView style={styles.backButton}>
         <Icon name="arrow-back" onPress={()=>this.goBack()}/>
       </SafeAreaView>
-      <Text style={styles.paragraph}>New Post</Text> 
+      <Text style={styles.paragraph}>New Post</Text>
       <View style={styles.form}>
         <Form type={Post} ref={c => this._form = c}/>
       </View>
