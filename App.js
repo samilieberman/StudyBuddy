@@ -55,7 +55,6 @@ export default class App extends React.Component {
 
   constructor(props){
     super(props);
-
     this.state = {
       isLoggedIn: false,
       data: [],
@@ -91,9 +90,9 @@ export default class App extends React.Component {
 
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
-              console.log(user);
-              this.setState({data:user.providerData[0]});
-              this.setState({isLoggedIn: true});
+            console.log(user);
+            this.setState({data:user.providerData[0]});
+            this.setState({isLoggedIn: true});
           }
         });
       }
@@ -157,15 +156,15 @@ class ChatScreen extends React.Component {
   }
   render() {
     return(
-    <KeyboardAvoidingView style={{flex:1}}>
-     <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-     />
-     </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={{flex:1}}>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={messages => this.onSend(messages)}
+          user={{
+            _id: 1,
+          }}
+        />
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -207,37 +206,36 @@ class PostingsScreen extends React.Component {
       });
       this.arrayholder = newArr;
 
-  },
-  (error) => {
-    console.log(error)
-  })
-}
-componentWillUnmount(){
-  this.mount=false;
-}
-addpost()
-{
-  var value = this._form.getValue();
-  if(value){
-    console.log("adding to DB...");
-    console.log(value);
-    let postsRef = firebase.database().ref("posts/"); 
-    postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description}).getKey();
+    },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+  componentWillUnmount(){
+    this.mount=false;
+  }
+  addpost(){
+    var value = this._form.getValue();
+    if(value){
+      console.log("adding to DB...");
+      console.log(value);
+      let postsRef = firebase.database().ref("posts/");
+      postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description}).getKey();
+      this.setState({
+        isPosting:false
+      });
+      Alert.alert("Successfully Posted");
+    }
+    else{
+      Alert.alert("Please fill out all the fields");
+    }
+  }
+  makepost(){
     this.setState({
-      isPosting:false
+      isPosting:true
     });
-    Alert.alert("Successfully Posted");
   }
-  else{
-    Alert.alert("Please fill out all the fields");
-  }
-}
-makepost()
-{
-  this.setState({
-    isPosting:true
-  });
-}
 /*
 seedetails()
 {
@@ -246,31 +244,29 @@ seedetails()
   });
 }
 */
-seeprofile()
-{
-  this.setState({
-    seeingProfile:true
-  });
-}
-goBack()
-{
-  this.setState({
-    isPosting:false,
-    //gettingDetails:false,
-    seeingProfile:false,
-  });
-}
+  seeprofile(){
+    this.setState({
+      seeingProfile:true
+    });
+  }
+  goBack(){
+    this.setState({
+      isPosting:false,
+      //gettingDetails:false,
+      seeingProfile:false,
+    });
+  }
 
-search = text => {
-  console.log(text);
-};
-clear = () => {
-  this.search.clear();
-};
-SearchFilterFunction(text) {
-  //passing the inserted text in textinput
+  search = text => {
+    console.log(text);
+  };
+  clear = () => {
+    this.search.clear();
+  };
+  SearchFilterFunction(text) {
+    //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function(item) {
-      //applying filter for the inserted text in search bar
+        //applying filter for the inserted text in search bar
       const itemData = (item.class ? item.class.toUpperCase() : ''.toUpperCase());
       const itemData2 = (item.title ? item.title.toUpperCase() : ''.toUpperCase());
       const itemData3 = (item.professor ? item.professor.toUpperCase() : ''.toUpperCase());
@@ -289,180 +285,177 @@ SearchFilterFunction(text) {
         (itemData6.indexOf(textData) > -1) ||
         (itemData7.indexOf(textData) > -1) ||
         (itemData8.indexOf(textData) > -1);
-  });
-  this.setState({
-    //setting the filtered newData on datasource
-    //After setting the data it will automatically re-render the view
-    dataSource: newData,
-    search: text,
-  });
-}
+    });
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      search: text,
+    });
+  }
 
-deleteicon(postuser, id)
-{
-  if(postuser==this.props.screenProps.data.displayName)
-    return <Icon
-      name='delete'
-      color='#f50'
-      onPress={() => this.delete(id)} />
-  else
-    return<View/>;
-}
+  deleteicon(postuser, id){
+    if(postuser==this.props.screenProps.data.displayName)
+      return <Icon
+        name='delete'
+        color='#f50'
+        onPress={() => this.delete(id)} />
+    else
+      return<View/>;
+  }
 
-renderItem = ({ item }) => (
-  <ListItem
-    onPress={()=>{this.seeprofile()}}
-    title={item.title}
-    subtitle={
-  <View>
-    <Text>Class: {item.class} ({item.professor})</Text>
-    <Text>Days: {item.days}</Text>
-    <Text>Time: {item.time}</Text>
-    <Text>Group Size: {item.groupSize}</Text>
-    <Text>Meeting Spot: {item.meetingSpot}</Text>
-    <Text>Additional Info: {item.description}</Text>
-    <Text>User: {item.user}</Text>
-  </View>}
-leftAvatar={{
-  source: { uri: item.img },
-}}
-rightIcon={
-  this.deleteicon(item.user, item.id)
-}
-bottomDivider
-chevron
-/>
-)
-state = {
-  clas: ''
-}
-updateClas = (clas) => {
-  this.setState({ clas: clas })
-}
-render() {
-  if(this.state.posts.length==0 && !this.state.isPosting)
-
-  return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'grey',
-
-  }}/>
+  renderItem = ({ item }) => (
+    <ListItem
+      onPress={()=>{this.seeprofile()}}
+      title={item.title}
+      subtitle={
+        <View>
+          <Text>Class: {item.class} ({item.professor})</Text>
+          <Text>Days: {item.days}</Text>
+          <Text>Time: {item.time}</Text>
+          <Text>Group Size: {item.groupSize}</Text>
+          <Text>Meeting Spot: {item.meetingSpot}</Text>
+          <Text>Additional Info: {item.description}</Text>
+          <Text>User: {item.user}</Text>
+        </View>}
+      leftAvatar={{
+        source: { uri: item.img },
+      }}
+      rightIcon={
+        this.deleteicon(item.user, item.id)
+      }
+      bottomDivider
+      chevron
+    />
+  )
+  state = {
+    clas: ''
+  }
+  updateClas = (clas) => {
+    this.setState({ clas: clas })
+  }
+  render() {
+    if(this.state.posts.length==0 && !this.state.isPosting)
+      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'grey',
+      }}/>
 
 
     else if (!this.state.isPosting && !this.state.seeingProfile){
       console.log("gets here 1");
       console.log(this.state.isPosting);
-    return (
-      <Fragment>
-        <SafeAreaView>
-          <SearchBar lightTheme round
-            platform = 'ios'
-            placeholder='Search...'
-            value={this.state.search}
-            onChangeText={text => this.SearchFilterFunction(text)}
-            onClear={text => this.SearchFilterFunction('')}
-          />
-       </SafeAreaView>
+      return (
+        <Fragment>
+          <SafeAreaView>
+            <SearchBar lightTheme round
+              platform = 'ios'
+              placeholder='Search...'
+              value={this.state.search}
+              onChangeText={text => this.SearchFilterFunction(text)}
+              onClear={text => this.SearchFilterFunction('')}
+            />
+          </SafeAreaView>
 
-      <FlatList
-        data={this.state.dataSource}
-        extraData={this.state}
-        renderItem={ this.renderItem}
-      />
-      <TouchableOpacity style={{
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              position: 'absolute',
-              bottom: 10,
-              right: 5
+          <FlatList
+            data={this.state.dataSource}
+            extraData={this.state}
+            renderItem={ this.renderItem}
+          />
+          <TouchableOpacity style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            position: 'absolute',
+            bottom: 10,
+            right: 5
           }}>
-        <Icon reverse
-            name='add'
-            color="green"
-            onPress={()=>this.makepost()}
-          />
-        </TouchableOpacity>
+            <Icon reverse
+              name='add'
+              color="green"
+              onPress={()=>this.makepost()}
+            />
+          </TouchableOpacity>
 
-      </Fragment>
+        </Fragment>
       );
     }
     else if(this.state.seeingProfile && !this.state.isPosting){
-console.log("gets here 2");
-return(
-  <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-    <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-    <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
-      <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
-    </SafeAreaView>
-    <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-      <SafeAreaView style={styles.imageRow}>
-        <Avatar style={styles.pic}
-          large
-          rounded
-          source={{uri: this.props.screenProps.ppurl}}
-          activeOpacity={0.7}
-        />
-        <SafeAreaView style={styles.majorRowColumn}>
-          <SafeAreaView style={styles.majorRow}>
-          <Input
-            placeholder="Major..."
-            label="Major: "
-         />
-        </SafeAreaView>
-        <SafeAreaView style={styles.gradYearStack}>
-          <Input
-            placeholder="Year..."
-            label="Graduation Year: "
-          />
-        </SafeAreaView>
-        </SafeAreaView>
-        </SafeAreaView>
-        <SafeAreaView style={styles.bio}>
-        <Input
-            placeholder="Tell us about yourself.."
-            label="Biography: "
-            returnKeyType="done"
-            blurOnSubmit={true}
-            enablesReturnKeyAutomatically={true}
-            multiline={true}
-         />
-        <SafeAreaView style={{marginTop:30}}>
-        <Input
-          disabled
-          label = "Classes (seperate by comma to add a new class)"
-          inputContainerStyle={{borderBottomWidth: 0}}
-          />
-        </SafeAreaView>
-        </SafeAreaView>
+      console.log("gets here 2");
+      return(
+        <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+          <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+            <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
+              <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
+            </SafeAreaView>
+            <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+            <SafeAreaView style={styles.imageRow}>
+              <Avatar style={styles.pic}
+                large
+                rounded
+                source={{uri: this.props.screenProps.ppurl}}
+                activeOpacity={0.7}
+              />
+              <SafeAreaView style={styles.majorRowColumn}>
+                <SafeAreaView style={styles.majorRow}>
+                  <Input
+                    placeholder="Major..."
+                    label="Major: "
+                  />
+                </SafeAreaView>
+                <SafeAreaView style={styles.gradYearStack}>
+                  <Input
+                    placeholder="Year..."
+                    label="Graduation Year: "
+                  />
+                </SafeAreaView>
+              </SafeAreaView>
+            </SafeAreaView>
+              <SafeAreaView style={styles.bio}>
+              <Input
+                  placeholder="Tell us about yourself.."
+                  label="Biography: "
+                  returnKeyType="done"
+                  blurOnSubmit={true}
+                  enablesReturnKeyAutomatically={true}
+                  multiline={true}
+               />
+              <SafeAreaView style={{marginTop:30}}>
+              <Input
+                disabled
+                label = "Classes (seperate by comma to add a new class)"
+                inputContainerStyle={{borderBottomWidth: 0}}
+                />
+              </SafeAreaView>
+              </SafeAreaView>
 
-<Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
-      </SafeAreaView>
-    </ScrollView>
+              <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+          </SafeAreaView>
+        </ScrollView>
       );
     }
     else if(this.state.isPosting && !this.state.seeingProfile){
-console.log("gets here 3");
+      console.log("gets here 3");
       return(
-      <ScrollView>
-      <SafeAreaView>
-        <SafeAreaView style={styles.backButton}>
-          <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+        <ScrollView>
+        <SafeAreaView>
+          <SafeAreaView style={styles.backButton}>
+            <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+          </SafeAreaView>
+          <Text style={styles.paragraph}>New Post</Text>
+          <View style={styles.form}>
+            <Form type={Post} ref={c => this._form = c}/>
+          </View>
+          <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
+          <Text></Text>
+          <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
         </SafeAreaView>
-        <Text style={styles.paragraph}>New Post</Text>
-        <View style={styles.form}>
-          <Form type={Post} ref={c => this._form = c}/>
-        </View>
-        <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
-        <Text></Text>
-        <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
-      </SafeAreaView>
-      </ScrollView>
+        </ScrollView>
       );
     }
-    }
+  }
 }
 
 class ProfileScreen extends React.Component {
@@ -497,11 +490,11 @@ class ProfileScreen extends React.Component {
             />
             <SafeAreaView style={styles.majorRowColumn}>
               <SafeAreaView style={styles.majorRow}>
-              <Input
-                placeholder="Major..."
-                label="Major: "
-             />
-            </SafeAreaView>
+                <Input
+                  placeholder="Major..."
+                  label="Major: "
+                />
+              </SafeAreaView>
             <SafeAreaView style={styles.gradYearStack}>
               <Input
                 placeholder="Year..."
@@ -509,30 +502,30 @@ class ProfileScreen extends React.Component {
               />
             </SafeAreaView>
             </SafeAreaView>
-            </SafeAreaView>
+          </SafeAreaView>
             <SafeAreaView style={styles.bio}>
             <Input
-                placeholder="Tell us about yourself.."
-                label="Biography: "
-                returnKeyType="done"
-                blurOnSubmit={true}
-                enablesReturnKeyAutomatically={true}
-                multiline={true}
+              placeholder="Tell us about yourself.."
+              label="Biography: "
+              returnKeyType="done"
+              blurOnSubmit={true}
+              enablesReturnKeyAutomatically={true}
+              multiline={true}
              />
-            <SafeAreaView style={{marginTop:30}}>
-            <Input
-              disabled
-              label = "Classes (seperate by comma to add a new class)"
-              inputContainerStyle={{borderBottomWidth: 0}}
-              />
+              <SafeAreaView style={{marginTop:30}}>
+                <Input
+                  disabled
+                  label = "Classes (seperate by comma to add a new class)"
+                  inputContainerStyle={{borderBottomWidth: 0}}
+                />
 
-            <TagInput
-              updateState={this.updateTagState}
-              tags={this.state.tags}
-              keysForTag={','}
-              placeholder="Class code"
-            />
-            </SafeAreaView>
+                <TagInput
+                  updateState={this.updateTagState}
+                  tags={this.state.tags}
+                  keysForTag={','}
+                  placeholder="Class code"
+                />
+              </SafeAreaView>
             </SafeAreaView>
 
             <Button
@@ -540,8 +533,8 @@ class ProfileScreen extends React.Component {
               title="Logout of Facebook"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
             />
-          </SafeAreaView>
-        </ScrollView>
+        </SafeAreaView>
+      </ScrollView>
     );
   }
 }
