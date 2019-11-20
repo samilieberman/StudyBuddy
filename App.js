@@ -1,31 +1,46 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, Text, View, Button, Alert, TouchableOpacity, Image, TextInput, ScrollView, Picker } from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
-import firebase from './firebase.js'
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import EntypoIcon from "react-native-vector-icons/Entypo";
+import t from 'tcomb-form-native';
+import { Button, Icon, Avatar, Text, SearchBar, Input} from 'react-native-elements';
+import { GiftedChat } from 'react-native-gifted-chat';
+
+const Form = t.form.Form;
+
 const FBSDK = require('react-native-fbsdk');
 const {
   GraphRequest,
   GraphRequestManager,
 } = FBSDK;
-Icon.loadFont();
+//Icon.loadFont();
+import firebase from './firebase.js';
+import { ScrollView } from 'react-native-gesture-handler';
+// import { NPN_ENABLED } from 'constants';
+
+const Post = t.struct({
+  title: t.String,
+  description: t.String,
+  professor: t.String,
+  days: t.String,
+  time: t.String
+});
 
 
 export default class App extends React.Component {
 
   constructor(props){
     super(props);
-    var username;
 
     this.state = {
       isLoggedIn: false,
       data: [],
-      ppurl:"null"
+      ppurl:"null",
+      signOut:this.signOutWithFacebook
     };
   }
 
@@ -70,8 +85,9 @@ export default class App extends React.Component {
     }
   }
 
-  signOutWithFacebook = async () => {
-
+  signOutWithFacebook = async () => {  
+    this.setState({isLoggedIn: false});
+    console.log("logged out...");
   }
 
   getCurrentUser(){
@@ -94,92 +110,216 @@ export default class App extends React.Component {
 
 
 class ChatScreen extends React.Component {
+  state = {
+    messages: [],
+  }
+  componentWillMount() {
+    this.setState({
+      messages: [
+        {
+          _id: 1,
+          text: 'Hello study buddy!',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+        },
+      ],
+    })
+  }
+
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        <Text> This is my Chat screen </Text>
-      </View>
+    <KeyboardAvoidingView style={{flex:1}}>
+     <GiftedChat 
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+     />
+     </KeyboardAvoidingView>
     );
   }
 }
 
 class PostingsScreen extends React.Component {
+mount=false;
+  constructor(props){
+    super(props);
+
+    this.state = {
+      posts:[],
+      isPosting:false
+    };
+  }
+  delete(key){
+    console.log(key);
+    let postsRef = firebase.database().ref("posts/"+key);
+    postsRef.remove();
+  }
+  componentDidMount= async () =>{
+    let postsRef = firebase.database().ref("posts/");
+    this.mount=true;
+
+
+    postsRef.on('value',snapshot => {  
+      const fbObject = snapshot.val();
+      const newArr = Object.keys(fbObject).map((key) => {
+        fbObject[key].id = key;
+        return fbObject[key];
+      });
+      
+      this.setState({
+        posts:newArr
+      });
+
+  
+  },
+  (error) => {
+    console.log(error)
+  })
+}
+componentWillUnmount(){
+  this.mount=false;
+}
+addpost(newTitle,newProfessor,newDays,newTime,newDescription)
+{
+  let postsRef = firebase.database().ref("posts/");
+  var newitem = postsRef.push({title:newTitle,description:newDescription,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName}).getKey();
+  console.log(newitem);
+  this.setState({
+    isPosting:false
+  });
+  Alert.alert("Successfully Posted");
+}
+makepost()
+{
+  this.setState({
+    isPosting:true
+  }); 
+}
+goBack()
+{
+  this.setState({
+    isPosting:false
+  });
+}
   render() {
-    return(
-      <View style={{flex: 1, flexDirection:'column', justifyContent: 'center', alignItems: 'stretch', backgroundColor: '#d0d0d0', width:"100%"}}>
-        {/* <Text> This is my Postings screen</Text> */}
-        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
-        <Posting title="<Title>" desc="<Description>" profef="I" days="Want" time="to" user="die"></Posting>
-      </View>
+    if(this.state.posts.length==0 && !this.state.isPosting)
+    
+      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
+          width: 80,
+          height: 80,
+          borderRadius: 40,
+          backgroundColor: 'grey',
+  
+      }}/>
+      
+    
+    else if (!this.state.isPosting){
+      console.log(this.state.posts);
+    return (
+      <Fragment>
+        <View style={{marginTop:50}}>
+          <SearchBar round lightTheme 
+          placeholder='Type Here...'
+          />
+        </View>
+      <FlatList
+      data={this.state.posts}
+      extraData={this.state}
+      renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
+      />
+      <TouchableOpacity style={{
+              width: 60,  
+              height: 60,   
+              borderRadius: 30,                                   
+              position: 'absolute',                                          
+              bottom: 10,
+              right: 5                                   
+          }}>
+        <Icon reverse
+            name='add' 
+            color="green"
+            onPress={()=>this.makepost()}
+            
+      />
+      </TouchableOpacity>
+    
+    </Fragment>
     );
   }
+  else
+    return(
+    <SafeAreaView>
+      <Text style={styles.paragraph}>New Post</Text> 
+      <View style={styles.form}>
+        <Form type={Post} ref={c => this._form = c}/>
+      </View>
+      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().description)}/>
+      <Text></Text>
+      <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '5'}} onPress={()=>this.goBack()}/>
+    </SafeAreaView>
+    );
+}
 }
 
 class UserProfile extends React.Component {
   render() {
     return(
-      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
-        <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
-          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
-        </View>
-        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+      <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+      <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+        <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
+      </View>
+      <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
         <View style={styles.imageRow}>
-          <Image
-            source={{uri: this.props.screenProps.ppurl}}
-            resizeMode="contain"
-            style={styles.image}
+        <Avatar style={styles.pic}
+          large
+          rounded
+          source={{uri: this.props.screenProps.ppurl}}
+          activeOpacity={0.7}
+        />
+        <View style={styles.majorRowColumn}>
+          <View style={styles.majorRow}>
+          <Input
+            placeholder="Major.."
+            label="Major: "
+         />
+        </View>
+        <View style={styles.gradYearStack}>
+          <Input 
+            placeholder="Year.." 
+            label="Graduation Year: "
           />
-          <View style={styles.majorRowColumn}>
-            <View style={styles.majorRow}>
-              <Text style={styles.major}>Major:</Text>
-              <TextInput
-                placeholder="Major.."
-                textBreakStrategy="simple"
-                style={styles.textInput3}
-              />
-            </View>
-            <View style={styles.gradYearStack}>
-              <Text style={styles.gradYear}>Grad year:</Text>
-              <TextInput placeholder="Year.." style={styles.textInput4} />
-            </View>
-          </View>
         </View>
-        <Text style={styles.biography}>Biography</Text>
-        <TextInput
-          placeholder="Tell us about yourself.."
-          returnKeyType="done"
-          style={styles.textInput}
-          blurOnSubmit={true}
-          enablesReturnKeyAutomatically={true}
-          multiline={true}
+        </View>
+        </View>
+        <View style={styles.bio}>
+        <Input
+            placeholder="Tell us about yourself.."
+            label="Biography: "
+            returnKeyType="done"
+            blurOnSubmit={true}
+            enablesReturnKeyAutomatically={true}
+            multiline={true}
+         />
+         </View>
+        <Button
+          onPress={this.props.screenProps.signOut}
+          title="Logout of Facebook" 
+          buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
         />
-        <Text style={styles.classes}>Classes:</Text>
-        <View style={styles.textAddedRow}>
-          <Text style={styles.textAdded}>Class 1</Text>
-            <EntypoIcon name="cross" style={styles.entoIcon} />
-        </View>
-        <View style={styles.textInput7Row}>
-        <TextInput
-          placeholder="Search for class.."
-          editable={false}
-          secureTextEntry={false}
-          spellCheck={true}
-          style={styles.textInput7}
-        />
-        <EntypoIcon name="plus" style={styles.entoIcon2} />
-        </View>
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
-        <TouchableOpacity
-          onPress={this.props.signOutWithFacebook}
-          style={styles.logoutButton}
-          title="Logout"
-          color="#3c50e8">
-          <Text style={{color: 'white'}}> Logout </Text>
-        </TouchableOpacity>
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
-      </ScrollView>
+        </SafeAreaView>
+        </ScrollView>
     );
   }
 }
@@ -301,22 +441,14 @@ class PostingDetails extends React.Component {
 class LoginScreen extends React.Component {
   render() {
     return(
-      // <View style={styles.container}>
-      //   <Text>Study Buddy</Text>
-      //   <Button
-      //     onPress={this.props.signInWithFacebook}
-      //     title="Login with Facebook"
-      //     color="#3c50e8"
-      //   />
-      // </View>
       <View style={styles.container}>
         <Text style={styles.titleText}> Study Buddy </Text>
         <Icon style={styles.icon} name="school" size={60} />
-       <TouchableOpacity
-         style={styles.button}
-         onPress={this.props.signInWithFacebook}>
-         <Text style={{color: 'white'}}> Login with Facebook </Text>
-       </TouchableOpacity>
+       <Button
+         title="Login with Facebook"
+         onPress={this.props.signInWithFacebook}
+         buttonStyle={{backgroundColor: '#397BE2'}}>
+       </Button>
        </View>
     );
   }
@@ -333,17 +465,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexDirection: 'column'
   },
-  button:{
-    alignItems: 'center',
-    backgroundColor: '#3b5998',
-    padding: 10,
-    flexDirection: 'column'
-  },
-  logoutButton:{
-    alignItems: 'center',
-    backgroundColor: '#3b5998',
-    padding: 10
-  },
+  // button:{
+  //   alignItems: 'center',
+  //   backgroundColor: '#3b5998',
+  //   padding: 10,
+  //   flexDirection: 'column'
+  // },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -380,42 +507,11 @@ const styles = StyleSheet.create({
     color: "#121212",
     marginLeft: 10
   },
-  majorRow: {
-    height: 27,
-    flexDirection: "row",
-    marginRight: 16
-  },
   gradYear: {
     top: 7,
     left: 0,
     color: "#121212",
     position: "absolute",
-  },
-  textInput4: {
-    top: 0,
-    left: 73,
-    width: 131,
-    height: 27,
-    color: "#121212",
-    position: "absolute",
-  },
-  gradYearStack: {
-    width: 204,
-    height: 27,
-    marginTop: 18
-  },
-  majorRowColumn: {
-    width: 204,
-    marginLeft: 26,
-    marginTop: 32,
-    marginBottom: 14
-  },
-  imageRow: {
-    height: 118,
-    flexDirection: "row",
-    marginTop: 18,
-    marginLeft: 37,
-    marginRight: 14
   },
   biography: {
     color: "#121212",
@@ -545,6 +641,69 @@ const styles = StyleSheet.create({
     fontSize: 40,
     marginTop: 209,
     marginLeft: 166
+  },
+  ImageIconStyle: {
+    padding: 10,
+    margin: 5,
+    height: 25,
+    width: 25,
+    resizeMode: 'stretch',
+  },
+  form: {
+    justifyContent: 'center',
+    marginTop: 50,
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  paragraph:{
+    margin:24,
+    fontSize:30,
+    fontWeight:'bold',
+    textAlign:'center'
+  },
+  cancel:{
+    backgroundColor: 'red',
+  },
+  majorRow: {
+      height: 25,
+      //flexDirection: "row",
+      marginRight: 16
+    },
+  textInput4: {
+      top: 0,
+      left: 73,
+      width: 131,
+      height: 27,
+      color: "#121212",
+      position: "absolute",
+    },
+  gradYearStack: {
+      width: 230,
+      height: 27,
+      marginTop: 50
+    },
+  majorRowColumn: {
+      width: 245,
+      marginLeft: 26,
+    },
+  imageRow: {
+      width: 400,
+      height: 118,
+      flexDirection: "row",
+      marginTop: 18,
+      marginLeft: 37,
+      marginRight: 14
+    }, 
+  pic:{
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      overflow:'hidden',
+    },   
+  bio:{
+    width: 400,
+    height: 400,
+    marginTop: 30
   }
 })
 
@@ -579,7 +738,8 @@ const bottomTabNavigator = createBottomTabNavigator(
   {
     initialRouteName: 'Postings',
     tabBarOptions: {
-      activeTintColor: '#3b5998'
+      activeTintColor: '#3b5998',
+      keyboardHidesTabBar: false
     }
   }
 );
