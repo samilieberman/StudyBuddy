@@ -152,13 +152,16 @@ class ChatScreen extends React.Component {
 
 class PostingsScreen extends React.Component {
 mount=false;
+
   constructor(props){
     super(props);
 
     this.state = {
       posts:[],
-      isPosting:false
+      isPosting:false,
+      search: ''
     };
+    this.arrayholder = [];
   }
   delete(key){
     console.log(key);
@@ -179,9 +182,10 @@ mount=false;
       });
       
       this.setState({
-        posts:newArr
+        posts:newArr,
+        dataSource: newArr,
       });
-
+      this.arrayholder = newArr;
   
   },
   (error) => {
@@ -214,6 +218,28 @@ goBack()
   });
 }
 
+search = text => {
+  console.log(text);
+};
+clear = () => {
+  this.search.clear();
+};
+SearchFilterFunction(text) {
+  //passing the inserted text in textinput
+    const newData = this.arrayholder.filter(function(item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+  });
+  this.setState({
+    //setting the filtered newData on datasource
+    //After setting the data it will automatically re-render the view
+    dataSource: newData,
+    search: text,
+  });
+}
+
 deleteicon(postuser, id)
 {
 if(postuser==this.props.screenProps.data.displayName)
@@ -226,16 +252,17 @@ else
 }
 
 renderItem = ({ item }) => (
-<ListItem
-onPress={()=>{Alert.alert(item.url)}}
-title={item.title}
-subtitle={ <View>
-<Text>Professor: {item.professor}</Text>
-<Text>Description: {item.description}</Text>
-<Text>Days: {item.days}</Text>
-<Text>Time: {item.time}</Text>
-<Text>User: {item.user}</Text>
-</View>}
+  <ListItem
+    onPress={()=>{Alert.alert(item.url)}}
+    title={item.title}
+    subtitle={ 
+  <View>
+    <Text>Professor: {item.professor}</Text>
+    <Text>Description: {item.description}</Text>
+    <Text>Days: {item.days}</Text>
+    <Text>Time: {item.time}</Text>
+    <Text>User: {item.user}</Text>
+  </View>}
 leftAvatar={{
   source: { uri: item.img },
 }}
@@ -244,7 +271,6 @@ rightIcon={
 }
 bottomDivider
 chevron
-
 />
 )
 
@@ -264,14 +290,17 @@ chevron
       console.log(this.state.posts);
     return (
       <Fragment>
-
-        <View style={{marginTop:50}}>
+        <SafeAreaView>
           <SearchBar round lightTheme 
-          placeholder='Type Here...'
+            placeholder='Search by title'
+            value={this.state.search}
+            onChangeText={text => this.SearchFilterFunction(text)}
+            onClear={text => this.SearchFilterFunction('')}
           />
-        </View>
+       </SafeAreaView>
+
       <FlatList
-      data={this.state.posts}
+      data={this.state.dataSource}
       extraData={this.state}
       renderItem={ this.renderItem}
       />
@@ -296,8 +325,8 @@ chevron
   }
   else
     return(
-      <ScrollView>
-    <KeyboardAvoidingView>
+    <ScrollView>
+    <SafeAreaView>
       <Text style={styles.paragraph}>New Post</Text> 
       <View style={styles.form}>
         <Form type={Post} ref={c => this._form = c}/>
@@ -305,7 +334,7 @@ chevron
       <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().description)}/>
       <Text></Text>
       <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '5'}} onPress={()=>this.goBack()}/>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
     </ScrollView>
     );
 }
