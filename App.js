@@ -174,7 +174,8 @@ class PostingsScreen extends React.Component {
     this.state = {
       posts:[],
       isPosting:false,
-      gettingDetails:false,
+      //gettingDetails:false,
+      seeingProfile:false,
       search: ''
     };
     this.arrayholder = [];
@@ -226,10 +227,26 @@ makepost()
     isPosting:true
   });
 }
+/*
+seedetails()
+{
+  this.setState({
+    gettingDetails:true
+  });
+}
+*/
+seeprofile()
+{
+  this.setState({
+    seeingProfile:true
+  });
+}
 goBack()
 {
   this.setState({
-    isPosting:false
+    isPosting:false,
+    //gettingDetails:false,
+    seeingProfile:false,
   });
 }
 
@@ -283,7 +300,7 @@ deleteicon(postuser, id)
 
 renderItem = ({ item }) => (
   <ListItem
-    onPress={()=>{Alert.alert(item.url)}}
+    onPress={()=>{this.seeprofile()}}
     title={item.title}
     subtitle={
   <View>
@@ -306,34 +323,14 @@ chevron
 />
 )
 
-  renderItem = ({ item }) => (
-    <ListItem
-      onPress={()=>/*this.details()*/Alert.alert(item.user)}
-      title={item.title}
-      subtitle={
-        <View>
-          <Text>Professor: {item.professor}</Text>
-          <Text>Class: {item.description}</Text>
-          <Text>Days: {item.days}</Text>
-          <Text>Time: {item.time}</Text>
-          <Text>User: {item.user}</Text>
-        </View>
-      }
-      leftAvatar={{
-        source: { uri: item.img },
-      }}
-      rightIcon={
-        this.deleteicon(item.user, item.id)
-      }
-      bottomDivider
-      chevron
-    />
-  )
   state = {clas: ''}
   updateClas = (clas) => {
    this.setState({ clas: clas })
   }
   render() {
+    console.log("posting " + this.state.isPosting);
+    //console.log("details " + this.state.gettingDetails);
+    console.log("profile " + this.state.seeingProfile);
     if(this.state.posts.length==0 && !this.state.isPosting)
 
       return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
@@ -345,8 +342,9 @@ chevron
       }}/>
 
 
-    else if (!this.state.isPosting){
-      console.log(this.state.posts);
+    else if (!this.state.isPosting && !this.state.seeingProfile){
+      console.log("gets here 1");
+      console.log(this.state.isPosting);
     return (
       <Fragment>
         <SafeAreaView>
@@ -382,24 +380,80 @@ chevron
       </Fragment>
       );
     }
-  else
-    return(
-    <ScrollView>
-    <SafeAreaView>
-      <SafeAreaView style={styles.backButton}>
-        <Icon name="arrow-back" onPress={()=>this.goBack()}/>
-      </SafeAreaView>
-      <Text style={styles.paragraph}>New Post</Text>
-      <View style={styles.form}>
-        <Form type={Post} ref={c => this._form = c}/>
-      </View>
-      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
-      <Text></Text>
-      <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '2'}} onPress={()=>this.goBack()}/>
+    else if(this.state.seeingProfile && !this.state.isPosting){
+console.log("gets here 2");
+return(
+  <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+    <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+    <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
+      <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
     </SafeAreaView>
+    <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+      <SafeAreaView style={styles.imageRow}>
+        <Avatar style={styles.pic}
+          large
+          rounded
+          source={{uri: this.props.screenProps.ppurl}}
+          activeOpacity={0.7}
+        />
+        <SafeAreaView style={styles.majorRowColumn}>
+          <SafeAreaView style={styles.majorRow}>
+          <Input
+            placeholder="Major..."
+            label="Major: "
+         />
+        </SafeAreaView>
+        <SafeAreaView style={styles.gradYearStack}>
+          <Input
+            placeholder="Year..."
+            label="Graduation Year: "
+          />
+        </SafeAreaView>
+        </SafeAreaView>
+        </SafeAreaView>
+        <SafeAreaView style={styles.bio}>
+        <Input
+            placeholder="Tell us about yourself.."
+            label="Biography: "
+            returnKeyType="done"
+            blurOnSubmit={true}
+            enablesReturnKeyAutomatically={true}
+            multiline={true}
+         />
+        <SafeAreaView style={{marginTop:30}}>
+        <Input
+          disabled
+          label = "Classes (seperate by comma to add a new class)"
+          inputContainerStyle={{borderBottomWidth: 0}}
+          />
+        </SafeAreaView>
+        </SafeAreaView>
+
+<Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+      </SafeAreaView>
     </ScrollView>
-    );
-}
+      );
+    }
+    else if(this.state.isPosting && !this.state.seeingProfile){
+console.log("gets here 3");
+      return(
+      <ScrollView>
+      <SafeAreaView>
+        <SafeAreaView style={styles.backButton}>
+          <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+        </SafeAreaView>
+        <Text style={styles.paragraph}>New Post</Text>
+        <View style={styles.form}>
+          <Form type={Post} ref={c => this._form = c}/>
+        </View>
+        <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
+        <Text></Text>
+        <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+      </SafeAreaView>
+      </ScrollView>
+      );
+    }
+    }
 }
 
 class ProfileScreen extends React.Component {
