@@ -29,7 +29,15 @@ export default class Posting extends React.Component {
                 <Text style={styles.message}>Time: {this.props.time}</Text>
                 <Text style={styles.message}>User: {this.props.user}</Text>
                 </View>
-                <TouchableOpacity onPress={this.props.delete}>
+                <TouchableOpacity 
+                    style={{
+                        width: 60,  
+                        height: 60,   
+                        borderRadius: 30,                                   
+                        right: 5,
+                        //position : 'absolute'                                                                          
+                    }}
+                    onPress={this.props.delete}>
                 <Icon reverse
                     name='delete' 
                     color="red"

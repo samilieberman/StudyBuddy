@@ -58,7 +58,7 @@ export default class App extends React.Component {
         //var rjson=await response.json();
         //Alert.alert('Logged in!', `Hi ${rjson.name}!`);
         //this.setState({name: rjson.name, ppurl: "null"});
-        const response2 = await fetch(`https://graph.facebook.com/me/picture?access_token=${token}`);
+        const response2 = await fetch(`https://graph.facebook.com/me/picture?width=9999&access_token=${token}`);
         console.log(response2.url);
         this.setState({ppurl: response2.url});
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
@@ -197,7 +197,7 @@ addpost(newTitle,newProfessor,newDays,newTime,newDescription)
   this.setState({
     isPosting:false
   });
-  Alert.alert("successfully posted");
+  Alert.alert("Successfully Posted");
 }
 makepost()
 {
@@ -237,11 +237,21 @@ goBack()
       extraData={this.state}
       renderItem={({item}) => <Posting title={item.title} description={item.description} professor={item.professor} days={item.days} time={item.time} user={item.user} delete={()=>this.delete(item.id)}></Posting>}
       />
-      <Icon reverse
+      <TouchableOpacity style={{
+              width: 60,  
+              height: 60,   
+              borderRadius: 30,                                   
+              position: 'absolute',                                          
+              bottom: 10,
+              right: 5                                   
+          }}>
+        <Icon reverse
             name='add' 
             color="green"
             onPress={()=>this.makepost()}
+            
       />
+      </TouchableOpacity>
     
     </Fragment>
     );
