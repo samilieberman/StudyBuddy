@@ -271,6 +271,33 @@ class PostingsCreation extends React.Component {
   }
 }
 
+class PostingDetails extends React.Component {
+     state = {clas: ''}
+   updateClas = (clas) => {
+      this.setState({ clas: clas })
+   }
+  render() {
+    return(
+      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+        <View style={styles.iconRow}>
+          <Icon name="arrow-back" style={styles.backIcon} />
+          <Text textBreakStrategy="simple" style={styles.postingTextInput}>Assignment</Text>
+        </View>
+        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+        <Text style={{fontSize: 20, marginTop: 50, marginLeft: 30}}>Class:</Text>
+        <Text style={styles.preferredDayS}>Preferred Day(s)</Text>
+        <Text style={styles.preferredTimeS}>Preferred Time(s)</Text>
+        <Text style={styles.user}>User</Text>
+        <Text style={styles.groupSize}>Group Size</Text>
+        <Text style={styles.meeting}>Preferred Meeting Spot</Text>
+        <EntypoIcon name="chat" style={styles.chatIcon} />
+        {/* <Text>{App.getCurrentUser()}</Text> */}
+        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
+      </View>
+    );
+  }
+}
+
 class LoginScreen extends React.Component {
   render() {
     return(
@@ -483,6 +510,42 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginLeft: 54
   },
+  preferredDayS: {
+    color: "#121212",
+    fontSize: 20,
+    marginTop: 36,
+    marginLeft: 29
+  },
+  preferredTimeS: {
+    color: "#121212",
+    fontSize: 20,
+    marginTop: 38,
+    marginLeft: 30
+  },
+  user: {
+    color: "#121212",
+    fontSize: 20,
+    marginTop: 52,
+    marginLeft: 30
+  },
+  groupSize: {
+    color: "#121212",
+    fontSize: 20,
+    marginTop: 48,
+    marginLeft: 29
+  },
+  meeting: {
+    color: "#121212",
+    fontSize: 20,
+    marginTop: 78,
+    marginLeft: 34
+  },
+  chatIcon: {
+    color: "rgba(128,128,128,1)",
+    fontSize: 40,
+    marginTop: 209,
+    marginLeft: 166
+  }
 })
 
 const bottomTabNavigator = createBottomTabNavigator(
@@ -504,7 +567,7 @@ const bottomTabNavigator = createBottomTabNavigator(
       }
     },
     Profile: {
-      screen: PostingsCreation,
+      screen: PostingDetails,
       props:{name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
