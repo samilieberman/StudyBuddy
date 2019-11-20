@@ -23,6 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 // import { NPN_ENABLED } from 'constants';
 
 var groupSize = t.enums({
+  "Study Partner": 'Study Partner (1)',
   "Small": 'Small Group (< 4)',
   "Big": 'Big Group (≥ 4)',
   "No Preference": 'No Preference'
@@ -42,9 +43,12 @@ const Post = t.struct({
   time: time,
   groupSize: groupSize,
   meetingSpot: t.String,
-  description: t.String,
+  description: t.maybe(t.String),
 });
 
+var options = {
+
+};
 
 export default class App extends React.Component {
 
@@ -210,15 +214,22 @@ mount=false;
 componentWillUnmount(){
   this.mount=false;
 }
-addpost(newTitle,newClass,newProfessor,newDays,newTime,newGroupSize,newMeetingSpot,newDescription)
+addpost()
 {
-  let postsRef = firebase.database().ref("posts/");
-  var newitem = postsRef.push({title:newTitle,class:newClass,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: newGroupSize, meetingSpot: newMeetingSpot,description:newDescription}).getKey();
-  console.log(newitem);
-  this.setState({
-    isPosting:false
-  });
-  Alert.alert("Successfully Posted");
+  var value = this._form.getValue();
+  if(value){
+    console.log("adding to DB...");
+    console.log(value);
+    let postsRef = firebase.database().ref("posts/"); 
+    postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description}).getKey();
+    this.setState({
+      isPosting:false
+    });
+    Alert.alert("Successfully Posted");
+  }
+  else{
+    Alert.alert("Please fill out all the fields");
+  }
 }
 makepost()
 {
@@ -292,7 +303,7 @@ renderItem = ({ item }) => (
     <Text>Time: {item.time}</Text>
     <Text>Group Size: {item.groupSize}</Text>
     <Text>Meeting Spot: {item.meetingSpot}</Text>
-    <Text>Description: {item.description}</Text>
+    <Text>Additional Info: {item.description}</Text>
     <Text>User: {item.user}</Text>
   </View>}
 leftAvatar={{
@@ -325,7 +336,7 @@ chevron
         <SafeAreaView>
           <SearchBar lightTheme round
             platform = 'ios'
-            placeholder='Search by class'
+            placeholder='Search...'
             value={this.state.search}
             onChangeText={text => this.SearchFilterFunction(text)}
             onClear={text => this.SearchFilterFunction('')}
@@ -365,9 +376,9 @@ chevron
       </SafeAreaView>
       <Text style={styles.paragraph}>New Post</Text> 
       <View style={styles.form}>
-        <Form type={Post} ref={c => this._form = c}/>
+        <Form type={Post} ref={c => this._form = c} options={options}/>
       </View>
-      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
+      <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost()}/>
       <Text></Text>
       <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red', size: '2'}} onPress={()=>this.goBack()}/>
     </SafeAreaView>
