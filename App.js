@@ -1,11 +1,10 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Posting from './Posting.js';
 import data from './app.json';
 import * as Facebook from 'expo-facebook';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import t from 'tcomb-form-native';
 import { Button, Icon, Avatar, Text, SearchBar, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -762,7 +761,7 @@ const bottomTabNavigator = createBottomTabNavigator(
       }
     },
     Profile: {
-      screen: PostingDetails,
+      screen: ProfileScreen,
       props:{name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
