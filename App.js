@@ -23,6 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 // import { NPN_ENABLED } from 'constants';
 
 var groupSize = t.enums({
+  "Study Partner": 'Study Partner (1)',
   "Small": 'Small Group (< 4)',
   "Big": 'Big Group (≥ 4)',
   "No Preference": 'No Preference'
@@ -43,10 +44,13 @@ const Post = t.struct({
   time: time,
   groupSize: groupSize,
   meetingSpot: t.String,
-  description: t.String,
+  description: t.maybe(t.String),
 });
 
-//console.log("test");
+var options = {
+
+};
+
 export default class App extends React.Component {
 
   constructor(props){
@@ -211,15 +215,22 @@ class PostingsScreen extends React.Component {
 componentWillUnmount(){
   this.mount=false;
 }
-addpost(newTitle,newClass,newProfessor,newDays,newTime,newGroupSize,newMeetingSpot,newDescription)
+addpost()
 {
-  let postsRef = firebase.database().ref("posts/");
-  var newitem = postsRef.push({title:newTitle,class:newClass,days:newDays,time:newTime,professor:newProfessor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: newGroupSize, meetingSpot: newMeetingSpot,description:newDescription}).getKey();
-  console.log(newitem);
-  this.setState({
-    isPosting:false
-  });
-  Alert.alert("Successfully Posted");
+  var value = this._form.getValue();
+  if(value){
+    console.log("adding to DB...");
+    console.log(value);
+    let postsRef = firebase.database().ref("posts/"); 
+    postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description}).getKey();
+    this.setState({
+      isPosting:false
+    });
+    Alert.alert("Successfully Posted");
+  }
+  else{
+    Alert.alert("Please fill out all the fields");
+  }
 }
 makepost()
 {
@@ -309,7 +320,7 @@ renderItem = ({ item }) => (
     <Text>Time: {item.time}</Text>
     <Text>Group Size: {item.groupSize}</Text>
     <Text>Meeting Spot: {item.meetingSpot}</Text>
-    <Text>Description: {item.description}</Text>
+    <Text>Additional Info: {item.description}</Text>
     <Text>User: {item.user}</Text>
   </View>}
 leftAvatar={{
@@ -322,24 +333,22 @@ bottomDivider
 chevron
 />
 )
+state = {
+  clas: ''
+}
+updateClas = (clas) => {
+  this.setState({ clas: clas })
+}
+render() {
+  if(this.state.posts.length==0 && !this.state.isPosting)
 
-  state = {clas: ''}
-  updateClas = (clas) => {
-   this.setState({ clas: clas })
-  }
-  render() {
-    console.log("posting " + this.state.isPosting);
-    //console.log("details " + this.state.gettingDetails);
-    console.log("profile " + this.state.seeingProfile);
-    if(this.state.posts.length==0 && !this.state.isPosting)
+  return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'grey',
 
-      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
-          width: 80,
-          height: 80,
-          borderRadius: 40,
-          backgroundColor: 'grey',
-
-      }}/>
+  }}/>
 
 
     else if (!this.state.isPosting && !this.state.seeingProfile){
@@ -350,7 +359,7 @@ chevron
         <SafeAreaView>
           <SearchBar lightTheme round
             platform = 'ios'
-            placeholder='Search by class'
+            placeholder='Search...'
             value={this.state.search}
             onChangeText={text => this.SearchFilterFunction(text)}
             onClear={text => this.SearchFilterFunction('')}
