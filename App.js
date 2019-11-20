@@ -7,7 +7,7 @@ import data from './app.json';
 import * as Facebook from 'expo-facebook';
 //import Icon from 'react-native-vector-icons/MaterialIcons';
 import t from 'tcomb-form-native';
-import { Button, Icon, Avatar, Text, SearchBar } from 'react-native-elements';
+import { Button, Icon, Avatar, Text, SearchBar, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 const Form = t.form.Form;
@@ -19,6 +19,7 @@ const {
 } = FBSDK;
 //Icon.loadFont();
 import firebase from './firebase.js';
+import { ScrollView } from 'react-native-gesture-handler';
 // import { NPN_ENABLED } from 'constants';
 
 const Post = t.struct({
@@ -117,7 +118,7 @@ class ChatScreen extends React.Component {
       messages: [
         {
           _id: 1,
-          text: 'Hello developer',
+          text: 'Hello study buddy!',
           createdAt: new Date(),
           user: {
             _id: 2,
@@ -274,24 +275,51 @@ goBack()
 class ProfileScreen extends React.Component {
   render() {
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
-        {/* <Text><Image style={{width: 100,height: 100,padding: 10}} source={{uri: this.props.screenProps.ppurl}}/>{this.props.screenProps.data.displayName}</Text> */}
+      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
+      <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
+        <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
+      </View>
+      <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+        <View style={styles.imageRow}>
         <Avatar style={styles.pic}
           large
           rounded
-          //title="SL"
           source={{uri: this.props.screenProps.ppurl}}
           activeOpacity={0.7}
         />
-        <Text></Text>
-        <Text h2>{this.props.screenProps.data.displayName}</Text>
-        <Text></Text>
+        <View style={styles.majorRowColumn}>
+          <View style={styles.majorRow}>
+          <Input
+            placeholder="Major.."
+            label="Major: "
+         />
+        </View>
+        <View style={styles.gradYearStack}>
+          <Input 
+            placeholder="Year.." 
+            label="Graduation Year: "
+          />
+        </View>
+        </View>
+        </View>
+        <View style={styles.bio}>
+        <Input
+            placeholder="Tell us about yourself.."
+            label="Biography: "
+            returnKeyType="done"
+            blurOnSubmit={true}
+            enablesReturnKeyAutomatically={true}
+            multiline={true}
+         />
+         </View>
         <Button
           onPress={this.props.screenProps.signOut}
           title="Logout of Facebook" 
-          buttonStyle={{backgroundColor: '#397BE2'}}
+          buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
         />
-      </View>
+        </SafeAreaView>
+        </ScrollView>
     );
   }
 }
@@ -356,11 +384,46 @@ const styles = StyleSheet.create({
   cancel:{
     backgroundColor: 'red',
   },
+  majorRow: {
+      height: 25,
+      //flexDirection: "row",
+      marginRight: 16
+    },
+  textInput4: {
+      top: 0,
+      left: 73,
+      width: 131,
+      height: 27,
+      color: "#121212",
+      position: "absolute",
+    },
+  gradYearStack: {
+      width: 230,
+      height: 27,
+      marginTop: 50
+    },
+  majorRowColumn: {
+      width: 245,
+      marginLeft: 26,
+    },
+  imageRow: {
+      width: 400,
+      height: 118,
+      flexDirection: "row",
+      marginTop: 18,
+      marginLeft: 37,
+      marginRight: 14
+    }, 
   pic:{
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    overflow:'hidden'
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      overflow:'hidden',
+    },   
+  bio:{
+    width: 400,
+    height: 400,
+    marginTop: 30
   }
 })
 
