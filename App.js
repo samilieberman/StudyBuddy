@@ -179,6 +179,7 @@ class PostingsScreen extends React.Component {
       isPosting:false,
       //gettingDetails:false,
       seeingProfile:false,
+      other:{whatever: ''},
       search: ''
     };
     this.arrayholder = [];
@@ -306,7 +307,7 @@ seedetails()
 
   renderItem = ({ item }) => (
     <ListItem
-      onPress={()=>{this.seeprofile()}}
+      onPress={()=>{this.seeprofile(); console.log("other now" + this.state.other); this.setState({other:item}); console.log(item)}}
       title={item.title}
       subtitle={
         <View>
@@ -384,54 +385,50 @@ seedetails()
     }
     else if(this.state.seeingProfile && !this.state.isPosting){
       console.log("gets here 2");
+      var convert = JSON.stringify(this.state.other);
+      //console.log(convert);
+      var userData = JSON.parse(convert);
+      //console.log(userData);
+      //console.log("other?: " + JSON.parse(JSON.stringify(this.state.other)));
+      console.log(this.props);
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+        <SafeAreaView style={styles.backButton}>
+          <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+        </SafeAreaView>
           <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-            <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
-              <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
+            <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
+              <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{userData.user}</Text>
             </SafeAreaView>
             <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
             <SafeAreaView style={styles.imageRow}>
               <Avatar style={styles.pic}
                 large
                 rounded
-                source={{uri: this.props.screenProps.ppurl}}
+                source={{uri: userData.img}}
                 activeOpacity={0.7}
               />
               <SafeAreaView style={styles.majorRowColumn}>
                 <SafeAreaView style={styles.majorRow}>
-                  <Input
-                    placeholder="Major..."
-                    label="Major: "
-                  />
+                  <Text style = {{fontSize: 20}}>Major:</Text>
+                  <Text>other users major</Text>
                 </SafeAreaView>
                 <SafeAreaView style={styles.gradYearStack}>
-                  <Input
-                    placeholder="Year..."
-                    label="Graduation Year: "
-                  />
+                  <Text style = {{fontSize: 20}}>Grad Year:</Text>
+                  <Text>other users grad</Text>
                 </SafeAreaView>
               </SafeAreaView>
             </SafeAreaView>
               <SafeAreaView style={styles.bio}>
-              <Input
+                <Input
                   placeholder="Tell us about yourself.."
                   label="Biography: "
                   returnKeyType="done"
                   blurOnSubmit={true}
                   enablesReturnKeyAutomatically={true}
                   multiline={true}
-               />
-              <SafeAreaView style={{marginTop:30}}>
-              <Input
-                disabled
-                label = "Classes (seperate by comma to add a new class)"
-                inputContainerStyle={{borderBottomWidth: 0}}
-                />
+                 />
               </SafeAreaView>
-              </SafeAreaView>
-
-              <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
           </SafeAreaView>
         </ScrollView>
       );
