@@ -394,8 +394,8 @@ seedetails()
             height: 60,
             borderRadius: 30,
             position: 'absolute',
-            bottom: 10,
-            right: 5
+            bottom: 15,
+            right: 15
           }}>
             <Icon reverse
               name='add'
