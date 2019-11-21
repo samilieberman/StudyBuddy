@@ -1,14 +1,17 @@
 import React, {Component, Fragment} from 'react';
-import { StyleSheet, View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS} from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Posting from './Posting.js';
-import data from './app.json';
-import * as Facebook from 'expo-facebook';
-import t from 'tcomb-form-native';
+import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS} from 'react-native';
 import { Button, Icon, Avatar, Text, SearchBar, ListItem, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
+import { ScrollView } from 'react-native-gesture-handler';
+import { createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { styles } from './styles.js'
 import TagInput from 'react-native-tags-input';
+import Posting from './Posting.js';
+import data from './app.json';
+import firebase from './firebase.js';
+import * as Facebook from 'expo-facebook';
+import t from 'tcomb-form-native';
 
 const Form = t.form.Form;
 
@@ -17,10 +20,6 @@ const {
   GraphRequest,
   GraphRequestManager,
 } = FBSDK;
-//Icon.loadFont();
-import firebase from './firebase.js';
-import { ScrollView } from 'react-native-gesture-handler';
-// import { NPN_ENABLED } from 'constants';
 
 var groupSize = t.enums({
   "Study Partner": 'Study Partner (1)',
@@ -37,7 +36,6 @@ var time = t.enums({
 
 const Post = t.struct({
   title: t.String,
-  //description: t.String,
   class: t.String,
   professor: t.String,
   days: t.String,
@@ -51,7 +49,7 @@ var options = {
 
 };
 
-export default class App extends React.Component {
+export default class App extends Component {
 
   constructor(props){
     super(props);
@@ -75,11 +73,7 @@ export default class App extends React.Component {
 
         // Get the user's name using Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        //var rjson=await response.json();
-        //Alert.alert('Logged in!', `Hi ${rjson.name}!`);
-        //this.setState({name: rjson.name, ppurl: "null"});
         const response2 = await fetch(`https://graph.facebook.com/me/picture?width=9999&access_token=${token}`);
-        console.log(response2.url);
         this.setState({ppurl: response2.url});
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
         firebase.auth().signInWithCredential(credential).catch((error) => {
@@ -116,7 +110,6 @@ export default class App extends React.Component {
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     if (isLoggedIn) {
-      //console.log(this.state.data);
       return <AppContainer screenProps={this.state}/>;
     }
     else{
@@ -127,8 +120,8 @@ export default class App extends React.Component {
 
 // Postings, Chat, Profile, Login
 
+class ChatScreen extends Component {
 
-class ChatScreen extends React.Component {
   state = {
     messages: [],
   }
@@ -162,27 +155,15 @@ class ChatScreen extends React.Component {
         <GiftedChat
           messages={this.state.messages}
           onSend={firebase.send}
-          //user={this.user}
-          user={{
-            //_id: 1,
-          }}
+          user={{}}
         />
       </KeyboardAvoidingView>
     );
   }
-  // componentDidMount() {
-  //   firebase.refOn(message =>
-  //     this.setState(previousState => ({
-  //       messages: GiftedChat.append(previousState.messages, message),
-  //     }))
-  //   );
-  // }
-  // componentWillUnmount() {
-  //   firebase.refOff();
-  // }
 }
 
-class PostingsScreen extends React.Component {
+class PostingsScreen extends Component {
+
   mount=false;
 
   constructor(props){
@@ -190,18 +171,18 @@ class PostingsScreen extends React.Component {
     this.state = {
       posts:[],
       isPosting:false,
-      //gettingDetails:false,
       seeingProfile:false,
       other:{whatever: ''},
       search: ''
     };
     this.arrayholder = [];
   }
+
   delete(key){
-    console.log(key);
     let postsRef = firebase.database().ref("posts/"+key);
     postsRef.remove();
   }
+
   componentDidMount= async () =>{
     let postsRef = firebase.database().ref("posts/");
     this.mount=true;
@@ -219,16 +200,17 @@ class PostingsScreen extends React.Component {
         dataSource: newArr,
       });
       this.arrayholder = newArr;
-
     },
       (error) => {
         console.log(error)
       }
     )
   }
+
   componentWillUnmount(){
     this.mount=false;
   }
+
   addpost(){
     var value = this._form.getValue();
     if(value){
@@ -239,39 +221,33 @@ class PostingsScreen extends React.Component {
       this.setState({
         isPosting:false
       });
-      Alert.alert("Successfully Posted");
+      Alert.alert("Successfully posted!");
     }
     else{
       Alert.alert("Please fill out all the fields");
     }
   }
+
   makepost(){
     this.setState({
       isPosting:true
     });
   }
-/*
-seedetails()
-{
-  this.setState({
-    gettingDetails:true
-  });
-}
-*/
+
   seeprofile = (postuser) =>{
     if(!(postuser==this.props.screenProps.data.displayName)){
       this.setState({
         seeingProfile:true
       });
     }
-    else{ // clicking ur own profile
+    else{ // Clicking your own profile
       this.props.navigation.navigate('Profile');
     }
   }
+
   goBack(){
     this.setState({
       isPosting:false,
-      //gettingDetails:false,
       seeingProfile:false,
     });
   }
@@ -279,35 +255,38 @@ seedetails()
   search = text => {
     console.log(text);
   };
+
   clear = () => {
     this.search.clear();
   };
+
   SearchFilterFunction(text) {
-    //passing the inserted text in textinput
-    const newData = this.arrayholder.filter(function(item) {
-        //applying filter for the inserted text in search bar
-      const itemData = (item.class ? item.class.toUpperCase() : ''.toUpperCase());
-      const itemData2 = (item.title ? item.title.toUpperCase() : ''.toUpperCase());
-      const itemData3 = (item.professor ? item.professor.toUpperCase() : ''.toUpperCase());
-      const itemData4 = (item.days ? item.days.toUpperCase() : ''.toUpperCase());
-      const itemData5 = (item.time ? item.time.toUpperCase() : ''.toUpperCase());
+    const newData = this.arrayholder.filter(function(item) { // Passing the inserted text in textinput
+
+      // Applying filter for the inserted text in search bar
+      const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
+      const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
+      const itemData3 = (item.professor   ? item.professor.toUpperCase()   : ''.toUpperCase());
+      const itemData4 = (item.days        ? item.days.toUpperCase()        : ''.toUpperCase());
+      const itemData5 = (item.time        ? item.time.toUpperCase()        : ''.toUpperCase());
       const itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase() : ''.toUpperCase());
-      const itemData7 = (item.groupSize ? item.groupSize.toUpperCase() : ''.toUpperCase());
-      const itemData8 = (item.user ? item.user.toUpperCase() : ''.toUpperCase());
+      const itemData7 = (item.groupSize   ? item.groupSize.toUpperCase()   : ''.toUpperCase());
+      const itemData8 = (item.user        ? item.user.toUpperCase()        : ''.toUpperCase());
 
       const textData = text.toUpperCase();
       return (itemData.indexOf(textData) > -1) ||
-        (itemData2.indexOf(textData) > -1) ||
-        (itemData3.indexOf(textData) > -1) ||
-        (itemData4.indexOf(textData) > -1) ||
-        (itemData5.indexOf(textData) > -1) ||
-        (itemData6.indexOf(textData) > -1) ||
-        (itemData7.indexOf(textData) > -1) ||
-        (itemData8.indexOf(textData) > -1);
+            (itemData2.indexOf(textData) > -1) ||
+            (itemData3.indexOf(textData) > -1) ||
+            (itemData4.indexOf(textData) > -1) ||
+            (itemData5.indexOf(textData) > -1) ||
+            (itemData6.indexOf(textData) > -1) ||
+            (itemData7.indexOf(textData) > -1) ||
+            (itemData8.indexOf(textData) > -1);
     });
+
+    // Setting the filtered newData on datasource
+    // After setting the data it will automatically re-render the view
     this.setState({
-      //setting the filtered newData on datasource
-      //After setting the data it will automatically re-render the view
       dataSource: newData,
       search: text,
     });
@@ -320,18 +299,18 @@ seedetails()
         color='#f50'
         onPress={() => this.delete(id)} />
     else
-      return<View/>;
+      return <View/>;
   }
 
   renderItem = ({ item }) => (
     <ListItem
       onPress={()=>{
-        this.seeprofile(item.user); 
+        this.seeprofile(item.user);
         this.setState(
         {
           other:item
-        }); 
-    }}
+        });
+      }}
       title={item.title}
       subtitle={
         <View>
@@ -353,25 +332,24 @@ seedetails()
       chevron
     />
   )
+
   state = {
     clas: ''
   }
+
   updateClas = (clas) => {
     this.setState({ clas: clas })
   }
+
   render() {
     if(this.state.posts.length==0 && !this.state.isPosting)
-      return <TouchableOpacity onPress={()=>this.makepost()} style={{ // if database is empty
+      return <TouchableOpacity onPress={()=>this.makepost()} style={{  // If database is empty
         width: 80,
         height: 80,
         borderRadius: 40,
         backgroundColor: 'grey',
       }}/>
-
-
     else if (!this.state.isPosting && !this.state.seeingProfile){
-      console.log("gets here 1");
-      console.log(this.state.isPosting);
       return (
         <Fragment>
           <SafeAreaView>
@@ -383,7 +361,6 @@ seedetails()
               onClear={text => this.SearchFilterFunction('')}
             />
           </SafeAreaView>
-
           <FlatList
             data={this.state.dataSource}
             extraData={this.state}
@@ -403,18 +380,13 @@ seedetails()
               onPress={()=>this.makepost()}
             />
           </TouchableOpacity>
-
         </Fragment>
       );
     }
     else if(this.state.seeingProfile && !this.state.isPosting){
-      console.log("gets here 2");
       var convert = JSON.stringify(this.state.other);
-      //console.log(convert);
       var userData = JSON.parse(convert);
-      //console.log(userData);
-      //console.log("other?: " + JSON.parse(JSON.stringify(this.state.other)));
-      console.log(this.props);
+      var firstName = (userData.user).substr(0,(userData.user).indexOf(' '));
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
         <SafeAreaView style={styles.backButton}>
@@ -435,17 +407,16 @@ seedetails()
               <SafeAreaView style={styles.majorRowColumn}>
                 <SafeAreaView style={styles.majorRow}>
                   <Text style = {{fontSize: 20}}>Major:</Text>
-                  <Text>other users major</Text>
+                  <Text> {firstName}'s major</Text>
                 </SafeAreaView>
                 <SafeAreaView style={styles.gradYearStack}>
                   <Text style = {{fontSize: 20}}>Grad Year:</Text>
-                  <Text>other users grad</Text>
+                  <Text> {firstName}'s grad year</Text>
                 </SafeAreaView>
               </SafeAreaView>
             </SafeAreaView>
               <SafeAreaView style={styles.bio}>
                 <Input disabled
-                  // value
                   placeholder="Tell us about yourself.."
                   label="Biography: "
                   returnKeyType="done"
@@ -456,44 +427,42 @@ seedetails()
               </SafeAreaView>
           </SafeAreaView>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Button
-              // onPress={this.props.screenProps.signOut}
-              onPress = {()=>this.props.navigation.navigate('Chat')}
+            <Button
+              onPress={()=>this.props.navigation.navigate('Chat')}
               title="Request to Chat"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
-          /> 
+            />
           </SafeAreaView>
         </ScrollView>
       );
     }
     else if(this.state.isPosting && !this.state.seeingProfile){
-      console.log("gets here 3");
       return(
         <ScrollView>
-        <SafeAreaView>
-          <SafeAreaView style={styles.backButton}>
-            <Icon name="arrow-back" onPress={()=>this.goBack()}/>
-          </SafeAreaView>
-          <Text style={styles.paragraph}>New Post</Text>
-          <View style={styles.form}>
-            <Form type={Post} ref={c => this._form = c}/>
-          </View>
-          <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
-            <View style={{marginBottom: 10}}>
-              <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:200}} onPress={()=>this.addpost()}/>
+          <SafeAreaView>
+            <SafeAreaView style={styles.backButton}>
+              <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+            </SafeAreaView>
+            <Text style={styles.paragraph}>New Post</Text>
+            <View style={styles.form}>
+              <Form type={Post} ref={c => this._form = c}/>
             </View>
-            <View style={{marginBottom: 10}}>
-              <Button title="Cancel" buttonStyle={{backgroundColor: 'red', width:100}} onPress={()=>this.goBack()}/>
-            </View>
+            <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
+              <View style={{marginBottom: 10}}>
+                <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:200}} onPress={()=>this.addpost()}/>
+              </View>
+              <View style={{marginBottom: 10}}>
+                <Button title="Cancel" buttonStyle={{backgroundColor: 'red', width:100}} onPress={()=>this.goBack()}/>
+              </View>
+            </SafeAreaView>
           </SafeAreaView>
-        </SafeAreaView>
         </ScrollView>
       );
     }
   }
 }
 
-class ProfileScreen extends React.Component {
+class ProfileScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -510,78 +479,79 @@ class ProfileScreen extends React.Component {
   };
   render() {
     return(
-      <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-        <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-        <SafeAreaView style = {{height: 40, marginTop: 30, alignSelf: "center"}}>
-          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.screenProps.data.displayName}</Text>
-        </SafeAreaView>
-        <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-          <SafeAreaView style={styles.imageRow}>
-            <Avatar style={styles.pic}
-              large
-              rounded
-              source={{uri: this.props.screenProps.ppurl}}
-              activeOpacity={0.7}
-            />
-            <SafeAreaView style={styles.majorRowColumn}>
-              <SafeAreaView style={styles.majorRow}>
+      <ScrollView style={styles.mainWrapper}>
+        <SafeAreaView style={styles.profileSafeArea1}>
+          <SafeAreaView style = {styles.profileSafeArea2}>
+            <Text style = {styles.profileNameStyle}>{this.props.screenProps.data.displayName}</Text>
+          </SafeAreaView>
+          <SafeAreaView style={styles.profileSafeArea3} />
+            <SafeAreaView style={styles.imageRow}>
+              <Avatar style={styles.pic}
+                large
+                rounded
+                source={{uri: this.props.screenProps.ppurl}}
+                activeOpacity={0.7}
+              />
+              <SafeAreaView style={styles.majorRowColumn}>
+                <SafeAreaView style={styles.majorRow}>
+                  <Input
+                    placeholder="Major..."
+                    label="Major: "
+                  />
+                </SafeAreaView>
+              <SafeAreaView style={styles.gradYearStack}>
                 <Input
-                  placeholder="Major..."
-                  label="Major: "
+                  placeholder="Year..."
+                  label="Graduation Year: "
                 />
               </SafeAreaView>
-            <SafeAreaView style={styles.gradYearStack}>
-              <Input
-                placeholder="Year..."
-                label="Graduation Year: "
-              />
-            </SafeAreaView>
             </SafeAreaView>
           </SafeAreaView>
-            <SafeAreaView style={styles.bio}>
-            <Input
-              placeholder="Tell us about yourself.."
-              label="Biography: "
-              returnKeyType="done"
-              blurOnSubmit={true}
-              enablesReturnKeyAutomatically={true}
-              multiline={true}
-             />
-              <SafeAreaView style={{marginTop:30}}>
-                <Input
-                  disabled
-                  label = "Classes (seperate by comma to add a new class)"
-                  inputContainerStyle={{borderBottomWidth: 0}}
-                />
-
-                <TagInput
-                  updateState={this.updateTagState}
-                  tags={this.state.tags}
-                  keysForTag={','}
-                  placeholder="Class code"
-                />
-              </SafeAreaView>
+          <SafeAreaView style={styles.bio}>
+          <Input
+            placeholder="Tell us about yourself.."
+            label="Biography: "
+            returnKeyType="done"
+            blurOnSubmit={true}
+            enablesReturnKeyAutomatically={true}
+            multiline={true}
+          />
+            <SafeAreaView style={{marginTop:30}}>
+              <Input
+                disabled
+                label = "Classes (seperate by comma to add a new class)"
+                inputContainerStyle={{borderBottomWidth: 0}}
+              />
+              <TagInput
+                updateState={this.updateTagState}
+                tags={this.state.tags}
+                keysForTag={','}
+                placeholder="Class code"
+              />
             </SafeAreaView>
-
-            <Button
-              onPress={this.props.screenProps.signOut}
-              title="Logout of Facebook"
-              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
-            />
+          </SafeAreaView>
+          <Button
+            onPress={this.props.screenProps.signOut}
+            title="Logout of Facebook"
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
+          />
         </SafeAreaView>
       </ScrollView>
     );
   }
 }
 
-class OtherProfile extends React.Component {
+///////////////////////Steven's code///////////////////////
+
+
+class OtherProfile extends Component {
   render() {
     return(
-      <ScrollView style={{flex: 1, backgroundColor: '#d0d0d0'}}>
-        <View style = {{height: 40, marginTop: 46, alignSelf: "center"}}>
-          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>Other</Text>
+      <ScrollView style={styles.mainWrapper}>
+        <View style = {styles.profileSafeArea2}>
+          <Text style = {styles.profileNameStyle}>Other</Text>
         </View>
-        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
+        <View style={styles.profileSafeArea3} />
         <View style={styles.imageRow}>
           <Image
             source={{uri: this.props.screenProps.ppurl}}
@@ -591,72 +561,64 @@ class OtherProfile extends React.Component {
           <View style={styles.majorRowColumn}>
             <View style={styles.majorRow}>
               <Text style={styles.major}>Major:</Text>
-
             </View>
             <View style={styles.gradYearStack}>
               <Text style={styles.gradYear}>Grad year:</Text>
-
             </View>
           </View>
         </View>
         <Text style={styles.biography}>Biography</Text>
-
         <Text style={styles.textInput}>
-       According to all known laws
-      of aviation,
-      there is no way a bee
-      should be able to fly.
-      Its wings are too small to get
-      its fat little body off the ground.
-      The bee, of course, flies anyway
-      because bees don't care
-      what humans think is impossible.
+          According to all known laws
+          of aviation,
+          there is no way a bee
+          should be able to fly.
+          Its wings are too small to get
+          its fat little body off the ground.
+          The bee, of course, flies anyway
+          because bees don't care
+          what humans think is impossible.
         </Text>
-
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
       </ScrollView>
     );
   }
 }
 
-class PostingsCreation extends React.Component {
-     state = {clas: ''}
-   updateClas = (clas) => {
-      this.setState({ clas: clas })
-   }
+class PostingsCreation extends Component {
+  state = {clas: ''}
+  updateClas = (clas) => {
+    this.setState({ clas: clas })
+  }
   render() {
     return(
-      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+      <View style={styles.mainWrapper}>
         <View style={styles.iconRow}>
           <Icon name="arrow-back" style={styles.backIcon} />
           <TextInput placeholder="Assignment" textBreakStrategy="simple" style={styles.postingTextInput} />
         </View>
         <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
-          <ScrollView>
-            <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
-            <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
-              <Picker.Item label = "HCI" value = "HCI" />
-              <Picker.Item label = "Eco" value = "ECO" />
-              <Picker.Item label = "Ethics" value = "Ethics" />
-            </Picker>
-            <Text>Choice: {this.state.clas}</Text>
-          </ScrollView>
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
+        <ScrollView>
+          <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
+          <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
+            <Picker.Item label = "HCI" value = "HCI" />
+            <Picker.Item label = "Eco" value = "ECO" />
+            <Picker.Item label = "Ethics" value = "Ethics" />
+          </Picker>
+          <Text>Choice: {this.state.clas}</Text>
+        </ScrollView>
       </View>
     );
   }
 }
 
-class PostingDetails extends React.Component {
+class PostingDetails extends Component {
      state = {clas: ''}
    updateClas = (clas) => {
       this.setState({ clas: clas })
    }
   render() {
     return(
-      <View style={{flex: 1, backgroundColor: '#d0d0d0'}}>
+      <View style={styles.mainWrapper}>
         <View style={styles.iconRow}>
           <Icon name="arrow-back" style={styles.backIcon} />
           <Text textBreakStrategy="simple" style={styles.postingTextInput}>Assignment</Text>
@@ -669,14 +631,15 @@ class PostingDetails extends React.Component {
         <Text style={styles.groupSize}>Group Size</Text>
         <Text style={styles.meeting}>Preferred Meeting Spot</Text>
         <EntypoIcon name="chat" style={styles.chatIcon} />
-        {/* <Text>{App.getCurrentUser()}</Text> */}
-        {/*<Icon name="arrow-back" style={{color: "black", fontSize: 40}} />*/}
       </View>
     );
   }
 }
 
-class LoginScreen extends React.Component {
+///////////////////////Steven's code///////////////////////
+
+
+class LoginScreen extends Component {
   render() {
     return(
       <View style={styles.container}>
@@ -686,276 +649,13 @@ class LoginScreen extends React.Component {
        <Button
          title="Login with Facebook"
          onPress={this.props.signInWithFacebook}
-         buttonStyle={{backgroundColor: '#397BE2', width: 320}}>
+         buttonStyle={styles.loginButton}>
        </Button>
        </View>
        </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  titleText:{
-    fontSize: 60,
-    textAlign: 'center',
-    flexDirection: 'column',
-
-  },
-  icon:{
-    textAlign: 'center',
-    flexDirection: 'column'
-  },
-  // button:{
-  //   alignItems: 'center',
-  //   backgroundColor: '#3b5998',
-  //   padding: 10,
-  //   flexDirection: 'column'
-  // },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 10
-  },
-  name: {
-    color: "#121212",
-    fontSize: 30,
-    lineHeight: 14,
-    marginTop: 62,
-    alignSelf: "center"
-  },
-  rect: {
-    width: 350,
-    height: 1,
-    backgroundColor: "rgba(0,0,0,1)",
-    marginTop: 21,
-    marginLeft: 12
-  },
-  image: {
-    width: 94,
-    height: 118,
-    borderRadius: 100,
-    borderColor: "#000000",
-    borderWidth: 0
-  },
-  major: {
-    color: "#121212",
-    marginTop: 7
-  },
-  textInput3: {
-    width: 139,
-    height: 27,
-    color: "#121212",
-    marginLeft: 10
-  },
-  gradYear: {
-    top: 7,
-    left: 0,
-    color: "#121212",
-    position: "absolute",
-  },
-  biography: {
-    color: "#121212",
-    marginTop: 47,
-    marginLeft: 37
-  },
-  textInput: {
-    width: 271,
-    height: 168,
-    color: "#121212",
-    borderRadius: 13,
-    borderColor: "#000000",
-    borderWidth: 2,
-    marginTop: 13,
-    marginLeft: 37
-  },
-  logOut: {
-    color: "#121212",
-    fontSize: 30,
-    lineHeight: 14,
-    marginTop: 258,
-    alignSelf: "center"
-  },
-  classes: {
-   color: "#121212",
-   marginTop: 39,
-   marginLeft: 36
- },
- textAdded: {
-   width: 120,
-   height: 27,
-   backgroundColor: "#3c50e8",
-   color: "#121212",
-   borderRadius: 8,
-   borderColor: "#3c50e8",
-   borderWidth: 4,
-   lineHeight: 26,
-   letterSpacing: 1,
-   textAlign: "center",
-   marginTop: 7
- },
- entoIcon: {
-   color: "rgba(128,128,128,1)",
-   fontSize: 40,
-   marginLeft: 11
- },
- textAddedRow: {
-   height: 40,
-   flexDirection: "row",
-   marginTop: 14,
-   marginLeft: 37,
-   marginRight: 167
- },
- textInput7: {
-   width: 120,
-   height: 27,
-   backgroundColor: "#3c50e8",
-   color: "#121212",
-   borderRadius: 8,
-   borderColor: "#3c50e8",
-   borderWidth: 4,
-   borderStyle: "solid",
-   marginTop: 7
- },
- entoIcon2: {
-   color: "rgba(128,128,128,1)",
-   fontSize: 40,
-   marginLeft: 11
- },
- textInput7Row: {
-   height: 40,
-   flexDirection: "row",
-   marginTop: 6,
-   marginLeft: 37,
-   marginRight: 167
- },
-  iconRow: {
-    height: 40,
-    flexDirection: "row",
-    marginTop: 39,
-    marginLeft: 15,
-    marginRight: 108
-  },
-  backIcon: {
-    color: "rgba(128,128,128,1)",
-    fontSize: 40
-  },
-  postingTextInput: {
-    width: 158,
-    height: 39,
-    color: "#121212",
-    fontSize: 30,
-    marginLeft: 54
-  },
-  preferredDayS: {
-    color: "#121212",
-    fontSize: 20,
-    marginTop: 36,
-    marginLeft: 29
-  },
-  preferredTimeS: {
-    color: "#121212",
-    fontSize: 20,
-    marginTop: 38,
-    marginLeft: 30
-  },
-  user: {
-    color: "#121212",
-    fontSize: 20,
-    marginTop: 52,
-    marginLeft: 30
-  },
-  groupSize: {
-    color: "#121212",
-    fontSize: 20,
-    marginTop: 48,
-    marginLeft: 29
-  },
-  meeting: {
-    color: "#121212",
-    fontSize: 20,
-    marginTop: 78,
-    marginLeft: 34
-  },
-  chatIcon: {
-    color: "rgba(128,128,128,1)",
-    fontSize: 40,
-    marginTop: 209,
-    marginLeft: 166
-  },
-  ImageIconStyle: {
-    padding: 10,
-    margin: 5,
-    height: 25,
-    width: 25,
-    resizeMode: 'stretch',
-  },
-  form: {
-    justifyContent: 'center',
-    marginTop: 8,
-    padding: 20,
-    backgroundColor: '#ffffff',
-  },
-  paragraph:{
-    margin:24,
-    marginBottom: 10,
-    fontSize:30,
-    fontWeight:'bold',
-    textAlign:'center'
-  },
-  cancel:{
-    backgroundColor: 'red',
-  },
-  majorRow: {
-      height: 25,
-      //flexDirection: "row",
-      marginRight: 16
-    },
-  textInput4: {
-      top: 0,
-      left: 73,
-      width: 131,
-      height: 27,
-      color: "#121212",
-      position: "absolute",
-    },
-  gradYearStack: {
-      width: 230,
-      height: 27,
-      marginTop: 50
-    },
-  majorRowColumn: {
-      width: 245,
-      marginLeft: 26,
-    },
-  imageRow: {
-      width: 400,
-      height: 118,
-      flexDirection: "row",
-      marginTop: 18,
-      marginLeft: 37,
-      marginRight: 14
-    },
-  pic:{
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      overflow:'hidden',
-    },
-  bio:{
-    width: 400,
-    height: 400,
-    marginTop: 40
-  },
-  tag:{
-    width: 400,
-    height: 400,
-    marginTop: 5
-  },
-  backButton:{
-    marginLeft: 15,
-    flexDirection: 'row'
-  }
-})
 
 const bottomTabNavigator = createBottomTabNavigator(
   {
@@ -977,7 +677,7 @@ const bottomTabNavigator = createBottomTabNavigator(
     },
     Profile: {
       screen: ProfileScreen,
-      props:{name:this.screenProps},
+      props: {name:this.screenProps},
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => (
           <Icon name="person" size={25} color={tintColor} />
