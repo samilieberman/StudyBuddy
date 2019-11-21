@@ -132,6 +132,13 @@ class ChatScreen extends React.Component {
   state = {
     messages: [],
   }
+  get user() {
+    return {
+      name: this.props.screenProps.displayName,
+      avatar: this.props.screenProps.ppurl,
+      _id: firebase.uid
+    };
+  }
   componentWillMount() {
     this.setState({
       messages: [
@@ -149,24 +156,30 @@ class ChatScreen extends React.Component {
     })
   }
 
-  onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
-  }
   render() {
     return(
       <KeyboardAvoidingView style={{flex:1}}>
         <GiftedChat
           messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
+          onSend={firebase.send}
+          //user={this.user}
           user={{
-            _id: 1,
+            //_id: 1,
           }}
         />
       </KeyboardAvoidingView>
     );
   }
+  // componentDidMount() {
+  //   firebase.refOn(message =>
+  //     this.setState(previousState => ({
+  //       messages: GiftedChat.append(previousState.messages, message),
+  //     }))
+  //   );
+  // }
+  // componentWillUnmount() {
+  //   firebase.refOff();
+  // }
 }
 
 class PostingsScreen extends React.Component {
@@ -245,10 +258,15 @@ seedetails()
   });
 }
 */
-  seeprofile(){
-    this.setState({
-      seeingProfile:true
-    });
+  seeprofile = (postuser) =>{
+    if(!(postuser==this.props.screenProps.data.displayName)){
+      this.setState({
+        seeingProfile:true
+      });
+    }
+    else{ // clicking ur own profile
+      this.props.navigation.navigate('Profile');
+    }
   }
   goBack(){
     this.setState({
@@ -307,7 +325,13 @@ seedetails()
 
   renderItem = ({ item }) => (
     <ListItem
-      onPress={()=>{this.seeprofile(); console.log("other now" + this.state.other); this.setState({other:item}); console.log(item)}}
+      onPress={()=>{
+        this.seeprofile(item.user); 
+        this.setState(
+        {
+          other:item
+        }); 
+    }}
       title={item.title}
       subtitle={
         <View>
@@ -420,7 +444,8 @@ seedetails()
               </SafeAreaView>
             </SafeAreaView>
               <SafeAreaView style={styles.bio}>
-                <Input
+                <Input disabled
+                  // value
                   placeholder="Tell us about yourself.."
                   label="Biography: "
                   returnKeyType="done"
@@ -429,6 +454,14 @@ seedetails()
                   multiline={true}
                  />
               </SafeAreaView>
+          </SafeAreaView>
+          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Button
+              // onPress={this.props.screenProps.signOut}
+              onPress = {()=>this.props.navigation.navigate('Chat')}
+              title="Request to Chat"
+              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
+          /> 
           </SafeAreaView>
         </ScrollView>
       );
@@ -445,9 +478,14 @@ seedetails()
           <View style={styles.form}>
             <Form type={Post} ref={c => this._form = c}/>
           </View>
-          <Button style={{alignSelf:'center'}} title="Post" buttonStyle={{backgroundColor: '#397BE2'}} onPress={()=>this.addpost(this._form.getValue().title,this._form.getValue().class,this._form.getValue().professor,this._form.getValue().days,this._form.getValue().time,this._form.getValue().groupSize,this._form.getValue().meetingSpot,this._form.getValue().description)}/>
-          <Text></Text>
-          <Button style={{alignSelf:'center'}} title="Cancel" buttonStyle={{backgroundColor: 'red'}} onPress={()=>this.goBack()}/>
+          <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
+            <View style={{marginBottom: 10}}>
+              <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:200}} onPress={()=>this.addpost()}/>
+            </View>
+            <View style={{marginBottom: 10}}>
+              <Button title="Cancel" buttonStyle={{backgroundColor: 'red', width:100}} onPress={()=>this.goBack()}/>
+            </View>
+          </SafeAreaView>
         </SafeAreaView>
         </ScrollView>
       );
@@ -528,7 +566,7 @@ class ProfileScreen extends React.Component {
             <Button
               onPress={this.props.screenProps.signOut}
               title="Logout of Facebook"
-              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30}}
+              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
             />
         </SafeAreaView>
       </ScrollView>
@@ -644,11 +682,13 @@ class LoginScreen extends React.Component {
       <View style={styles.container}>
         <Text style={styles.titleText}> Study Buddy </Text>
         <Icon style={styles.icon} name="school" size={60} />
+       <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 20}}>
        <Button
          title="Login with Facebook"
          onPress={this.props.signInWithFacebook}
-         buttonStyle={{backgroundColor: '#397BE2'}}>
+         buttonStyle={{backgroundColor: '#397BE2', width: 320}}>
        </Button>
+       </View>
        </View>
     );
   }

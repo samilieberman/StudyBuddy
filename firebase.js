@@ -1,6 +1,7 @@
 import * as firebase from 'firebase'  // Should not be used elsewhere in the project
 import firebaseData from './app.json';
 import apiData from './config.json';
+import uuid from 'uuid';
 
 // Initialize Firebase
 let firebaseConfig = {
@@ -12,4 +13,5 @@ let firebaseConfig = {
     messagingSenderId: firebaseData.expo.extra.firebase.messagingSenderId
   };
 firebase.initializeApp(firebaseConfig);
+
 export default firebase;
