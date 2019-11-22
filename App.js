@@ -62,7 +62,7 @@ class ProfData extends React.Component
     };
   }
 
-  
+
   componentDidMount = async () =>{
     let postsRef = firebase.database().ref("users/"+this.props.uid);
     console.log(this.props.uid);
@@ -76,7 +76,7 @@ class ProfData extends React.Component
     }
     render()
     {
-  
+
       return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
       <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
@@ -150,12 +150,12 @@ export default class App extends Component {
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
         const response2 = await fetch(`https://graph.facebook.com/me/picture?width=9999&access_token=${token}`);
         this.setState({ppurl: response2.url});
-        const credential = firebase.auth.FacebookAuthProvider.credential(token); 
+        const credential = firebase.auth.FacebookAuthProvider.credential(token);
         firebase.auth().signInWithCredential(credential).catch((error) => {
           // Handle Errors here.
           alert(`Facebook Login Error: ${message}`);
         });
-       
+
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         firebase.auth().onAuthStateChanged(user => {
@@ -179,13 +179,13 @@ export default class App extends Component {
               });
 
 
-    
+
           }
         });
-       
+
         this.mount=true;
-    
-       
+
+
       }
       else { // type === 'cancel'
         this.setState({isLoggedIn: false, name: ""});
@@ -251,7 +251,7 @@ class ChatScreen extends Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }))
   }
-  
+
   render() {
     return(
       <KeyboardAvoidingView style={{flex:1}}>
@@ -347,8 +347,10 @@ class PostingsScreen extends Component {
       this.setState({
         seeingProfile:true
       });
-      
     }
+    else{ // Clicking your own profile
+      this.props.navigation.navigate('Profile');
+    }	
   }
 
   goBack(){
@@ -597,7 +599,7 @@ class ProfileScreen extends Component {
       postsRef.update({
         'bio':bio
       });
-      
+
     }
 if(maj!=""&&maj!="temp")
 {
@@ -612,10 +614,10 @@ if(gradient!=""&&gradient!="temp")
 postsRef.update({
   'grad':gradient
 });
-    
+
 }
-   
-  
+
+
     });
     this.props.navigation.navigate('Profile')
     Alert.alert("Successfully Updated Profile");
@@ -668,7 +670,7 @@ gradchange=(val)=>{this.setState({grad:val});
             multiline={true}
             onChangeText={(big)=>this.biochange(big)}
           />
-          
+
             <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
               <Input
                 disabled
@@ -688,7 +690,7 @@ gradchange=(val)=>{this.setState({grad:val});
             title="Save Changes"
             buttonStyle={{backgroundColor: '#397BE2', width: 200}}
           />
-  
+
           <Button
             onPress={this.props.screenProps.signOut}
             title="Logout of Facebook"
