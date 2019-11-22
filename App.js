@@ -349,6 +349,7 @@ class PostingsScreen extends Component {
         borderRadius: 40,
         backgroundColor: 'grey',
       }}/>
+//normal posting screen
     else if (!this.state.isPosting && !this.state.seeingProfile){
       return (
         <Fragment>
@@ -383,6 +384,7 @@ class PostingsScreen extends Component {
         </Fragment>
       );
     }
+//seeing someone else's profile
     else if(this.state.seeingProfile && !this.state.isPosting){
       var convert = JSON.stringify(this.state.other);
       var userData = JSON.parse(convert);
@@ -390,7 +392,7 @@ class PostingsScreen extends Component {
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
         <SafeAreaView style={styles.backButton}>
-          <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+          <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
         </SafeAreaView>
           <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
             <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
@@ -436,12 +438,13 @@ class PostingsScreen extends Component {
         </ScrollView>
       );
     }
+    //create posting screen
     else if(this.state.isPosting && !this.state.seeingProfile){
       return(
         <ScrollView>
           <SafeAreaView>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" onPress={()=>this.goBack()}/>
+              <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
             </SafeAreaView>
             <Text style={styles.paragraph}>New Post</Text>
             <View style={styles.form}>
@@ -546,39 +549,55 @@ class ProfileScreen extends Component {
 
 class OtherProfile extends Component {
   render() {
+    var convert = JSON.stringify(this.state.other);
+    var userData = JSON.parse(convert);
+    var firstName = (userData.user).substr(0,(userData.user).indexOf(' '));
     return(
-      <ScrollView style={styles.mainWrapper}>
-        <View style = {styles.profileSafeArea2}>
-          <Text style = {styles.profileNameStyle}>Other</Text>
-        </View>
-        <View style={styles.profileSafeArea3} />
-        <View style={styles.imageRow}>
-          <Image
-            source={{uri: this.props.screenProps.ppurl}}
-            resizeMode="contain"
-            style={styles.image}
+      <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+      <SafeAreaView style={styles.backButton}>
+        <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
+      </SafeAreaView>
+        <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+          <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
+            <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{userData.user}</Text>
+          </SafeAreaView>
+          <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+          <SafeAreaView style={styles.imageRow}>
+            <Avatar style={styles.pic}
+              large
+              rounded
+              source={{uri: userData.img}}
+              activeOpacity={0.7}
+            />
+            <SafeAreaView style={styles.majorRowColumn}>
+              <SafeAreaView style={styles.majorRow}>
+                <Text style = {{fontSize: 20}}>Major:</Text>
+                <Text> {firstName}'s major</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.gradYearStack}>
+                <Text style = {{fontSize: 20}}>Grad Year:</Text>
+                <Text> {firstName}'s grad year</Text>
+              </SafeAreaView>
+            </SafeAreaView>
+          </SafeAreaView>
+            <SafeAreaView style={styles.bio}>
+              <Input disabled
+                placeholder="Tell us about yourself.."
+                label="Biography: "
+                returnKeyType="done"
+                blurOnSubmit={true}
+                enablesReturnKeyAutomatically={true}
+                multiline={true}
+               />
+            </SafeAreaView>
+        </SafeAreaView>
+        <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Button
+            onPress={()=>this.props.navigation.navigate('Chat')}
+            title="Request to Chat"
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
           />
-          <View style={styles.majorRowColumn}>
-            <View style={styles.majorRow}>
-              <Text style={styles.major}>Major:</Text>
-            </View>
-            <View style={styles.gradYearStack}>
-              <Text style={styles.gradYear}>Grad year:</Text>
-            </View>
-          </View>
-        </View>
-        <Text style={styles.biography}>Biography</Text>
-        <Text style={styles.textInput}>
-          According to all known laws
-          of aviation,
-          there is no way a bee
-          should be able to fly.
-          Its wings are too small to get
-          its fat little body off the ground.
-          The bee, of course, flies anyway
-          because bees don't care
-          what humans think is impossible.
-        </Text>
+        </SafeAreaView>
       </ScrollView>
     );
   }
@@ -612,10 +631,6 @@ class PostingsCreation extends Component {
 }
 
 class PostingDetails extends Component {
-     state = {clas: ''}
-   updateClas = (clas) => {
-      this.setState({ clas: clas })
-   }
   render() {
     return(
       <View style={styles.mainWrapper}>
