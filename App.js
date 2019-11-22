@@ -185,7 +185,8 @@ class PostingsScreen extends Component {
   }
   updateTagState = (state) => {
     this.setState({
-      tags: state
+      tags: state, 
+      dataSource:this.state.posts
     })
   };
 
@@ -211,6 +212,7 @@ class PostingsScreen extends Component {
         dataSource: newArr,
       });
       this.arrayholder = newArr;
+      this.tagholder = newArr;
     },
       (error) => {
         console.log(error)
@@ -264,7 +266,7 @@ class PostingsScreen extends Component {
   }
 
   search = text => {
-    console.log(text);
+    console.log(text+ "told you so muthafaka");
   };
 
   clear = () => {
@@ -272,8 +274,7 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
-    console.log("hi " + text);
-    const newData = this.arrayholder.filter(function(item) { // Passing the inserted text in textinput
+    const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
       const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
@@ -302,6 +303,49 @@ class PostingsScreen extends Component {
       search: text,
     });
   }
+
+
+  SearchTag(tags){
+    if(tags.length == 0){
+      return;
+    }
+    //console.log("1." + this.state.tags.tagsArray[0]);
+    var filteredData = []
+    var newTags = []
+    var itemData, itemData2, itemData3, itemData4, itemData5, itemData6, itemData7, itemData8;
+    var textData;
+    var titleSame;
+    var classSame;
+    filteredData = this.tagholder.filter((item)=>{  
+    for(var i = 0; i < tags.length; i++){
+          console.log(tags.length);
+           itemData  = (item.class ? item.class.toUpperCase():''.toUpperCase());
+           itemData2 = (item.title ? item.title.toUpperCase():''.toUpperCase());
+           itemData3 = (item.professor ? item.professor.toUpperCase():''.toUpperCase());
+           itemData4 = (item.days ? item.days.toUpperCase():''.toUpperCase());
+           itemData5 = (item.time ? item.time.toUpperCase():''.toUpperCase());
+           itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase():''.toUpperCase());
+           itemData7 = (item.groupSize ? item.groupSize.toUpperCase():''.toUpperCase());
+           itemData8 = (item.user ? item.user.toUpperCase():''.toUpperCase());
+
+           textData = tags[i].toUpperCase()
+
+          console.log(textData + " , " +itemData);
+          //return (itemData.indexOf(textData) > -1)
+          if(itemData == textData || itemData2 == textData){
+            return ((itemData.indexOf(textData) > -1) && (itemData2.indexOf(textData) > -1));
+          }
+          else{
+            return;
+          }        
+    }
+  });
+      
+  
+    this.setState({
+      dataSource: filteredData // after filter we are setting users to new array
+    });
+}
 
   deleteicon(postuser, id){
     if(postuser==this.props.screenProps.data.displayName)
@@ -344,12 +388,6 @@ class PostingsScreen extends Component {
     />
   )
 
-  updateFilter = (filterArray) => {
-    filterArray.forEach(function(tag){
-      this.SearchFilterFunction(tag);
-    })
-  }
-
   render() {
     //updateFilter(this.state.tags.tagsArray);
     //console.log(this.state.tags.tagsArray);
@@ -374,7 +412,7 @@ class PostingsScreen extends Component {
             <TagInput
               updateState={this.updateTagState}
               tags={this.state.tags}
-              keysForTag={','}
+              // keysForTag={'enter', ','}
               placeholder="Separate filters by commas.."
               leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
               leftElementContainerStyle={{marginLeft: 3}}
@@ -388,7 +426,8 @@ class PostingsScreen extends Component {
               tagTextStyle={{color: '#397BE2'}}
             />
             <Button
-              onPress={() => this.updateFilter(this.state.tags.tagsArray)}
+              onPress={()=> this.SearchTag(this.state.tags.tagsArray)}
+              //onPress={() => this.updateFilter(this.state.tags.tagsArray)}
               title="Apply Filter"
             />
           </SafeAreaView>
@@ -504,6 +543,7 @@ class ProfileScreen extends Component {
     };
   }
   updateTagState = (state) => {
+    console.log("hi"+state)
     this.setState({
       tags: state
     })
