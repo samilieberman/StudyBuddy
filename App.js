@@ -606,7 +606,7 @@ gradchange=(val)=>{this.setState({grad:val});
           <Button
             onPress={this.props.screenProps.signOut}
             title="Logout of Facebook"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, marginBottom: 30}}
           />
         </SafeAreaView>
       </ScrollView>
