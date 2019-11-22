@@ -173,10 +173,21 @@ class PostingsScreen extends Component {
       isPosting:false,
       seeingProfile:false,
       other:{whatever: ''},
-      search: ''
+      search: '',
+      tags: {
+        tag: '',
+        tagsArray: []
+      },
     };
     this.arrayholder = [];
+    this.tagholder = [];
+    this.SearchFilterFunction = this.SearchFilterFunction.bind(this);
   }
+  updateTagState = (state) => {
+    this.setState({
+      tags: state
+    })
+  };
 
   delete(key){
     let postsRef = firebase.database().ref("posts/"+key);
@@ -261,8 +272,8 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
+    console.log("hi " + text);
     const newData = this.arrayholder.filter(function(item) { // Passing the inserted text in textinput
-
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
       const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
@@ -333,15 +344,15 @@ class PostingsScreen extends Component {
     />
   )
 
-  state = {
-    clas: ''
-  }
-
-  updateClas = (clas) => {
-    this.setState({ clas: clas })
+  updateFilter = (filterArray) => {
+    filterArray.forEach(function(tag){
+      this.SearchFilterFunction(tag);
+    })
   }
 
   render() {
+    //updateFilter(this.state.tags.tagsArray);
+    //console.log(this.state.tags.tagsArray);
     if(this.state.posts.length==0 && !this.state.isPosting)
       return <TouchableOpacity onPress={()=>this.makepost()} style={{  // If database is empty
         width: 80,
@@ -359,6 +370,26 @@ class PostingsScreen extends Component {
               value={this.state.search}
               onChangeText={text => this.SearchFilterFunction(text)}
               onClear={text => this.SearchFilterFunction('')}
+            />
+            <TagInput
+              updateState={this.updateTagState}
+              tags={this.state.tags}
+              keysForTag={','}
+              placeholder="Separate filters by commas.."
+              leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
+              leftElementContainerStyle={{marginLeft: 3}}
+              containerStyle={{width: 300}}
+              inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
+              inputStyle={{color: '#397BE2'}}
+              onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
+              onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
+              autoCorrect={false}
+              tagStyle={{backgroundColor: '#fff'}}
+              tagTextStyle={{color: '#397BE2'}}
+            />
+            <Button
+              onPress={() => this.updateFilter(this.state.tags.tagsArray)}
+              title="Apply Filter"
             />
           </SafeAreaView>
           <FlatList
@@ -526,14 +557,24 @@ class ProfileScreen extends Component {
                 updateState={this.updateTagState}
                 tags={this.state.tags}
                 keysForTag={','}
-                placeholder="Class code"
+                placeholder="Class code.."
+                leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
+                leftElementContainerStyle={{marginLeft: 3}}
+                containerStyle={{width: 300}}
+                inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
+                inputStyle={{color: '#397BE2'}}
+                onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
+                onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
+                autoCorrect={false}
+                tagStyle={{backgroundColor: '#fff'}}
+                tagTextStyle={{color: '#397BE2'}}
               />
             </SafeAreaView>
           </SafeAreaView>
           <Button
             onPress={this.props.screenProps.signOut}
             title="Logout of Facebook"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, marginBottom: 30}}
           />
         </SafeAreaView>
       </ScrollView>

@@ -282,7 +282,21 @@ const styles = StyleSheet.create({
   backButton: {
     marginLeft: 15,
     flexDirection: 'row'
-  }
+  },
+  tagContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#3ca897',
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'white',
+    borderWidth: 1,
+    marginTop: 8,
+    borderRadius: 5,
+    padding: 3,
+  },
 })
 
 
