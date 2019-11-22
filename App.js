@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS} from 'react-native';
+import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS, ColorPropType} from 'react-native';
 import { Button, Icon, Avatar, Text, SearchBar, ListItem, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,7 +13,9 @@ import firebase from './firebase.js';
 import * as Facebook from 'expo-facebook';
 import t from 'tcomb-form-native';
 
+
 const Form = t.form.Form;
+console.disableYellowBox = true;
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -48,6 +50,78 @@ const Post = t.struct({
 var options = {
 
 };
+class ProfData extends React.Component
+{
+  constructor(props){
+    super(props);
+    this.state = {
+      bio:"null",
+      major:"null",
+      grad:"null",
+
+    };
+  }
+
+  
+  componentDidMount = async () =>{
+    let postsRef = firebase.database().ref("users/"+this.props.uid);
+    console.log(this.props.uid);
+    postsRef.on('value',snapshot => {
+      this.setState({
+        bio:snapshot.val().bio,
+        major:snapshot.val().major,
+        grad:snapshot.val().grad
+      });
+      });
+    }
+    render()
+    {
+  
+      return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
+      <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
+        <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.user}</Text>
+      </SafeAreaView>
+      <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+      <SafeAreaView style={styles.imageRow}>
+        <Avatar style={styles.pic}
+          large
+          rounded
+          source={{uri: this.props.img}}
+          activeOpacity={0.7}
+        />
+        <SafeAreaView style={styles.majorRowColumn}>
+          <SafeAreaView style={styles.majorRow}>
+            <Text style = {{fontSize: 20}}>Major:</Text>
+            <Text> {this.state.major}</Text>
+          </SafeAreaView>
+          <SafeAreaView style={styles.gradYearStack}>
+            <Text style = {{fontSize: 20}}>Grad Year:</Text>
+              <Text> {(this.state.grad)}</Text>
+          </SafeAreaView>
+        </SafeAreaView>
+      </SafeAreaView>
+        <SafeAreaView style={styles.bio}>
+        <Text style = {{fontSize: 20}}>Bio:</Text>
+        <Text>{this.state.bio}</Text>
+        </SafeAreaView>
+    </SafeAreaView>)
+    }
+
+    }
+/*
+  let postsRef = firebase.database().ref("users/"+props.uid);
+  console.log("hi")
+  var hi;
+  postsRef.once('value',snapshot => {
+    console.log(snapshot.val().bio)
+      hi=snapshot.val().bio;
+      console.log(hi);
+      return <Text>{hi}</Text>;
+    });
+  return <Text>{hi}</Text>;
+  */
+
 
 export default class App extends Component {
 
@@ -57,6 +131,7 @@ export default class App extends Component {
       isLoggedIn: false,
       data: [],
       ppurl:"null",
+      uid:"null",
       signOut:this.signOutWithFacebook
     };
   }
@@ -75,20 +150,42 @@ export default class App extends Component {
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
         const response2 = await fetch(`https://graph.facebook.com/me/picture?width=9999&access_token=${token}`);
         this.setState({ppurl: response2.url});
-        const credential = firebase.auth.FacebookAuthProvider.credential(token);
+        const credential = firebase.auth.FacebookAuthProvider.credential(token); 
         firebase.auth().signInWithCredential(credential).catch((error) => {
           // Handle Errors here.
           alert(`Facebook Login Error: ${message}`);
         });
+       
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
             console.log(user);
-            this.setState({data:user.providerData[0]});
+            this.setState({data:user.providerData[0], uid:user.uid});
             this.setState({isLoggedIn: true});
+            let postsRef = firebase.database().ref("users/");
+              postsRef.child(user.uid).once('value', function(snapshot) {
+                var exists = (snapshot.val() !== null);
+                if(!exists)
+                {
+                postsRef.child(user.uid).set({
+                'name': user.providerData[0].displayName,
+                'bio': "",
+                'major':"",
+                'grad':"",
+                "classes":[]
+              });
+            }
+              });
+
+
+    
           }
         });
+       
+        this.mount=true;
+    
+       
       }
       else { // type === 'cancel'
         this.setState({isLoggedIn: false, name: ""});
@@ -137,7 +234,7 @@ class ChatScreen extends Component {
       messages: [
         {
           _id: 1,
-          text: 'Hello study buddy!',
+          text: 'Hello developer',
           createdAt: new Date(),
           user: {
             _id: 2,
@@ -149,14 +246,22 @@ class ChatScreen extends Component {
     })
   }
 
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
+  
   render() {
     return(
       <KeyboardAvoidingView style={{flex:1}}>
         <GiftedChat
-          messages={this.state.messages}
-          onSend={firebase.send}
-          user={{}}
-        />
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+      />
       </KeyboardAvoidingView>
     );
   }
@@ -173,7 +278,10 @@ class PostingsScreen extends Component {
       isPosting:false,
       seeingProfile:false,
       other:{whatever: ''},
-      search: ''
+      search: '',
+      selectedbio:"null",
+      selectedgrad:"null",
+      selectedmajor:"null",
     };
     this.arrayholder = [];
   }
@@ -183,7 +291,7 @@ class PostingsScreen extends Component {
     postsRef.remove();
   }
 
-  componentDidMount= async () =>{
+  componentDidMount = async () =>{
     let postsRef = firebase.database().ref("posts/");
     this.mount=true;
 
@@ -217,7 +325,7 @@ class PostingsScreen extends Component {
       console.log("adding to DB...");
       console.log(value);
       let postsRef = firebase.database().ref("posts/");
-      postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description}).getKey();
+      postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description , uid:this.props.screenProps.uid}).getKey();
       this.setState({
         isPosting:false
       });
@@ -235,13 +343,11 @@ class PostingsScreen extends Component {
   }
 
   seeprofile = (postuser) =>{
-    if(!(postuser==this.props.screenProps.data.displayName)){
+    if(!(postuser.user==this.props.screenProps.data.displayName)){
       this.setState({
         seeingProfile:true
       });
-    }
-    else{ // Clicking your own profile
-      this.props.navigation.navigate('Profile');
+      
     }
   }
 
@@ -302,10 +408,11 @@ class PostingsScreen extends Component {
       return <View/>;
   }
 
+
   renderItem = ({ item }) => (
     <ListItem
       onPress={()=>{
-        this.seeprofile(item.user);
+        this.seeprofile(item);
         this.setState(
         {
           other:item
@@ -340,6 +447,7 @@ class PostingsScreen extends Component {
   updateClas = (clas) => {
     this.setState({ clas: clas })
   }
+
 
   render() {
     if(this.state.posts.length==0 && !this.state.isPosting)
@@ -388,46 +496,17 @@ class PostingsScreen extends Component {
     else if(this.state.seeingProfile && !this.state.isPosting){
       var convert = JSON.stringify(this.state.other);
       var userData = JSON.parse(convert);
-      var firstName = (userData.user).substr(0,(userData.user).indexOf(' '));
+      console.log(userData);
+
+
+
+
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
         <SafeAreaView style={styles.backButton}>
           <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
         </SafeAreaView>
-          <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-            <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
-              <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{userData.user}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-            <SafeAreaView style={styles.imageRow}>
-              <Avatar style={styles.pic}
-                large
-                rounded
-                source={{uri: userData.img}}
-                activeOpacity={0.7}
-              />
-              <SafeAreaView style={styles.majorRowColumn}>
-                <SafeAreaView style={styles.majorRow}>
-                  <Text style = {{fontSize: 20}}>Major:</Text>
-                  <Text> {firstName}'s major</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.gradYearStack}>
-                  <Text style = {{fontSize: 20}}>Grad Year:</Text>
-                  <Text> {firstName}'s grad year</Text>
-                </SafeAreaView>
-              </SafeAreaView>
-            </SafeAreaView>
-              <SafeAreaView style={styles.bio}>
-                <Input disabled
-                  placeholder="Tell us about yourself.."
-                  label="Biography: "
-                  returnKeyType="done"
-                  blurOnSubmit={true}
-                  enablesReturnKeyAutomatically={true}
-                  multiline={true}
-                 />
-              </SafeAreaView>
-          </SafeAreaView>
+        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user}/>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
               onPress={()=>this.props.navigation.navigate('Chat')}
@@ -452,7 +531,7 @@ class PostingsScreen extends Component {
             </View>
             <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
               <View style={{marginBottom: 10}}>
-                <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:200}} onPress={()=>this.addpost()}/>
+                <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:150}} onPress={()=>this.addpost()}/>
               </View>
               <View style={{marginBottom: 10}}>
                 <Button title="Cancel" buttonStyle={{backgroundColor: 'red', width:100}} onPress={()=>this.goBack()}/>
@@ -466,6 +545,27 @@ class PostingsScreen extends Component {
 }
 
 class ProfileScreen extends Component {
+
+
+
+  componentDidMount = async () =>{
+    let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
+    console.log(this.props.uid);
+    postsRef.on('value',snapshot => {
+      if(snapshot.val().bio!="")
+      this.setState({
+        placeholderb:snapshot.val().bio,
+      });
+      if(snapshot.val().grad!="")
+      this.setState({
+        placeholderg:snapshot.val().grad,
+      });
+      if(snapshot.val().bio!="")
+      this.setState({
+        placeholderm:snapshot.val().major,
+      });
+      });
+    }
   constructor(props) {
     super(props);
     this.state = {
@@ -473,13 +573,59 @@ class ProfileScreen extends Component {
         tag: '',
         tagsArray: []
       },
+      placeholderb:"Tell us about yourself..",
+      placeholderg:"Year...",
+      placeholderm:"Major...",
+      bio:"temp",
+      grad:"temp",
+      major:"temp"
     };
+
   }
   updateTagState = (state) => {
     this.setState({
       tags: state
     })
   };
+  updateProfile=(maj, gradient, bio)=>
+  {
+    let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
+    console.log(this.state.major)
+    postsRef.once('value', function(snapshot) {
+      if(bio!=""&&bio!="temp")
+      {
+      postsRef.update({
+        'bio':bio
+      });
+      
+    }
+if(maj!=""&&maj!="temp")
+{
+postsRef.update({
+  'major':maj,
+});
+
+
+}
+if(gradient!=""&&gradient!="temp")
+{
+postsRef.update({
+  'grad':gradient
+});
+    
+}
+   
+  
+    });
+    this.props.navigation.navigate('Profile')
+    Alert.alert("Successfully Updated Profile");
+}
+biochange=(val)=>{this.setState({bio:val});
+}
+majorchange=(val)=>{this.setState({major:val});
+}
+gradchange=(val)=>{this.setState({grad:val});
+}
   render() {
     return(
       <ScrollView style={styles.mainWrapper}>
@@ -498,28 +644,32 @@ class ProfileScreen extends Component {
               <SafeAreaView style={styles.majorRowColumn}>
                 <SafeAreaView style={styles.majorRow}>
                   <Input
-                    placeholder="Major..."
+                    placeholder={this.state.placeholderm}
                     label="Major: "
+                    onChangeText={(maj) => this.majorchange(maj)}
                   />
                 </SafeAreaView>
               <SafeAreaView style={styles.gradYearStack}>
                 <Input
-                  placeholder="Year..."
+                  placeholder={this.state.placeholderg}
                   label="Graduation Year: "
+                  onChangeText={(gradyr) =>this.gradchange(gradyr)}
                 />
               </SafeAreaView>
             </SafeAreaView>
           </SafeAreaView>
           <SafeAreaView style={styles.bio}>
           <Input
-            placeholder="Tell us about yourself.."
+            placeholder={this.state.placeholderb}
             label="Biography: "
             returnKeyType="done"
             blurOnSubmit={true}
             enablesReturnKeyAutomatically={true}
             multiline={true}
+            onChangeText={(big)=>this.biochange(big)}
           />
-            <SafeAreaView style={{marginTop:30}}>
+          
+            <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
               <Input
                 disabled
                 label = "Classes (seperate by comma to add a new class)"
@@ -532,12 +682,20 @@ class ProfileScreen extends Component {
                 placeholder="Class code"
               />
             </SafeAreaView>
-          </SafeAreaView>
+            <View style = {{flexDirection: 'column',  alignItems: 'center'}}>
+            <Button
+            onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio)}
+            title="Save Changes"
+            buttonStyle={{backgroundColor: '#397BE2', width: 200}}
+          />
+  
           <Button
             onPress={this.props.screenProps.signOut}
             title="Logout of Facebook"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 180, width: 200}}
           />
+          </View>
+          </SafeAreaView>
         </SafeAreaView>
       </ScrollView>
     );

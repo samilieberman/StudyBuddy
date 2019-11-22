@@ -272,7 +272,8 @@ const styles = StyleSheet.create({
   bio: {
     width: 400,
     height: 400,
-    marginTop: 40
+    marginTop: 40,
+    marginBottom: 150
   },
   tag: {
     width: 400,
