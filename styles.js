@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   backButton: {
+    marginTop: 60,
     marginLeft: 15,
     flexDirection: 'row'
   },

@@ -5,8 +5,8 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { styles } from './styles.js'
-import TagInput from 'react-native-tags-input';
+import { styles } from './styles.js';
+import TagInput from './tagInput.js';
 import Posting from './Posting.js';
 import data from './app.json';
 import firebase from './firebase.js';
@@ -185,8 +185,7 @@ class PostingsScreen extends Component {
   }
   updateTagState = (state) => {
     this.setState({
-      tags: state, 
-      dataSource:this.state.posts
+      tags: state
     })
   };
 
@@ -208,10 +207,10 @@ class PostingsScreen extends Component {
         return fbObject[key];
       });
       this.setState({
-        posts:newArr,
+        posts: newArr,
         dataSource: newArr,
       });
-      this.arrayholder = newArr;
+      //this.arrayholder = newArr;
       this.tagholder = newArr;
     },
       (error) => {
@@ -274,6 +273,7 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
+    console.log(this.tagholder);
     const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
@@ -307,45 +307,48 @@ class PostingsScreen extends Component {
 
   SearchTag(tags){
     if(tags.length == 0){
+      this.tagholder = this.state.posts;
+      this.setState({
+        dataSource: this.state.posts
+      });
       return;
     }
     //console.log("1." + this.state.tags.tagsArray[0]);
-    var filteredData = []
-    var newTags = []
-    var itemData, itemData2, itemData3, itemData4, itemData5, itemData6, itemData7, itemData8;
-    var textData;
-    var titleSame;
-    var classSame;
-    filteredData = this.tagholder.filter((item)=>{  
+    var filteredData = this.state.posts;
+    var textData = [];
+
+    console.log("yo i tried here boy");
+
     for(var i = 0; i < tags.length; i++){
-          console.log(tags.length);
-           itemData  = (item.class ? item.class.toUpperCase():''.toUpperCase());
-           itemData2 = (item.title ? item.title.toUpperCase():''.toUpperCase());
-           itemData3 = (item.professor ? item.professor.toUpperCase():''.toUpperCase());
-           itemData4 = (item.days ? item.days.toUpperCase():''.toUpperCase());
-           itemData5 = (item.time ? item.time.toUpperCase():''.toUpperCase());
-           itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase():''.toUpperCase());
-           itemData7 = (item.groupSize ? item.groupSize.toUpperCase():''.toUpperCase());
-           itemData8 = (item.user ? item.user.toUpperCase():''.toUpperCase());
 
-           textData = tags[i].toUpperCase()
+      filteredData = filteredData.filter((item)=>{
+        const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
+        const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
+        const itemData3 = (item.professor   ? item.professor.toUpperCase()   : ''.toUpperCase());
+        const itemData4 = (item.days        ? item.days.toUpperCase()        : ''.toUpperCase());
+        const itemData5 = (item.time        ? item.time.toUpperCase()        : ''.toUpperCase());
+        const itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase() : ''.toUpperCase());
+        const itemData7 = (item.groupSize   ? item.groupSize.toUpperCase()   : ''.toUpperCase());
+        const itemData8 = (item.user        ? item.user.toUpperCase()        : ''.toUpperCase());
 
-          console.log(textData + " , " +itemData);
-          //return (itemData.indexOf(textData) > -1)
-          if(itemData == textData || itemData2 == textData){
-            return ((itemData.indexOf(textData) > -1) && (itemData2.indexOf(textData) > -1));
-          }
-          else{
-            return;
-          }        
+        textData = tags[i].toUpperCase();
+        return (itemData.indexOf(textData) > -1) ||
+              (itemData2.indexOf(textData) > -1) ||
+              (itemData3.indexOf(textData) > -1) ||
+              (itemData4.indexOf(textData) > -1) ||
+              (itemData5.indexOf(textData) > -1) ||
+              (itemData6.indexOf(textData) > -1) ||
+              (itemData7.indexOf(textData) > -1) ||
+              (itemData8.indexOf(textData) > -1);
+        });
+        console.log("Filter " + i + ", " + textData + ": the filtered data is now " + filteredData);
+      }
+      this.tagholder = filteredData;
+      this.setState({
+        dataSource: filteredData // after filter we are setting users to new array
+      });
     }
-  });
-      
-  
-    this.setState({
-      dataSource: filteredData // after filter we are setting users to new array
-    });
-}
+
 
   deleteicon(postuser, id){
     if(postuser==this.props.screenProps.data.displayName)
@@ -412,7 +415,9 @@ class PostingsScreen extends Component {
             <TagInput
               updateState={this.updateTagState}
               tags={this.state.tags}
-              // keysForTag={'enter', ','}
+              keysForTag={','}
+              onKey={()=> this.SearchTag(this.state.tags.tagsArray)}
+              onDelete={()=> this.SearchTag(this.state.tags.tagsArray)}
               placeholder="Separate filters by commas.."
               leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
               leftElementContainerStyle={{marginLeft: 3}}
@@ -424,11 +429,6 @@ class PostingsScreen extends Component {
               autoCorrect={false}
               tagStyle={{backgroundColor: '#fff'}}
               tagTextStyle={{color: '#397BE2'}}
-            />
-            <Button
-              onPress={()=> this.SearchTag(this.state.tags.tagsArray)}
-              //onPress={() => this.updateFilter(this.state.tags.tagsArray)}
-              title="Apply Filter"
             />
           </SafeAreaView>
           <FlatList
