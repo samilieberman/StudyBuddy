@@ -23,6 +23,35 @@ const {
   GraphRequestManager,
 } = FBSDK;
 
+//class formData extends React.Component{
+/*
+constructor(props) {
+    super(props);
+
+    this.state = {
+        pickerOptions: t.enums({})
+    };
+}
+
+componentDidMount() {
+    //run your api call and once you have new value and options..
+    //you can run your api call and update the state like this at any place - doesn't have to be componentDidMount
+    let usersRef = firebase.database().ref("users/"+this.props.uid);
+    console.log(this.props.uid);
+    usersRef.on('value',snapshot => {
+      this.setState({
+          pickerOptions: t.enums({snapshot.val().classes}),
+      });
+    });
+
+}
+*/
+
+
+//var test = {"hci": 'HCI', "eco": 'ECO'};
+//console.log(test);
+//test.hci = "diff";
+
 var groupSize = t.enums({
   "Study Partner": 'Study Partner (1)',
   "Small": 'Small Group (< 4)',
@@ -36,6 +65,8 @@ var time = t.enums({
   "Any Time": 'Any Time'
 });
 
+//var course = t.enums(test);
+
 const Post = t.struct({
   title: t.String,
   class: t.String,
@@ -46,7 +77,7 @@ const Post = t.struct({
   meetingSpot: t.String,
   description: t.maybe(t.String),
 });
-
+//}
 var options = {
 
 };
@@ -58,6 +89,7 @@ class ProfData extends React.Component
       bio:"null",
       major:"null",
       grad:"null",
+      clas:[]
 
     };
   }
@@ -70,42 +102,52 @@ class ProfData extends React.Component
       this.setState({
         bio:snapshot.val().bio,
         major:snapshot.val().major,
-        grad:snapshot.val().grad
+        grad:snapshot.val().grad,
+        clas:snapshot.val().classes
       });
-      });
-    }
-    render()
-    {
+    });
+  }
 
+    render(){
+    var classList = "";
+    for (var i = 0; i < this.state.clas.length; i++) {
+      classList = classList.concat(this.state.clas[i]);
+      if(i < this.state.clas.length - 1)
+      classList = classList.concat(", ");
+    }
       return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-      <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
-        <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.user}</Text>
-      </SafeAreaView>
-      <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-      <SafeAreaView style={styles.imageRow}>
-        <Avatar style={styles.pic}
-          large
-          rounded
-          source={{uri: this.props.img}}
-          activeOpacity={0.7}
-        />
-        <SafeAreaView style={styles.majorRowColumn}>
-          <SafeAreaView style={styles.majorRow}>
-            <Text style = {{fontSize: 20}}>Major:</Text>
-            <Text> {this.state.major}</Text>
-          </SafeAreaView>
-          <SafeAreaView style={styles.gradYearStack}>
-            <Text style = {{fontSize: 20}}>Grad Year:</Text>
+        <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
+          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.user}</Text>
+        </SafeAreaView>
+        <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
+        <SafeAreaView style={styles.imageRow}>
+          <Avatar style={styles.pic}
+            large
+            rounded
+            source={{uri: this.props.img}}
+            activeOpacity={0.7}
+          />
+          <SafeAreaView style={styles.majorRowColumn}>
+            <SafeAreaView style={styles.majorRow}>
+              <Text style = {{fontSize: 20}}>Major:</Text>
+              <Text> {this.state.major}</Text>
+            </SafeAreaView>
+            <SafeAreaView style={styles.gradYearStack}>
+              <Text style = {{fontSize: 20}}>Grad Year:</Text>
               <Text> {(this.state.grad)}</Text>
+            </SafeAreaView>
           </SafeAreaView>
         </SafeAreaView>
-      </SafeAreaView>
         <SafeAreaView style={styles.bio}>
-        <Text style = {{fontSize: 20}}>Bio:</Text>
-        <Text>{this.state.bio}</Text>
+          <Text style = {{fontSize: 20}}>Bio:</Text>
+          <Text>{this.state.bio}</Text>
         </SafeAreaView>
-    </SafeAreaView>)
+        <SafeAreaView style = {{width: 350, marginTop: -300}}>
+          <Text style = {{fontSize: 20}}> Classes: </Text>
+          <Text>{classList}</Text>
+        </SafeAreaView>
+      </SafeAreaView>)
     }
 
     }
@@ -350,7 +392,7 @@ class PostingsScreen extends Component {
     }
     else{ // Clicking your own profile
       this.props.navigation.navigate('Profile');
-    }	
+    }
   }
 
   goBack(){
@@ -442,14 +484,6 @@ class PostingsScreen extends Component {
     />
   )
 
-  state = {
-    clas: ''
-  }
-
-  updateClas = (clas) => {
-    this.setState({ clas: clas })
-  }
-
 
   render() {
     if(this.state.posts.length==0 && !this.state.isPosting)
@@ -499,10 +533,6 @@ class PostingsScreen extends Component {
       var convert = JSON.stringify(this.state.other);
       var userData = JSON.parse(convert);
       console.log(userData);
-
-
-
-
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
         <SafeAreaView style={styles.backButton}>
@@ -548,26 +578,29 @@ class PostingsScreen extends Component {
 
 class ProfileScreen extends Component {
 
-
-
   componentDidMount = async () =>{
     let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
     console.log(this.props.uid);
     postsRef.on('value',snapshot => {
       if(snapshot.val().bio!="")
-      this.setState({
-        placeholderb:snapshot.val().bio,
-      });
+        this.setState({
+          placeholderb:snapshot.val().bio,
+        });
       if(snapshot.val().grad!="")
-      this.setState({
-        placeholderg:snapshot.val().grad,
-      });
+        this.setState({
+          placeholderg:snapshot.val().grad,
+        });
       if(snapshot.val().bio!="")
-      this.setState({
-        placeholderm:snapshot.val().major,
-      });
-      });
-    }
+        this.setState({
+          placeholderm:snapshot.val().major,
+        });
+      if(snapshot.val().classes.length!=0){
+        this.setState({
+          tags:{tagsArray:snapshot.val().classes},
+        });
+      }
+    });
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -589,45 +622,55 @@ class ProfileScreen extends Component {
       tags: state
     })
   };
-  updateProfile=(maj, gradient, bio)=>
+  updateProfile=(maj, gradient, bio, courses)=>
   {
+    console.log(courses.length);
     let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
     console.log(this.state.major)
     postsRef.once('value', function(snapshot) {
-      if(bio!=""&&bio!="temp")
-      {
-      postsRef.update({
-        'bio':bio
-      });
-
-    }
-if(maj!=""&&maj!="temp")
-{
-postsRef.update({
-  'major':maj,
-});
-
-
-}
-if(gradient!=""&&gradient!="temp")
-{
-postsRef.update({
-  'grad':gradient
-});
-
-}
-
+      if(bio!=""&&bio!="temp"){
+        postsRef.update({
+          'bio':bio
+        });
+      }
+      if(maj!=""&&maj!="temp"){
+        postsRef.update({
+          'major':maj,
+        });
+      }
+      if(gradient!=""&&gradient!="temp"){
+        postsRef.update({
+          'grad':gradient
+        });
+      }
+      if(courses.length != 0){
+        console.log("not empty");
+        postsRef.update({
+          'classes':courses
+        });
+      }
+      else{
+        Alert.alert("Must have at least 1 course");
+        return;
+      }
 
     });
+    if(courses.length == 0){
+      postsRef.on('value',snapshot => {
+        if(snapshot.val().classes.length!=0){
+          this.setState({
+            tags:{tagsArray:snapshot.val().classes},
+          });
+        }
+      });
+      return;
+    }
     this.props.navigation.navigate('Profile')
     Alert.alert("Successfully Updated Profile");
 }
-biochange=(val)=>{this.setState({bio:val});
-}
-majorchange=(val)=>{this.setState({major:val});
-}
-gradchange=(val)=>{this.setState({grad:val});
-}
+  biochange=(val)=>{this.setState({bio:val});}
+  majorchange=(val)=>{this.setState({major:val});}
+  gradchange=(val)=>{this.setState({grad:val});}
   render() {
     return(
       <ScrollView style={styles.mainWrapper}>
@@ -686,7 +729,7 @@ gradchange=(val)=>{this.setState({grad:val});
             </SafeAreaView>
             <View style = {{flexDirection: 'column',  alignItems: 'center'}}>
             <Button
-            onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio)}
+            onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
             title="Save Changes"
             buttonStyle={{backgroundColor: '#397BE2', width: 200}}
           />

@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     width: 400,
     height: 400,
     marginTop: 40,
-    marginBottom: 150
+    marginBottom: 0
   },
   tag: {
     width: 400,
