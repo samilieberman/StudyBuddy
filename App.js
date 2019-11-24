@@ -271,6 +271,7 @@ export default class App extends Component {
     return this.username;
   }
 
+
   render() {
     const isLoggedIn = this.state.isLoggedIn;
     if (isLoggedIn) {
@@ -375,14 +376,14 @@ class PostingsScreen extends Component {
 
   delete(key){
     let postsRef = firebase.database().ref("posts/"+key);
-    Alert.alert('Are you sure you want to delete?', "This can't be reversed",
+    Alert.alert('Are you sure you want to delete?', "This can't be reversed!",
       [
-        {text: 'Yes', onPress: () => postsRef.remove()},
         {
           text: 'Cancel',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
-        }
+        },
+        {text: 'Yes', onPress: () => postsRef.remove()}
       ]
     );
   }
@@ -442,14 +443,31 @@ class PostingsScreen extends Component {
       console.log("adding to DB...");
       console.log(value);
       let postsRef = firebase.database().ref("posts/");
-      postsRef.push({title:value.title,class:value.class,days:value.days,time:value.time,professor:value.professor,user:this.props.screenProps.data.displayName,img: this.props.screenProps.ppurl, groupSize: value.groupSize, meetingSpot: value.meetingSpot,description:value.description , uid:this.props.screenProps.uid}).getKey();
+      postsRef.push({
+        title:value.title,
+        class: value.class,
+        days: value.days,
+        time: value.time,
+        professor: value.professor,
+        user: this.props.screenProps.data.displayName,
+        img: this.props.screenProps.ppurl,
+        groupSize: value.groupSize,
+        meetingSpot: value.meetingSpot,
+        description: value.description,
+        uid: this.props.screenProps.uid
+      }).getKey();
+
+      if(value.description == ''){
+        value.description = 'N/A';
+      }
+
       this.setState({
         isPosting:false
       });
       Alert.alert("Successfully posted!");
     }
     else{
-      Alert.alert("Please fill out all the fields");
+      Alert.alert("Please fill out all the fields.");
     }
   }
 
@@ -610,16 +628,31 @@ class PostingsScreen extends Component {
           other:item
         });
       }}
+      titleStyle={{fontSize: 22, textDecorationLine: 'underline'}}
       title={item.title}
       subtitle={
         <View>
-          <Text>Class: {item.class} ({item.professor})</Text>
-          <Text>Days: {item.days}</Text>
-          <Text>Time: {item.time}</Text>
-          <Text>Group Size: {item.groupSize}</Text>
-          <Text>Meeting Spot: {item.meetingSpot}</Text>
-          <Text>Additional Info: {item.description}</Text>
-          <Text>User: {item.user}</Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15 }}>Class:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.class} ({item.professor}) </Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>Days:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.days}</Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>Time:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.time}</Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>Group Size:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.groupSize}</Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>Meeting Spot:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.meetingSpot}</Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>Additional Info:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.description}</Text>
+          </Text>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>User:
+            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.user}</Text>
+          </Text>
         </View>}
       leftAvatar={{
         size: 80,
@@ -812,6 +845,21 @@ class ProfileScreen extends Component {
       }
     });
   }
+
+
+    makeSure(){
+      Alert.alert("Are you sure you want to logout?","",
+        [
+          {
+            text: "No, go back!",
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'Yes', onPress: this.props.screenProps.signOut}
+        ]
+      );
+    }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -819,9 +867,9 @@ class ProfileScreen extends Component {
         tag: '',
         tagsArray: []
       },
-      bio:"temp",
-      grad:"temp",
-      major:"temp",
+      bio:"",
+      grad:"",
+      major:"",
       placeholderb:"Tell us about yourself..",
       placeholderg:"Year...",
       placeholderm:"Major...",
@@ -840,50 +888,29 @@ class ProfileScreen extends Component {
     let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
     console.log(this.state.major)
     postsRef.once('value', function(snapshot) {
-      if(bio!=""&&bio!="temp"){
+      if(bio!=""){
         postsRef.update({
           'bio':bio
         });
       }
-      if(maj!=""&&maj!="temp"){
+      if(maj!=""){
         postsRef.update({
           'major':maj,
         });
       }
-      if(gradient!=""&&gradient!="temp"){
+      if(gradient!=""){
         postsRef.update({
           'grad':gradient
         });
       }
-      //if(courses.length != 0){
-        //console.log("not empty");
       postsRef.update({
         'classes':courses
       });
-      //}
-      //else{
-      //  Alert.alert("Must have at least 1 course");
-      //  return;
-      //}
-
     });
-/*
-    if(courses.length == 0){
-      postsRef.on('value',snapshot => {
-        if(snapshot.val().classes.length!=0){
-          this.setState({
-            tags:{tagsArray:snapshot.val().classes},
-          });
-        }
-      });
-      return;
-    }*/
     this.props.navigation.navigate('Profile')
-    Alert.alert("Successfully Updated Profile");
+    Alert.alert("Successfully updated profile!");
 }
-  biochange=(val)=>{
-    this.setState({bio:val});
-  }
+  biochange=(val)=>{this.setState({bio:val});}
   majorchange=(val)=>{this.setState({major:val});}
   gradchange=(val)=>{this.setState({grad:val});}
   render() {
@@ -957,7 +984,7 @@ class ProfileScreen extends Component {
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
                 onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
                 autoCorrect={false}
-                tagStyle={{backgroundColor: '#fff'}}
+                tagStyle={{backgroundColor: '#fff', marginBottom: 10}}
                 tagTextStyle={{color: '#397BE2'}}
               />
             </SafeAreaView>
@@ -969,9 +996,9 @@ class ProfileScreen extends Component {
           />
 
           <Button
-            onPress={this.props.screenProps.signOut}
+            onPress={() => this.makeSure()}
             title="Logout"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, marginBottom: 30}}
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30}}
           />
           </View>
           </SafeAreaView>
