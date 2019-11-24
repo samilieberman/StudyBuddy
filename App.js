@@ -754,15 +754,15 @@ class ProfileScreen extends Component {
     postsRef.on('value',snapshot => {
       if(snapshot.val().bio!="")
         this.setState({
-          placeholderb:snapshot.val().bio,
+          bio:snapshot.val().bio,
         });
       if(snapshot.val().grad!="")
         this.setState({
-          placeholderg:snapshot.val().grad,
+          grad:snapshot.val().grad,
         });
       if(snapshot.val().bio!="")
         this.setState({
-          placeholderm:snapshot.val().major,
+          major:snapshot.val().major,
         });
       if(snapshot.val().classes!=undefined){
         this.setState({
@@ -778,12 +778,12 @@ class ProfileScreen extends Component {
         tag: '',
         tagsArray: []
       },
-      placeholderb:"Tell us about yourself..",
-      placeholderg:"Year...",
-      placeholderm:"Major...",
       bio:"temp",
       grad:"temp",
       major:"temp"
+      placeholderb:"Tell us about yourself..",
+      placeholderg:"Year...",
+      placeholderm:"Major...",
     };
 
   }
@@ -847,8 +847,6 @@ class ProfileScreen extends Component {
   gradchange=(val)=>{this.setState({grad:val});}
   render() {
     return(
-    
-      <ScrollView style={styles.mainWrapper}>
         <SafeAreaView style={styles.profileSafeArea1}>
           <SafeAreaView style = {styles.profileSafeArea2}>
             <Text style = {styles.profileNameStyle}>{this.props.screenProps.data.displayName}</Text>
@@ -865,6 +863,7 @@ class ProfileScreen extends Component {
                 <SafeAreaView style={styles.majorRow}>
                   <Input
                     placeholder={this.state.placeholderm}
+                    value={this.state.major}
                     label="Major: "
                     onChangeText={(maj) => this.majorchange(maj)}
                   />
@@ -878,9 +877,12 @@ class ProfileScreen extends Component {
               </SafeAreaView>
             </SafeAreaView>
           </SafeAreaView>
+          
+      
           <SafeAreaView style={styles.bio}>
-            <ScrollView style={{hieght: 400}}>
+          <ScrollView styles={{height: 500}}>
           <Input
+            value={this.state.bio}
             placeholder={this.state.placeholderb}
             label="Biography: "
             returnKeyType="done"
@@ -891,12 +893,12 @@ class ProfileScreen extends Component {
             maxLength={280}
             allowFontScaling={false}
           />
-            </ScrollView>
-            <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
+          </ScrollView>
+            <SafeAreaView style={{marginTop:30, justifyContent: 'center'}}>
               <Input
                 disabled
                 label = "Classes (seperate by comma to add a new class)"
-                inputContainerStyle={{borderBottomWidth: 0}}
+                inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
               />
               <TagInput
                 updateState={this.updateTagState}
@@ -934,7 +936,7 @@ class ProfileScreen extends Component {
           </View>
           </SafeAreaView>
         </SafeAreaView>
-      </ScrollView>
+
     );
   }
 }

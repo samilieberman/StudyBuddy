@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     borderColor: "#000000",
     borderWidth: 2,
-    marginTop: 13,
+    //marginTop: 13,
     marginLeft: 37
   },
   logOut: {
