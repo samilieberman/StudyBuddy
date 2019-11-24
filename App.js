@@ -545,6 +545,7 @@ class PostingsScreen extends Component {
   deleteicon(postuser, id){
     if(postuser==this.props.screenProps.data.displayName)
       return <Icon
+        size={30}
         name='delete'
         color='#f50'
         onPress={() => this.delete(id)} />
@@ -574,13 +575,16 @@ class PostingsScreen extends Component {
           <Text>User: {item.user}</Text>
         </View>}
       leftAvatar={{
+        size: 80,
         source: { uri: item.img },
       }}
       rightIcon={
         this.deleteicon(item.user, item.id)
       }
       bottomDivider
-      chevron
+      chevron={{
+        size: 30,
+      }}
     />
   )
 
@@ -689,7 +693,7 @@ class PostingsScreen extends Component {
       return(
         <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
         <SafeAreaView style={styles.backButton}>
-          <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
+          <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
         </SafeAreaView>
         <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user}/>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -708,7 +712,7 @@ class PostingsScreen extends Component {
         <ScrollView>
           <SafeAreaView>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
             </SafeAreaView>
             <Text style={styles.paragraph}>New Post</Text>
             <View style={styles.form}>
@@ -927,7 +931,7 @@ class OtherProfile extends Component {
     return(
       <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <SafeAreaView style={styles.backButton}>
-        <Icon name="arrow-back" size= "40" onPress={()=>this.goBack()}/>
+        <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
       </SafeAreaView>
         <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
           <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
