@@ -130,14 +130,14 @@ class ProfData extends React.Component
   }
 
     render(){
-    var classList = "";
-    if(this.state.clas != undefined){
-    for (var i = 0; i < this.state.clas.length; i++) {
-      classList = classList.concat(this.state.clas[i]);
-      if(i < this.state.clas.length - 1)
-      classList = classList.concat(", ");
-    }
-  }
+      var classList = "";
+      if(this.state.clas != undefined){
+        for (var i = 0; i < this.state.clas.length; i++) {
+          classList = classList.concat(this.state.clas[i]);
+          if(i < this.state.clas.length - 1)
+          classList = classList.concat(", ");
+        }
+      }
       return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
         <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
@@ -162,10 +162,12 @@ class ProfData extends React.Component
             </SafeAreaView>
           </SafeAreaView>
         </SafeAreaView>
+        <ScrollView style={{hieght: 400}}>
         <SafeAreaView style={styles.bio}>
           <Text style = {{fontSize: 20}}>Bio:</Text>
           <Text>{this.state.bio}</Text>
         </SafeAreaView>
+        </ScrollView>
         <SafeAreaView style = {{width: 350, marginTop: -300}}>
           <Text style = {{fontSize: 20}}> Classes: </Text>
           <Text>{classList}</Text>
@@ -365,7 +367,16 @@ class PostingsScreen extends Component {
 
   delete(key){
     let postsRef = firebase.database().ref("posts/"+key);
-    postsRef.remove();
+    Alert.alert('Are you sure you want to delete?', "This can't be reversed",
+      [
+        {text: 'Yes', onPress: () => postsRef.remove()},
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        }
+      ]
+    );
   }
 
   componentDidMount = async () =>{
@@ -695,7 +706,9 @@ class PostingsScreen extends Component {
         <SafeAreaView style={styles.backButton}>
           <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
         </SafeAreaView>
+        <View>
         <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user}/>
+        </View>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
               onPress={()=>this.props.navigation.navigate('Chat')}
@@ -827,11 +840,14 @@ class ProfileScreen extends Component {
     this.props.navigation.navigate('Profile')
     Alert.alert("Successfully Updated Profile");
 }
-  biochange=(val)=>{this.setState({bio:val});}
+  biochange=(val)=>{
+    this.setState({bio:val});
+  }
   majorchange=(val)=>{this.setState({major:val});}
   gradchange=(val)=>{this.setState({grad:val});}
   render() {
     return(
+    
       <ScrollView style={styles.mainWrapper}>
         <SafeAreaView style={styles.profileSafeArea1}>
           <SafeAreaView style = {styles.profileSafeArea2}>
@@ -863,6 +879,7 @@ class ProfileScreen extends Component {
             </SafeAreaView>
           </SafeAreaView>
           <SafeAreaView style={styles.bio}>
+            <ScrollView style={{hieght: 400}}>
           <Input
             placeholder={this.state.placeholderb}
             label="Biography: "
@@ -871,8 +888,10 @@ class ProfileScreen extends Component {
             enablesReturnKeyAutomatically={true}
             multiline={true}
             onChangeText={(big)=>this.biochange(big)}
+            maxLength={280}
+            allowFontScaling={false}
           />
-
+            </ScrollView>
             <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
               <Input
                 disabled
