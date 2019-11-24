@@ -347,6 +347,7 @@ class PostingsScreen extends Component {
       textInSearch:'',
       other:{whatever: ''},
       search: '',
+      courseChoice:[],
       selectedbio:"null",
       selectedgrad:"null",
       selectedmajor:"null",
@@ -379,11 +380,29 @@ class PostingsScreen extends Component {
     );
   }
 
+  reloadClasses =async () =>{
+  let classRef = firebase.database().ref("users/" + this.props.screenProps.uid);
+  classRef.once('value',snapshot => {
+    var inside = snapshot.val().classes;
+
+    this.setState({
+    courseChoice: inside
+    });
+  })
+  return 0;
+}
   componentDidMount = async () =>{
     let postsRef = firebase.database().ref("posts/");
-    this.mount=true;
-
+    let classRef = firebase.database().ref("users/" + this.props.screenProps.uid);
+    classRef.once('value',snapshot => {
+      var inside = snapshot.val().classes;
+  
+      this.setState({
+      courseChoice: inside
+      });
+    })
     postsRef.on('value',snapshot => {
+      
       const fbObject = snapshot.val();
       if(fbObject==null)
         return 0;
@@ -427,6 +446,7 @@ class PostingsScreen extends Component {
   }
 
   makepost(){
+    this.reloadClasses()
     this.setState({
       isPosting:true
     });
@@ -603,11 +623,13 @@ class PostingsScreen extends Component {
   render() {
 
     var test = ["hci", "eco", "Ethics"];
-    console.log(test);
-    test = Object.assign({}, test);
-    console.log(test);
+    var obj={};
+    for(var poop in this.state.courseChoice)
+    {
+      obj[this.state.courseChoice[poop]]=this.state.courseChoice[poop].toString();
+    }
 
-    //console.log(this.state);
+    console.log(obj);
 
     var groupSize = t.enums({
       "Study Partner": 'Study Partner (1)',
@@ -622,7 +644,7 @@ class PostingsScreen extends Component {
       "Any Time": 'Any Time'
     });
 
-    var course = t.enums(test);
+    var course = t.enums(obj);
 
     const Post = t.struct({
       title: t.String,
@@ -780,7 +802,7 @@ class ProfileScreen extends Component {
       },
       bio:"temp",
       grad:"temp",
-      major:"temp"
+      major:"temp",
       placeholderb:"Tell us about yourself..",
       placeholderg:"Year...",
       placeholderm:"Major...",
