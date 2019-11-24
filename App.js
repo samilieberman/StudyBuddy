@@ -5,8 +5,8 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { styles } from './styles.js'
-import TagInput from 'react-native-tags-input';
+import { styles } from './styles.js';
+import TagInput from './tagInput.js';
 import Posting from './Posting.js';
 import data from './app.json';
 import firebase from './firebase.js';
@@ -340,14 +340,26 @@ class PostingsScreen extends Component {
       posts:[],
       isPosting:false,
       seeingProfile:false,
+      textInSearch:'',
       other:{whatever: ''},
       search: '',
       selectedbio:"null",
       selectedgrad:"null",
       selectedmajor:"null",
+      tags: {
+        tag: '',
+        tagsArray: []
+      },
     };
     this.arrayholder = [];
+    this.tagholder = [];
+    this.SearchFilterFunction = this.SearchFilterFunction.bind(this);
   }
+  updateTagState = (state) => {
+    this.setState({
+      tags: state
+    })
+  };
 
   delete(key){
     let postsRef = firebase.database().ref("posts/"+key);
@@ -367,10 +379,11 @@ class PostingsScreen extends Component {
         return fbObject[key];
       });
       this.setState({
-        posts:newArr,
+        posts: newArr,
         dataSource: newArr,
       });
-      this.arrayholder = newArr;
+      //this.arrayholder = newArr;
+      this.tagholder = newArr;
     },
       (error) => {
         console.log(error)
@@ -425,7 +438,7 @@ class PostingsScreen extends Component {
   }
 
   search = text => {
-    console.log(text);
+    console.log(text+ "told you so muthafaka");
   };
 
   clear = () => {
@@ -433,8 +446,9 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
-    const newData = this.arrayholder.filter(function(item) { // Passing the inserted text in textinput
-
+    const textData = text.toUpperCase();
+    console.log("Text is  " + textData + ": the un-filtered data is " + this.tagholder);
+    const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
       const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
@@ -445,7 +459,6 @@ class PostingsScreen extends Component {
       const itemData7 = (item.groupSize   ? item.groupSize.toUpperCase()   : ''.toUpperCase());
       const itemData8 = (item.user        ? item.user.toUpperCase()        : ''.toUpperCase());
 
-      const textData = text.toUpperCase();
       return (itemData.indexOf(textData) > -1) ||
             (itemData2.indexOf(textData) > -1) ||
             (itemData3.indexOf(textData) > -1) ||
@@ -458,11 +471,74 @@ class PostingsScreen extends Component {
 
     // Setting the filtered newData on datasource
     // After setting the data it will automatically re-render the view
+    console.log("The filtered data is now " + newData);
     this.setState({
+      textInSearch: text,
       dataSource: newData,
       search: text,
     });
   }
+
+
+  SearchTag(tags){
+
+    var searchText = this.state.textInSearch;
+    // If there are no tags
+    if(tags.length == 0){
+      // If there is no text in the search bar
+      if(searchText == ''){
+        this.setState({
+          dataSource: this.state.posts
+        });
+      }
+      // If there is text in the search bar
+      else{
+        this.tagholder = this.state.posts;
+        this.SearchFilterFunction(searchText)
+      }
+      return;
+    }
+
+    var filteredData = [];
+    // If there are active tags
+    filteredData = this.state.posts;
+
+    for(var i = 0; i < tags.length; i++){
+
+      filteredData = filteredData.filter((item)=>{
+        const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
+        const itemData2 = (item.title       ? item.title.toUpperCase()       : ''.toUpperCase());
+        const itemData3 = (item.professor   ? item.professor.toUpperCase()   : ''.toUpperCase());
+        const itemData4 = (item.days        ? item.days.toUpperCase()        : ''.toUpperCase());
+        const itemData5 = (item.time        ? item.time.toUpperCase()        : ''.toUpperCase());
+        const itemData6 = (item.meetingSpot ? item.meetingSpot.toUpperCase() : ''.toUpperCase());
+        const itemData7 = (item.groupSize   ? item.groupSize.toUpperCase()   : ''.toUpperCase());
+        const itemData8 = (item.user        ? item.user.toUpperCase()        : ''.toUpperCase());
+
+        textData = tags[i].toUpperCase();
+        return (itemData.indexOf(textData) > -1) ||
+              (itemData2.indexOf(textData) > -1) ||
+              (itemData3.indexOf(textData) > -1) ||
+              (itemData4.indexOf(textData) > -1) ||
+              (itemData5.indexOf(textData) > -1) ||
+              (itemData6.indexOf(textData) > -1) ||
+              (itemData7.indexOf(textData) > -1) ||
+              (itemData8.indexOf(textData) > -1);
+        });
+        console.log("Filter " + i + ", " + textData + ": the filtered data is now " + filteredData);
+      }
+      this.tagholder = filteredData;
+      if(searchText != ''){
+        this.SearchFilterFunction(searchText);
+      }
+      else{
+        // After filter we are setting postings to new array
+        this.setState({
+          dataSource: filteredData
+        });
+      }
+    }
+
 
   deleteicon(postuser, id){
     if(postuser==this.props.screenProps.data.displayName)
@@ -542,6 +618,7 @@ class PostingsScreen extends Component {
       description: t.maybe(t.String),
     });
 
+
     if(this.state.posts.length==0 && !this.state.isPosting)
       return <TouchableOpacity onPress={()=>this.makepost()} style={{  // If database is empty
         width: 80,
@@ -560,6 +637,24 @@ class PostingsScreen extends Component {
               value={this.state.search}
               onChangeText={text => this.SearchFilterFunction(text)}
               onClear={text => this.SearchFilterFunction('')}
+            />
+            <TagInput
+              updateState={this.updateTagState}
+              tags={this.state.tags}
+              keysForTag={','}
+              onKey={()=> this.SearchTag(this.state.tags.tagsArray)}
+              onDelete={()=> this.SearchTag(this.state.tags.tagsArray)}
+              placeholder="Separate filters by commas.."
+              leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
+              leftElementContainerStyle={{marginLeft: 3}}
+              containerStyle={{width: 300}}
+              inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
+              inputStyle={{color: '#397BE2'}}
+              onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
+              onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
+              autoCorrect={false}
+              tagStyle={{backgroundColor: '#fff'}}
+              tagTextStyle={{color: '#397BE2'}}
             />
           </SafeAreaView>
           <FlatList
@@ -674,6 +769,7 @@ class ProfileScreen extends Component {
 
   }
   updateTagState = (state) => {
+    console.log("hi"+state)
     this.setState({
       tags: state
     })
@@ -780,7 +876,17 @@ class ProfileScreen extends Component {
                 updateState={this.updateTagState}
                 tags={this.state.tags}
                 keysForTag={','}
-                placeholder="Class code"
+                placeholder="Class code.."
+                leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
+                leftElementContainerStyle={{marginLeft: 3}}
+                containerStyle={{width: 300}}
+                inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
+                inputStyle={{color: '#397BE2'}}
+                onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
+                onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
+                autoCorrect={false}
+                tagStyle={{backgroundColor: '#fff'}}
+                tagTextStyle={{color: '#397BE2'}}
               />
             </SafeAreaView>
             <View style = {{flexDirection: 'column',  alignItems: 'center'}}>
@@ -793,7 +899,9 @@ class ProfileScreen extends Component {
           <Button
             onPress={this.props.screenProps.signOut}
             title="Logout of Facebook"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 180, width: 200}}
+
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, marginBottom: 30}}
+
           />
           </View>
           </SafeAreaView>
