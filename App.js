@@ -111,7 +111,6 @@ class ProfData extends React.Component
       major:"null",
       grad:"null",
       clas:[]
-
     };
   }
 
@@ -139,12 +138,19 @@ class ProfData extends React.Component
         }
       }
       return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-        <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
-          <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{this.props.user}</Text>
+      <SafeAreaView style={{backgroundColor: '#ffffff'}}>
+
+        <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'center'}}>
+           <SafeAreaView style={{right: 80}}>
+             <Icon name="arrow-back" size= {40} onPress={this.props.goBack}/>
+          </SafeAreaView>
+          <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
+            <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
+          </SafeAreaView>
         </SafeAreaView>
+        
         <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-        <SafeAreaView style={styles.imageRow}>
+        <SafeAreaView style={styles.otherImageRow}>
           <Avatar style={styles.pic}
             large
             rounded
@@ -154,41 +160,27 @@ class ProfData extends React.Component
           <SafeAreaView style={styles.majorRowColumn}>
             <SafeAreaView style={styles.majorRow}>
               <Text style = {{fontSize: 20}}>Major:</Text>
-              <Text> {this.state.major}</Text>
+              <Text style = {{fontSize: 16}}>{this.state.major}</Text>
             </SafeAreaView>
             <SafeAreaView style={styles.gradYearStack}>
               <Text style = {{fontSize: 20}}>Grad Year:</Text>
-              <Text> {(this.state.grad)}</Text>
+              <Text style = {{fontSize: 16}}>{this.state.grad}</Text>
             </SafeAreaView>
           </SafeAreaView>
         </SafeAreaView>
-        <ScrollView style={{hieght: 400}}>
-        <SafeAreaView style={styles.bio}>
+        <SafeAreaView style={styles.bioClass}>
+        <SafeAreaView style={styles.otherBio}>
           <Text style = {{fontSize: 20}}>Bio:</Text>
-          <Text>{this.state.bio}</Text>
+          <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
         </SafeAreaView>
-        </ScrollView>
-        <SafeAreaView style = {{width: 350, marginTop: -300}}>
-          <Text style = {{fontSize: 20}}> Classes: </Text>
-          <Text>{classList}</Text>
+        <SafeAreaView style = {{width: 400, marginLeft: 30}}>
+          <Text style = {{fontSize: 20}}>Classes:</Text>
+          <Text style = {{fontSize: 16}}>{classList}</Text>
+        </SafeAreaView>
         </SafeAreaView>
       </SafeAreaView>)
+      }
     }
-
-    }
-/*
-  let postsRef = firebase.database().ref("users/"+props.uid);
-  console.log("hi")
-  var hi;
-  postsRef.once('value',snapshot => {
-    console.log(snapshot.val().bio)
-      hi=snapshot.val().bio;
-      console.log(hi);
-      return <Text>{hi}</Text>;
-    });
-  return <Text>{hi}</Text>;
-  */
-
 
 export default class App extends Component {
 
@@ -489,7 +481,7 @@ class PostingsScreen extends Component {
     }
   }
 
-  goBack(){
+  goBack = () =>{
     this.setState({
       isPosting:false,
       seeingProfile:false,
@@ -628,30 +620,31 @@ class PostingsScreen extends Component {
           other:item
         });
       }}
-      titleStyle={{fontSize: 22, textDecorationLine: 'underline'}}
+      titleStyle={{fontSize: 22, marginBottom: 5}}
+      //textDecorationLine: 'underline'
       title={item.title}
       subtitle={
         <View>
           <Text style={{fontWeight: 'bold', fontSize: 15 }}>Class:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.class} ({item.professor}) </Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.class} ({item.professor}) </Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>Days:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.days}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.days}</Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>Time:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.time}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.time}</Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>Group Size:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.groupSize}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.groupSize}</Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>Meeting Spot:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.meetingSpot}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.meetingSpot}</Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>Additional Info:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.description}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.description}</Text>
           </Text>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>User:
-            <Text style={{fontWeight: 'normal', fontSize: 13}}> {item.user}</Text>
+            <Text style={{fontWeight: 'normal', fontSize: 15}}> {item.user}</Text>
           </Text>
         </View>}
       leftAvatar={{
@@ -776,21 +769,18 @@ class PostingsScreen extends Component {
       var userData = JSON.parse(convert);
       console.log(userData);
       return(
-        <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-        <SafeAreaView style={styles.backButton}>
-          <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
+        <SafeAreaView>
+        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
+
+        <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Button
+            onPress={()=>this.props.navigation.navigate('Chat')}
+            title="Request to Chat"
+            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, alignSelf: 'center'}}
+          />
         </SafeAreaView>
-        <View>
-        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user}/>
-        </View>
-          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Button
-              onPress={()=>this.props.navigation.navigate('Chat')}
-              title="Request to Chat"
-              buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
-            />
-          </SafeAreaView>
-        </ScrollView>
+
+        </SafeAreaView>
       );
     }
     //create posting screen
@@ -798,10 +788,14 @@ class PostingsScreen extends Component {
       return(
         <ScrollView>
           <SafeAreaView>
+            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
             <SafeAreaView style={styles.backButton}>
               <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
             </SafeAreaView>
-            <Text style={styles.paragraph}>New Post</Text>
+            <SafeAreaView style={{justifyContent: 'center'}}>
+              <Text style={styles.paragraph}>New Post</Text>
+            </SafeAreaView>
+            </SafeAreaView>
             <View style={styles.form}>
               <Form type={Post} ref={c => this._form = c}/>
             </View>
@@ -936,7 +930,7 @@ class ProfileScreen extends Component {
                     onChangeText={(maj) => this.majorchange(maj)}
                   />
                 </SafeAreaView>
-              <SafeAreaView style={styles.gradYearStack}>
+              <SafeAreaView style={styles.gradYearStack2}>
                 <Input
                   value={this.state.grad}
                   placeholder={this.state.placeholderg}
@@ -948,25 +942,28 @@ class ProfileScreen extends Component {
           </SafeAreaView>
 
 
-          <SafeAreaView style={styles.bio}>
-          <ScrollView styles={{height: 500}}>
-          <Input
-            value={this.state.bio}
-            placeholder={this.state.placeholderb}
-            label="Biography: "
-            returnKeyType="done"
-            blurOnSubmit={true}
-            enablesReturnKeyAutomatically={true}
-            multiline={true}
-            onChangeText={(big)=>this.biochange(big)}
-            maxLength={280}
-            allowFontScaling={false}
-          />
-          </ScrollView>
-            <SafeAreaView style={{marginTop:30, justifyContent: 'center'}}>
+          <SafeAreaView style={styles.bioClass}>
+            <SafeAreaView>
+              <ScrollView>
+              <Input
+                value={this.state.bio}
+                placeholder={this.state.placeholderb}
+                label="Biography: "
+                returnKeyType="done"
+                blurOnSubmit={true}
+                enablesReturnKeyAutomatically={true}
+                multiline={true}
+                onChangeText={(big)=>this.biochange(big)}
+                maxLength={280}
+                allowFontScaling={false}
+              />
+            </ScrollView>
+          </SafeAreaView>
+          
+            <SafeAreaView style ={{marginTop:30}} >
               <Input
                 disabled
-                label = "Classes (seperate by comma to add a new class)"
+                label = "Classes (seperate by comma):"
                 inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
               />
               <TagInput
@@ -978,7 +975,7 @@ class ProfileScreen extends Component {
                 placeholder="Class code.."
                 leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
                 leftElementContainerStyle={{marginLeft: 3}}
-                containerStyle={{width: 300}}
+                containerStyle={{width: 400}}
                 inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
                 inputStyle={{color: '#397BE2'}}
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -988,135 +985,30 @@ class ProfileScreen extends Component {
                 tagTextStyle={{color: '#397BE2'}}
               />
             </SafeAreaView>
-            <View style = {{flexDirection: 'column',  alignItems: 'center'}}>
-            <Button
-            onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
-            title="Save Changes"
-            buttonStyle={{backgroundColor: '#397BE2', width: 200}}
-          />
+            <SafeAreaView style = {{flexDirection: 'column',  alignItems: 'center', justifyContent:'space-between', marginTop:20}}>
 
-          <Button
-            onPress={() => this.makeSure()}
-            title="Logout"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30}}
-          />
-          </View>
-          </SafeAreaView>
-        </SafeAreaView>
-
-    );
-  }
-}
-
-///////////////////////Steven's code///////////////////////
-
-
-class OtherProfile extends Component {
-  render() {
-    var convert = JSON.stringify(this.state.other);
-    var userData = JSON.parse(convert);
-    var firstName = (userData.user).substr(0,(userData.user).indexOf(' '));
-    return(
-      <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <SafeAreaView style={styles.backButton}>
-        <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
-      </SafeAreaView>
-        <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-          <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
-            <Text style = {{fontSize: 35, lineHeight: 42, marginLeft: 0}}>{userData.user}</Text>
-          </SafeAreaView>
-          <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
-          <SafeAreaView style={styles.imageRow}>
-            <Avatar style={styles.pic}
-              large
-              rounded
-              source={{uri: userData.img}}
-              activeOpacity={0.7}
+            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <Button
+              onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
+              title="Save Changes"
+              buttonStyle={{backgroundColor: '#397BE2', width: 200}}
             />
-            <SafeAreaView style={styles.majorRowColumn}>
-              <SafeAreaView style={styles.majorRow}>
-                <Text style = {{fontSize: 20}}>Major:</Text>
-                <Text> {firstName}'s major</Text>
-              </SafeAreaView>
-              <SafeAreaView style={styles.gradYearStack}>
-                <Text style = {{fontSize: 20}}>Grad Year:</Text>
-                <Text> {firstName}'s grad year</Text>
-              </SafeAreaView>
             </SafeAreaView>
+          
+          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Button
+              onPress={() => this.makeSure()}
+             title="Logout"
+              buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center'}}
+            />
           </SafeAreaView>
-            <SafeAreaView style={styles.bio}>
-              <Input disabled
-                placeholder="Tell us about yourself.."
-                label="Biography: "
-                returnKeyType="done"
-                blurOnSubmit={true}
-                enablesReturnKeyAutomatically={true}
-                multiline={true}
-               />
-            </SafeAreaView>
+          </SafeAreaView>
+
+          </SafeAreaView>
         </SafeAreaView>
-        <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Button
-            onPress={()=>this.props.navigation.navigate('Chat')}
-            title="Request to Chat"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
-          />
-        </SafeAreaView>
-      </ScrollView>
     );
   }
 }
-
-class PostingsCreation extends Component {
-  state = {clas: ''}
-  updateClas = (clas) => {
-    this.setState({ clas: clas })
-  }
-  render() {
-    return(
-      <View style={styles.mainWrapper}>
-        <View style={styles.iconRow}>
-          <Icon name="arrow-back" style={styles.backIcon} />
-          <TextInput placeholder="Assignment" textBreakStrategy="simple" style={styles.postingTextInput} />
-        </View>
-        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
-        <ScrollView>
-          <Text style={{fontSize: 20, marginTop: 50, marginLeft: 35, marginBottom: -50}}>Class</Text>
-          <Picker selectedValue = {this.state.clas} onValueChange = {this.updateClas}>
-            <Picker.Item label = "HCI" value = "HCI" />
-            <Picker.Item label = "Eco" value = "ECO" />
-            <Picker.Item label = "Ethics" value = "Ethics" />
-          </Picker>
-          <Text>Choice: {this.state.clas}</Text>
-        </ScrollView>
-      </View>
-    );
-  }
-}
-
-class PostingDetails extends Component {
-  render() {
-    return(
-      <View style={styles.mainWrapper}>
-        <View style={styles.iconRow}>
-          <Icon name="arrow-back" style={styles.backIcon} />
-          <Text textBreakStrategy="simple" style={styles.postingTextInput}>Assignment</Text>
-        </View>
-        <View style={{width: 450, height: 1, backgroundColor: "black", marginTop: 24}} />
-        <Text style={{fontSize: 20, marginTop: 50, marginLeft: 30}}>Class:</Text>
-        <Text style={styles.preferredDayS}>Preferred Day(s)</Text>
-        <Text style={styles.preferredTimeS}>Preferred Time(s)</Text>
-        <Text style={styles.user}>User</Text>
-        <Text style={styles.groupSize}>Group Size</Text>
-        <Text style={styles.meeting}>Preferred Meeting Spot</Text>
-        <EntypoIcon name="chat" style={styles.chatIcon} />
-      </View>
-    );
-  }
-}
-
-///////////////////////Steven's code///////////////////////
-
 
 class LoginScreen extends Component {
   render() {

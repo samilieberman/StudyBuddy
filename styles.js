@@ -7,10 +7,10 @@ const styles = StyleSheet.create({
 
   },
   profileSafeArea1: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    marginTop: 50
   },
   profileSafeArea2: {
     height: 40,
@@ -226,7 +226,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   paragraph:{
-    margin:24,
     marginBottom: 10,
     fontSize:30,
     fontWeight:'bold',
@@ -237,7 +236,8 @@ const styles = StyleSheet.create({
   },
   majorRow: {
     height: 25,
-    marginRight: 16
+    marginRight: 16,
+    marginTop: 5
   },
   textInput4: {
     top: 0,
@@ -248,6 +248,11 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   gradYearStack: {
+    width: 230,
+    height: 27,
+    marginTop: 30
+  },
+  gradYearStack2: {
     width: 230,
     height: 27,
     marginTop: 50
@@ -264,6 +269,13 @@ const styles = StyleSheet.create({
     marginLeft: 37,
     marginRight: 14
   },
+  otherImageRow: {
+    width: 400,
+    height: 118,
+    flexDirection: "row",
+    marginTop: 25,
+    marginLeft: 10,
+  },
   pic: {
     width: 100,
     height: 100,
@@ -274,7 +286,17 @@ const styles = StyleSheet.create({
     width: 400,
     height: 400,
     marginTop: 40,
-    marginBottom: 0
+    marginBottom: 20,
+    marginLeft: 20
+  },
+  otherBio:{
+    marginLeft: 30,
+    marginBottom: 20
+  },
+  bioClass:{
+    width: 400,
+    height: 400,
+    marginTop: 40
   },
   tag: {
     width: 400,
@@ -282,9 +304,9 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   backButton: {
-    marginTop: 60,
-    marginLeft: 15,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    right: 110,
+    justifyContent: 'flex-start',
   },
   tagContainer: {
     flex: 1,
