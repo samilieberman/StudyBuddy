@@ -131,11 +131,13 @@ class ProfData extends React.Component
 
     render(){
     var classList = "";
+    if(this.state.clas != undefined){
     for (var i = 0; i < this.state.clas.length; i++) {
       classList = classList.concat(this.state.clas[i]);
       if(i < this.state.clas.length - 1)
       classList = classList.concat(", ");
     }
+  }
       return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
         <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
