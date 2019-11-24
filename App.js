@@ -130,14 +130,14 @@ class ProfData extends React.Component
   }
 
     render(){
-    var classList = "";
-    if(this.state.clas != undefined){
-    for (var i = 0; i < this.state.clas.length; i++) {
-      classList = classList.concat(this.state.clas[i]);
-      if(i < this.state.clas.length - 1)
-      classList = classList.concat(", ");
-    }
-  }
+      var classList = "";
+      if(this.state.clas != undefined){
+        for (var i = 0; i < this.state.clas.length; i++) {
+          classList = classList.concat(this.state.clas[i]);
+          if(i < this.state.clas.length - 1)
+          classList = classList.concat(", ");
+        }
+      }
       return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
         <SafeAreaView style = {{height: 40, marginTop: 10, alignSelf: "center"}}>
@@ -365,7 +365,16 @@ class PostingsScreen extends Component {
 
   delete(key){
     let postsRef = firebase.database().ref("posts/"+key);
-    postsRef.remove();
+    Alert.alert('Are you sure you want to delete?', "This can't be reversed",
+      [
+        {text: 'Yes', onPress: () => postsRef.remove()},
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        }
+      ]
+    );
   }
 
   componentDidMount = async () =>{
