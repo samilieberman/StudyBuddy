@@ -332,6 +332,7 @@ send = messages => {
       text,
       user,
       createdAt: this.timestamp,
+    };
     this.ref.push(message);
   }
 };
