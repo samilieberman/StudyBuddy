@@ -334,6 +334,12 @@ class ChatScreen extends Component {
   }
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////POSTINGS SCREEN//////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
 class PostingsScreen extends Component {
 
   mount=false;
@@ -345,6 +351,7 @@ class PostingsScreen extends Component {
       isPosting:false,
       seeingProfile:false,
       textInSearch:'',
+      refreshing: false,
       other:{whatever: ''},
       search: '',
       courseChoice:[],
@@ -396,13 +403,13 @@ class PostingsScreen extends Component {
     let classRef = firebase.database().ref("users/" + this.props.screenProps.uid);
     classRef.once('value',snapshot => {
       var inside = snapshot.val().classes;
-  
+
       this.setState({
       courseChoice: inside
       });
     })
     postsRef.on('value',snapshot => {
-      
+
       const fbObject = snapshot.val();
       if(fbObject==null)
         return 0;
@@ -413,6 +420,7 @@ class PostingsScreen extends Component {
       this.setState({
         posts: newArr,
         dataSource: newArr,
+        refreshing: false,
       });
       //this.arrayholder = newArr;
       this.tagholder = newArr;
@@ -582,6 +590,14 @@ class PostingsScreen extends Component {
         onPress={() => this.delete(id)} />
     else
       return <View/>;
+  };
+
+  handleRefresh = () => {
+    this.setState({
+      refreshing: true,
+    }, () => {
+      this.componentDidMount();
+    });
   }
 
 
@@ -699,7 +715,10 @@ class PostingsScreen extends Component {
           <FlatList
             data={this.state.dataSource}
             extraData={this.state}
-            renderItem={ this.renderItem}
+            renderItem={this.renderItem}
+            keyExtractor={item => item.title}
+            refreshing={this.state.refreshing}
+            onRefresh={this.handleRefresh}
           />
           <TouchableOpacity style={{
             width: 60,
@@ -892,6 +911,7 @@ class ProfileScreen extends Component {
                 </SafeAreaView>
               <SafeAreaView style={styles.gradYearStack}>
                 <Input
+                  value={this.state.grad}
                   placeholder={this.state.placeholderg}
                   label="Graduation Year: "
                   onChangeText={(gradyr) =>this.gradchange(gradyr)}
@@ -899,8 +919,8 @@ class ProfileScreen extends Component {
               </SafeAreaView>
             </SafeAreaView>
           </SafeAreaView>
-          
-      
+
+
           <SafeAreaView style={styles.bio}>
           <ScrollView styles={{height: 500}}>
           <Input
@@ -950,10 +970,8 @@ class ProfileScreen extends Component {
 
           <Button
             onPress={this.props.screenProps.signOut}
-            title="Logout of Facebook"
-
+            title="Logout"
             buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, marginBottom: 30}}
-
           />
           </View>
           </SafeAreaView>
