@@ -885,6 +885,7 @@ class ProfileScreen extends Component {
             multiline={true}
             onChangeText={(big)=>this.biochange(big)}
             maxLength={280}
+            allowFontScaling={false}
           />
             </ScrollView>
             <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
