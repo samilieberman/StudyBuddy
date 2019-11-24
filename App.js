@@ -162,10 +162,12 @@ class ProfData extends React.Component
             </SafeAreaView>
           </SafeAreaView>
         </SafeAreaView>
+        <ScrollView style={{hieght: 400}}>
         <SafeAreaView style={styles.bio}>
           <Text style = {{fontSize: 20}}>Bio:</Text>
           <Text>{this.state.bio}</Text>
         </SafeAreaView>
+        </ScrollView>
         <SafeAreaView style = {{width: 350, marginTop: -300}}>
           <Text style = {{fontSize: 20}}> Classes: </Text>
           <Text>{classList}</Text>
@@ -691,7 +693,9 @@ class PostingsScreen extends Component {
         <SafeAreaView style={styles.backButton}>
           <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
         </SafeAreaView>
+        <View>
         <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user}/>
+        </View>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
               onPress={()=>this.props.navigation.navigate('Chat')}
@@ -830,6 +834,7 @@ class ProfileScreen extends Component {
   gradchange=(val)=>{this.setState({grad:val});}
   render() {
     return(
+    
       <ScrollView style={styles.mainWrapper}>
         <SafeAreaView style={styles.profileSafeArea1}>
           <SafeAreaView style = {styles.profileSafeArea2}>
@@ -861,6 +866,7 @@ class ProfileScreen extends Component {
             </SafeAreaView>
           </SafeAreaView>
           <SafeAreaView style={styles.bio}>
+            <ScrollView style={{hieght: 400}}>
           <Input
             placeholder={this.state.placeholderb}
             label="Biography: "
@@ -871,7 +877,7 @@ class ProfileScreen extends Component {
             onChangeText={(big)=>this.biochange(big)}
             maxLength={280}
           />
-
+            </ScrollView>
             <SafeAreaView style={{marginTop:30, justifyContent: 'center', marginBottom:10}}>
               <Input
                 disabled

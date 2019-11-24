@@ -2,8 +2,9 @@ import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
   mainWrapper: {
-    flex: 1,
-    backgroundColor: '#d0d0d0'
+    //flex: 1,
+    backgroundColor: '#d0d0d0',
+
   },
   profileSafeArea1: {
     flex: 1,
