@@ -172,6 +172,7 @@ class PostingsScreen extends Component {
       posts:[],
       isPosting:false,
       seeingProfile:false,
+      textInSearch:'',
       other:{whatever: ''},
       search: '',
       tags: {
@@ -273,7 +274,8 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
-    console.log(this.tagholder);
+    const textData = text.toUpperCase();
+    console.log("Text is  " + textData + ": the un-filtered data is " + this.tagholder);
     const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
@@ -285,7 +287,6 @@ class PostingsScreen extends Component {
       const itemData7 = (item.groupSize   ? item.groupSize.toUpperCase()   : ''.toUpperCase());
       const itemData8 = (item.user        ? item.user.toUpperCase()        : ''.toUpperCase());
 
-      const textData = text.toUpperCase();
       return (itemData.indexOf(textData) > -1) ||
             (itemData2.indexOf(textData) > -1) ||
             (itemData3.indexOf(textData) > -1) ||
@@ -298,7 +299,9 @@ class PostingsScreen extends Component {
 
     // Setting the filtered newData on datasource
     // After setting the data it will automatically re-render the view
+    console.log("Text is  " + textData + ": the filtered data is now " + newData);
     this.setState({
+      textInSearch: text,
       dataSource: newData,
       search: text,
     });
@@ -307,14 +310,27 @@ class PostingsScreen extends Component {
 
   SearchTag(tags){
     if(tags.length == 0){
-      this.tagholder = this.state.posts;
-      this.setState({
-        dataSource: this.state.posts
-      });
+      // this.tagholder = this.state.posts;
+      if(this.state.textInSearch == ''){
+        this.setState({
+          dataSource: this.state.posts
+        });
+      }
+      else{
+        this.tagholder = this.state.posts;
+        this.SearchFilterFunction(this.state.textInSearch)
+      }
       return;
     }
     //console.log("1." + this.state.tags.tagsArray[0]);
-    var filteredData = this.state.posts;
+    var filteredData = [];
+    if(this.state.textInSearch == ''){
+      filteredData = this.state.posts;
+    }
+    else {
+      filteredData = this.state.dataSource;
+      console.log("Now we got " + filteredData);
+    }
     var textData = [];
 
     console.log("yo i tried here boy");
