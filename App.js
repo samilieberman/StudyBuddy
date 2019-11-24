@@ -289,6 +289,7 @@ class ChatScreen extends Component {
 
   state = {
     messages: [],
+    ref:""
   }
   get user() {
     return {
@@ -297,21 +298,55 @@ class ChatScreen extends Component {
       _id: firebase.uid
     };
   }
+  get ref() {
+    return firebase.database().ref('messages');
+  }
+  parse = snapshot => {
+    const { timestamp: numberStamp, text, user } = snapshot.val();
+    const { key: id } = snapshot;
+    const { key: _id } = snapshot; //needed for giftedchat
+    const timestamp = new Date(numberStamp);
+    const message = {
+      id,
+      _id,
+      timestamp,
+      text,
+      user,
+    };
+    return message;
+  }
+  refOn = callback => {
+    this.ref
+      .limitToLast(20)
+      .on('child_added', snapshot => callback(this.parse(snapshot)));
+  }
+
+
+get timestamp() {
+  return firebase.database.ServerValue.TIMESTAMP;
+}
+send = messages => {
+  for (let i = 0; i < messages.length; i++) {
+    const { text, user } = messages[i];
+    const message = {
+      text,
+      user,
+      createdAt: this.timestamp,
+    this.ref.push(message);
+  }
+};
+
   componentWillMount() {
     this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ],
+      messages: [],
     })
+  }
+  componentDidMount() {
+    this.refOn(message =>
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, message),
+      }))
+    );
   }
 
   onSend(messages = []) {
@@ -325,9 +360,12 @@ class ChatScreen extends Component {
       <KeyboardAvoidingView style={{flex:1}}>
         <GiftedChat
         messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
+        onSend={this.send}
         user={{
-          _id: 1,
+          name:this.props.screenProps.data.displayName,
+          avatar: this.props.screenProps.ppurl,
+          id: this.props.screenProps.uid,
+          _id: this.props.screenProps.uid,
         }}
       />
       </KeyboardAvoidingView>
