@@ -236,7 +236,7 @@ export default class App extends Component {
                 'bio': "",
                 'major':"",
                 'grad':"",
-                "classes":[""]
+                "classes":[]
               });
             }
               });
@@ -514,7 +514,7 @@ class PostingsScreen extends Component {
     test = Object.assign({}, test);
     console.log(test);
 
-    console.log(this.state);
+    //console.log(this.state);
 
     var groupSize = t.enums({
       "Study Partner": 'Study Partner (1)',
@@ -650,11 +650,11 @@ class ProfileScreen extends Component {
         this.setState({
           placeholderm:snapshot.val().major,
         });
-      //if(snapshot.val().classes[0]!=""){
+      if(snapshot.val().classes!=undefined){
         this.setState({
           tags:{tagsArray:snapshot.val().classes},
         });
-      //}
+      }
     });
   }
   constructor(props) {
@@ -699,18 +699,19 @@ class ProfileScreen extends Component {
           'grad':gradient
         });
       }
-      if(courses.length != 0){
-        console.log("not empty");
-        postsRef.update({
-          'classes':courses
-        });
-      }
-      else{
-        Alert.alert("Must have at least 1 course");
-        return;
-      }
+      //if(courses.length != 0){
+        //console.log("not empty");
+      postsRef.update({
+        'classes':courses
+      });
+      //}
+      //else{
+      //  Alert.alert("Must have at least 1 course");
+      //  return;
+      //}
 
     });
+/*
     if(courses.length == 0){
       postsRef.on('value',snapshot => {
         if(snapshot.val().classes.length!=0){
@@ -720,7 +721,7 @@ class ProfileScreen extends Component {
         }
       });
       return;
-    }
+    }*/
     this.props.navigation.navigate('Profile')
     Alert.alert("Successfully Updated Profile");
 }
