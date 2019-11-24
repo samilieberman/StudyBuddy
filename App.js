@@ -52,6 +52,26 @@ componentDidMount() {
 //console.log(test);
 //test.hci = "diff";
 
+//componentDidMount = async () =>{
+//  let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
+//  console.log(this.props.uid);
+//  postsRef.on('value',snapshot => {
+//console.log(snapshot.val());
+//  });
+//}
+//constructor(props) {
+//  super(props);
+//  this.state = {
+//    test:"test"
+//  };
+
+//}
+/*
+var test = ["hci", "eco", "Ethics"];
+console.log(test);
+test = Object.assign({}, test);
+console.log(test);
+
 var groupSize = t.enums({
   "Study Partner": 'Study Partner (1)',
   "Small": 'Small Group (< 4)',
@@ -65,11 +85,11 @@ var time = t.enums({
   "Any Time": 'Any Time'
 });
 
-//var course = t.enums(test);
+var course = t.enums(test);
 
 const Post = t.struct({
   title: t.String,
-  class: t.String,
+  class: course,
   professor: t.String,
   days: t.String,
   time: time,
@@ -77,6 +97,7 @@ const Post = t.struct({
   meetingSpot: t.String,
   description: t.maybe(t.String),
 });
+*/
 //}
 var options = {
 
@@ -215,7 +236,7 @@ export default class App extends Component {
                 'bio': "",
                 'major':"",
                 'grad':"",
-                "classes":[]
+                "classes":[""]
               });
             }
               });
@@ -363,6 +384,7 @@ class PostingsScreen extends Component {
 
   addpost(){
     var value = this._form.getValue();
+    //console.log(value);
     if(value){
       console.log("adding to DB...");
       console.log(value);
@@ -486,6 +508,40 @@ class PostingsScreen extends Component {
 
 
   render() {
+
+    var test = ["hci", "eco", "Ethics"];
+    console.log(test);
+    test = Object.assign({}, test);
+    console.log(test);
+
+    console.log(this.state);
+
+    var groupSize = t.enums({
+      "Study Partner": 'Study Partner (1)',
+      "Small": 'Small Group (< 4)',
+      "Big": 'Big Group (≥ 4)',
+      "No Preference": 'No Preference'
+    });
+    var time = t.enums({
+      "Morning": 'Morning',
+      "Afternoon": 'Afternoon',
+      "Evening": 'Evening',
+      "Any Time": 'Any Time'
+    });
+
+    var course = t.enums(test);
+
+    const Post = t.struct({
+      title: t.String,
+      class: course,
+      professor: t.String,
+      days: t.String,
+      time: time,
+      groupSize: groupSize,
+      meetingSpot: t.String,
+      description: t.maybe(t.String),
+    });
+
     if(this.state.posts.length==0 && !this.state.isPosting)
       return <TouchableOpacity onPress={()=>this.makepost()} style={{  // If database is empty
         width: 80,
@@ -594,11 +650,11 @@ class ProfileScreen extends Component {
         this.setState({
           placeholderm:snapshot.val().major,
         });
-      if(snapshot.val().classes.length!=0){
+      //if(snapshot.val().classes[0]!=""){
         this.setState({
           tags:{tagsArray:snapshot.val().classes},
         });
-      }
+      //}
     });
   }
   constructor(props) {
