@@ -299,7 +299,7 @@ class PostingsScreen extends Component {
 
     // Setting the filtered newData on datasource
     // After setting the data it will automatically re-render the view
-    console.log("Text is  " + textData + ": the filtered data is now " + newData);
+    console.log("The filtered data is now " + newData);
     this.setState({
       textInSearch: text,
       dataSource: newData,
@@ -309,31 +309,27 @@ class PostingsScreen extends Component {
 
 
   SearchTag(tags){
+
+    var searchText = this.state.textInSearch;
+    // If there are no tags
     if(tags.length == 0){
-      // this.tagholder = this.state.posts;
-      if(this.state.textInSearch == ''){
+      // If there is no text in the search bar
+      if(searchText == ''){
         this.setState({
           dataSource: this.state.posts
         });
       }
+      // If there is text in the search bar
       else{
         this.tagholder = this.state.posts;
-        this.SearchFilterFunction(this.state.textInSearch)
+        this.SearchFilterFunction(searchText)
       }
       return;
     }
-    //console.log("1." + this.state.tags.tagsArray[0]);
-    var filteredData = [];
-    if(this.state.textInSearch == ''){
-      filteredData = this.state.posts;
-    }
-    else {
-      filteredData = this.state.dataSource;
-      console.log("Now we got " + filteredData);
-    }
-    var textData = [];
 
-    console.log("yo i tried here boy");
+    var filteredData = [];
+    // If there are active tags
+    filteredData = this.state.posts;
 
     for(var i = 0; i < tags.length; i++){
 
@@ -360,9 +356,15 @@ class PostingsScreen extends Component {
         console.log("Filter " + i + ", " + textData + ": the filtered data is now " + filteredData);
       }
       this.tagholder = filteredData;
-      this.setState({
-        dataSource: filteredData // after filter we are setting users to new array
-      });
+      if(searchText != ''){
+        this.SearchFilterFunction(searchText);
+      }
+      else{
+        // After filter we are setting postings to new array
+        this.setState({
+          dataSource: filteredData
+        });
+      }
     }
 
 
