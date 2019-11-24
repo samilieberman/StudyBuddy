@@ -877,6 +877,8 @@ class ProfileScreen extends Component {
                 updateState={this.updateTagState}
                 tags={this.state.tags}
                 keysForTag={','}
+                onDelete ={()=> console.log("dum")}
+                onKey={()=> console.log("dum")}
                 placeholder="Class code.."
                 leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
                 leftElementContainerStyle={{marginLeft: 3}}
