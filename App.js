@@ -142,7 +142,7 @@ class ProfData extends React.Component
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
           </SafeAreaView>
         </SafeAreaView>
-        
+
         <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
         <SafeAreaView style={styles.otherImageRow}>
           <Avatar style={styles.pic}
@@ -763,12 +763,12 @@ class PostingsScreen extends Component {
     }
 //seeing someone else's profile
     else if(this.state.seeingProfile && !this.state.isPosting){
-      var convert = JSON.stringify(this.state.other);
-      var userData = JSON.parse(convert);
-      console.log(userData);
+      //var convert = JSON.stringify(this.state.other);
+      //var userData = JSON.parse(convert);
+      //console.log(userData);
       return(
         <SafeAreaView>
-        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
+          <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
 
         <SafeAreaView style={{flexDirection:'column'}}>
           <Button
@@ -956,7 +956,7 @@ class ProfileScreen extends Component {
               />
             </ScrollView>
           </SafeAreaView>
-          
+
             <SafeAreaView style ={{marginTop:30}} >
               <Input
                 disabled
@@ -990,8 +990,8 @@ class ProfileScreen extends Component {
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
               buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-            /></SafeAreaView>   
-          
+            /></SafeAreaView>
+
             <SafeAreaView>
             <Button
               onPress={() => this.makeSure()}
