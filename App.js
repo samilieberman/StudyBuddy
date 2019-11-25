@@ -334,7 +334,7 @@ send = messages => {
   componentWillMount() {
     this.setState({
       messages: [],
-      otherUser:this.props.navigation.getParam('otheruid', ''),
+      otherUser:"",
     })
   }
 
@@ -414,7 +414,7 @@ this.refOn(message =>
 
 reRef=async(convoid)=>
 {
-  this.setState({ref :convoid}, ()=>{ console.log(convoid+ "print"); this.refOn(message =>
+  this.setState({ref :convoid}, ()=>{this.refOn(message =>
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, message)
     }))
@@ -428,10 +428,18 @@ reRef=async(convoid)=>
     this.setState({
       otherUser:"",
       messages:[],
+
     });
+    this.props.navigation.setParams({'otheruid':''})
   }
   componentWillUnmount()
-  {this.focusListener.remove()}
+  {
+    if(this.state.ref!='')
+      {
+        firebase.database().ref(this.state.ref).off()
+      }
+    this.focusListener.remove()
+  }
 
   render() {
     console.log(this.props.navigation.getParam('otheruid','it broke'))
