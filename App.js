@@ -134,13 +134,14 @@ class ProfData extends React.Component
       return (
       <SafeAreaView style={{backgroundColor: '#ffffff'}}>
 
-        <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'center'}}>
+        <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'space-between'}}>
            <SafeAreaView>
-             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{position: 'absolute', right: 30, top:1}}/>
+             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{left:20}}/>
           </SafeAreaView>
           <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
           </SafeAreaView>
+          <SafeAreaView></SafeAreaView>
         </SafeAreaView>
 
         <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
@@ -787,13 +788,14 @@ class PostingsScreen extends Component {
       return(
         <ScrollView>
           <SafeAreaView>
-            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} iconStyle={{position: 'absolute', right: 50, top:1}}/>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} iconStyle = {{left:20}}/>
             </SafeAreaView>
             <SafeAreaView style={{justifyContent: 'center'}}>
               <Text style={styles.paragraph}>New Post</Text>
             </SafeAreaView>
+            <SafeAreaView></SafeAreaView>
             </SafeAreaView>
             <View style={styles.form}>
               <Form type={Post} ref={c => this._form = c}/>
