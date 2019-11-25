@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS, ColorPropType} from 'react-native';
+import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS, ColorPropType, TouchableNativeFeedbackBase} from 'react-native';
 import { Button, Icon, Avatar, Text, SearchBar, ListItem, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -286,13 +286,17 @@ export default class App extends Component {
 // Postings, Chat, Profile, Login
 
 class ChatScreen extends Component {
-
-  state = {
+  constructor(props){
+    super(props);
+    this.state = {
     messages: [],
-    ref:""
-  }
+    ref:"",
+    otherUser:this.props.navigation.getParam('uid', ''),
+    convoList:{},
+  }}
   get user() {
     return {
+ 
       name: this.props.screenProps.displayName,
       avatar: this.props.screenProps.ppurl,
       _id: firebase.uid
@@ -316,7 +320,8 @@ class ChatScreen extends Component {
     return message;
   }
   refOn = callback => {
-    this.ref
+    console.log("callback: " +this.state.ref)
+    firebase.database().ref(this.state.ref)
       .limitToLast(20)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
@@ -333,32 +338,77 @@ send = messages => {
       user,
       createdAt: this.timestamp,
     };
-    this.ref.push(message);
+    console.log(this.state.ref + "sending")
+    firebase.database().ref(this.state.ref).push(message);
   }
 };
-
   componentWillMount() {
     this.setState({
       messages: [],
+      otherUser:this.props.navigation.getParam('otheruid', ''),
     })
   }
-  componentDidMount() {
-    this.refOn(message =>
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, message),
-      }))
-    );
-  }
 
-  onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
+  componentDidMount = async() =>{
+ 
+
+    let convoRef=firebase.database().ref('users/'+this.props.screenProps.uid).child('convos/');
+    convoRef.on('value', (snapshot)=>
+    {
+      this.setState({otherUser:this.props.navigation.getParam('otheruid', '')})
+      console.log(snapshot.val()+this.props.navigation.getParam('otheruid', ''))
+      if(snapshot.val()==null && this.props.navigation.getParam('otheruid', '')!=null){
+        console.log('here?');
+        var convoId=this.ref.push();
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
+    }
+    else{
+      var found=false;
+    for(var k in snapshot.val())
+    {
+      console.log(snapshot.val()[k].otherUser+ " " +this.props.navigation.getParam('otheruid', ''))
+      if(snapshot.val()[k].otherUser==this.props.navigation.getParam('otheruid', '')){ 
+        this.setState({ref:snapshot.val()[k].convoid})
+        found=true;
+    }}
+    if(!found)
+      {
+        var convoId=this.ref.push();
+        console.log(firebase.database().ref("/"))
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        this.setState({ref:convoId})
+      }
+      this.refOn(message =>
+        this.setState(previousState => ({
+          messages: GiftedChat.append(previousState.messages, message),
+        })),
+      );
+  }}) 
+  };
+
+  goBack(){
+    this.setState({
+      otherUser:"",
+    });
   }
+  componentWillUnmount() {
+    this.refOff();
+  }
+  
 
   render() {
+    if(this.state.otherUser!="")
+    {
+      console.log(this.state.otherUser)
+    }
     return(
       <KeyboardAvoidingView style={{flex:1}}>
+          <SafeAreaView style={styles.backButton}>
+      <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
+    </SafeAreaView>
         <GiftedChat
         messages={this.state.messages}
         onSend={this.send}
@@ -528,6 +578,7 @@ class PostingsScreen extends Component {
     }
   }
 
+  
   goBack(){
     this.setState({
       isPosting:false,
@@ -708,6 +759,11 @@ class PostingsScreen extends Component {
   )
 
 
+  requestChat=(uid)=>{
+    this.props.navigation.navigate('Chat',{otheruid:uid})
+
+  }
+
   render() {
 
     var test = ["hci", "eco", "Ethics"];
@@ -824,7 +880,7 @@ class PostingsScreen extends Component {
         </View>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
-              onPress={()=>this.props.navigation.navigate('Chat')}
+              onPress={()=>this.requestChat(this.state.other.uid)}
               title="Request to Chat"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
             />
