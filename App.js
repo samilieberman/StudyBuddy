@@ -164,15 +164,15 @@ class ProfData extends React.Component
         </SafeAreaView>
 
       <SafeAreaView style={{flexDirection:'row', marginLeft:30,marginRight: 20, marginBottom: 50}}>
-        <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
-          <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
+        <SafeAreaView style={{flexDirection:'column'}}>
+        <View><Text style = {{fontSize: 20}}>Classes:</Text></View>
+        <View style={{marginBottom:20}}><Text style = {{fontSize: 16}}>{classList}</Text></View>
+        <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
           <View style={{height: 120}} >
           <ScrollView>
             <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
           </ScrollView>
           </View>
-          <View><Text style = {{fontSize: 20}}>Classes:</Text></View>
-          <View><Text style = {{fontSize: 16}}>{classList}</Text></View>
         </SafeAreaView>
       </SafeAreaView>
 
@@ -929,6 +929,7 @@ class ProfileScreen extends Component {
                   value={this.state.major}
                   label="Major: "
                   onChangeText={(maj) => this.majorchange(maj)}
+                  maxLength={19}
                 />
               </SafeAreaView>
               <SafeAreaView style={styles.gradYearStack2}>
@@ -937,6 +938,7 @@ class ProfileScreen extends Component {
                   placeholder={this.state.placeholderg}
                   label="Graduation Year: "
                   onChangeText={(gradyr) =>this.gradchange(gradyr)}
+                  maxLength={15}
                 />
               </SafeAreaView>
             </SafeAreaView>
@@ -944,25 +946,7 @@ class ProfileScreen extends Component {
 
           <SafeAreaView style={{flexDirection:'row', marginTop: 40, marginBottom: 40}}>
           <SafeAreaView style={{flexDirection:'column', marginLeft:20,marginRight:20}}>
-            <View style={{marginBottom:5, padding:20}}>
-            <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
-              <Input
-                value={this.state.bio}
-                placeholder={this.state.placeholderb}
-                label="Biography: "
-                returnKeyType="done"
-                blurOnSubmit={true}
-                enablesReturnKeyAutomatically={true}
-                multiline={true}
-                onChangeText={(big)=>this.biochange(big)}
-                maxLength={100}
-                allowFontScaling={false}
-                style={{maxHeight: 200}}
-              />
-            </ScrollView>
-            </View>
-
-            <View>
+          <View>
               <View style={{marginLeft:20,marginRight:20}}>
               <Input
                 disabled
@@ -988,6 +972,25 @@ class ProfileScreen extends Component {
                 tagTextStyle={{color: '#397BE2'}}
               />
             </View>
+
+            <KeyboardAvoidingView style={{marginBottom:5, padding:20}}>
+            <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+              <Input
+                value={this.state.bio}
+                placeholder={this.state.placeholderb}
+                label="Biography: "
+                returnKeyType="done"
+                blurOnSubmit={true}
+                enablesReturnKeyAutomatically={true}
+                multiline={true}
+                onChangeText={(big)=>this.biochange(big)}
+                maxLength={100}
+                allowFontScaling={false}
+                style={{maxHeight: 200}}
+              />
+            </ScrollView>
+            </KeyboardAvoidingView>
+
 
             <SafeAreaView style={{marginBottom: 50}}>
             <Button
