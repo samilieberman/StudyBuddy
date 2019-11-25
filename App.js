@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, SafeAreaView, TextInput, Picker, ActionSheetIOS, ColorPropType} from 'react-native';
+import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, Platform, SafeAreaView, TextInput, Picker, ActionSheetIOS, ColorPropType} from 'react-native';
 import { Button, Icon, Avatar, Text, SearchBar, ListItem, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -309,7 +309,10 @@ class ChatScreen extends Component {
 
   render() {
     return(
-      <KeyboardAvoidingView style={{flex:1}}>
+      <KeyboardAvoidingView
+      style={{flex:1}}
+      behavior={Platform.OS === 'ios' ? "" : "padding"}
+      >
         <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
@@ -791,7 +794,7 @@ class PostingsScreen extends Component {
             <View style={styles.form}>
               <Form type={Post} ref={c => this._form = c}/>
             </View>
-            
+
             <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
               <View style={{marginBottom: 10}}>
                 <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:150}} onPress={()=>this.addpost()}/>
