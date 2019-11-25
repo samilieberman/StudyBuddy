@@ -292,7 +292,7 @@ class ChatScreen extends Component {
     messages: [],
     ref:"",
     otherUser:this.props.navigation.getParam('uid', ''),
-    convoList:{},
+    convoList:[],
   }}
   get user() {
     return {
@@ -360,8 +360,8 @@ send = messages => {
       if(snapshot.val()==null){
         console.log(this.props.this.props.navigation.getParam('otheruid', ''));
         var convoId=this.ref.push();
-        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''), 'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
     }
     else{
@@ -377,8 +377,8 @@ send = messages => {
       {
         var convoId=this.ref.push();
         console.log(firebase.database().ref("/"))
-        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''), 'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
    
@@ -392,16 +392,46 @@ this.refOn(message =>
 }
 )
     }
-    
-  };
+
+
+
+
+    let classRef = firebase.database().ref("users/"+this.props.screenProps.uid)
+    classRef.once('value',snapshot1 => {
+    var x=[]
+    var counter=0;
+    for(var y in snapshot1.val().convos)
+    {
+      x[counter]=snapshot1.val().convos[y].convoid
+      console.log(x[y])
+      counter++;
+    }
+    this.setState({convoList:x})
+    console.log(x)
+    })
+ // things I need name of other 
+     //console.log(newArr);
+      //convoList:snapshot.val()
+     // });
+    };
+
+
+reRef=async()=>
+{
+     this.refOn(message =>
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, message),
+      })),
+    );
+    this.setState({otherUser:"test"})
+    }
+
+
 
   goBack(){
     this.setState({
       otherUser:"",
     });
-  }
-  componentWillUnmount() {
-    this.refOff();
   }
   
 
@@ -410,7 +440,11 @@ this.refOn(message =>
     {
       console.log(this.state.otherUser)
 
-      return (<SafeAreaView><Text>conversations</Text></SafeAreaView>)
+      return (<SafeAreaView><FlatList
+      data={this.state.convoList}
+      renderItem={({ item }) => <View style={{margin:30}}><Text style={{fontSize:30}} onPress={()=>{this.setState({messages:[],ref:item});this.reRef()}}>{item}</Text><Text style={{fontSize:30}}> gap</Text></View>}
+    />
+    </SafeAreaView>)
     }
     else 
     return(
