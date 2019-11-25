@@ -334,7 +334,7 @@ send = messages => {
   componentWillMount() {
     this.setState({
       messages: [],
-      otherUser:this.props.navigation.getParam('otheruid', ''),
+      otherUser:"",
     })
   }
 
@@ -428,7 +428,9 @@ reRef=async(convoid)=>
     this.setState({
       otherUser:"",
       messages:[],
+     
     });
+    this.props.navigation.setParams({'otheruid':''})
   }
   componentWillUnmount()
   {this.focusListener.remove()}
@@ -438,7 +440,8 @@ reRef=async(convoid)=>
     
     if(this.state.otherUser=="")
     {
-      return (<SafeAreaView><FlatList
+      return (<SafeAreaView>
+        <Text></Text><FlatList
       data={this.state.convoList}
       renderItem={({ item }) => (
         <ListItem
