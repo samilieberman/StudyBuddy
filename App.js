@@ -142,7 +142,7 @@ class ProfData extends React.Component
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
           </SafeAreaView>
         </SafeAreaView>
-        
+
         <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
         <SafeAreaView style={styles.otherImageRow}>
           <Avatar style={styles.pic}
@@ -601,6 +601,7 @@ class PostingsScreen extends Component {
       refreshing: true,
     }, () => {
       this.componentDidMount();
+      this.SearchTag(this.state.tags.tagsArray);
     });
   }
 
@@ -722,7 +723,7 @@ class PostingsScreen extends Component {
               placeholder="Separate filters by commas.."
               leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
               leftElementContainerStyle={{marginLeft: 3}}
-              containerStyle={{width: 300}}
+              containerStyle={{width: 414}}
               inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
               inputStyle={{}}
               onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -952,7 +953,7 @@ class ProfileScreen extends Component {
               />
             </ScrollView>
           </SafeAreaView>
-          
+
             <SafeAreaView style ={{marginTop:30}} >
               <Input
                 disabled
@@ -968,7 +969,7 @@ class ProfileScreen extends Component {
                 placeholder="Class code.."
                 leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
                 leftElementContainerStyle={{marginLeft: 3}}
-                containerStyle={{width: 400}}
+                containerStyle={{width: 414}}
                 inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
                 inputStyle={{}}
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -986,8 +987,8 @@ class ProfileScreen extends Component {
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
               buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-            /></SafeAreaView>   
-          
+            /></SafeAreaView>
+
             <SafeAreaView>
             <Button
               onPress={() => this.makeSure()}
