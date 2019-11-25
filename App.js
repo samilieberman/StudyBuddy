@@ -958,7 +958,7 @@ class PostingsScreen extends Component {
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
               onPress={()=>this.requestChat(this.state.other.uid,  this.state.other.img, this.state.other.user)}
-              title="Request to Chat"
+              title="Start Chatting Now"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
             />
           </SafeAreaView>
