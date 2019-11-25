@@ -350,6 +350,11 @@ send = messages => {
   }
 
   componentDidMount = async() =>{
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+
+    
+
+
     if (this.props.navigation.getParam('otheruid', '')!='')
     {
     let convoRef=firebase.database().ref('users/'+this.props.screenProps.uid).child('convos/');
@@ -357,11 +362,12 @@ send = messages => {
     {
       this.setState({otherUser:this.props.navigation.getParam('otheruid', '')})
       console.log(snapshot.val()+this.props.navigation.getParam('otheruid', ''))
+      console.log(this.props.navigation.getParam('name', '')+this.props.navigation.getParam('avatar', ''))
       if(snapshot.val()==null){
-        console.log(this.props.this.props.navigation.getParam('otheruid', ''));
+        console.log(this.props.navigation.getParam('otheruid', ''));
         var convoId=this.ref.push();
-        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),"otherName":this.props.navigation.getParam('name', ''), 'avatar':this.props.navigation.getParam('avatar', '')})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
     }
     else{
@@ -376,9 +382,9 @@ send = messages => {
     if(!found)
       {
         var convoId=this.ref.push();
-        console.log(firebase.database().ref("/"))
-        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        console.log(this.props.navigation.getParam('name', '')+this.props.navigation.getParam('avatar', ''))
+        convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''), "otherName":this.props.navigation.getParam('name', ''), 'avatar':this.props.navigation.getParam('avatar', '')})
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
    
@@ -391,7 +397,8 @@ this.refOn(message =>
 );
 }
 )
-    }
+
+}
 
 
 
@@ -400,9 +407,10 @@ this.refOn(message =>
     classRef.once('value',snapshot1 => {
     var x=[]
     var counter=0;
+    
     for(var y in snapshot1.val().convos)
     {
-      x[counter]=snapshot1.val().convos[y].convoid
+      x[counter]={'convoid':snapshot1.val().convos[y].convoid,'avatar':snapshot1.val().convos[y].avatar,'name':snapshot1.val().convos[y].otherName}
       console.log(x[y])
       counter++;
     }
@@ -413,6 +421,7 @@ this.refOn(message =>
      //console.log(newArr);
       //convoList:snapshot.val()
      // });
+    })
     };
 
 
@@ -431,24 +440,46 @@ reRef=async()=>
   goBack(){
     this.setState({
       otherUser:"",
+      messages:[],
     });
   }
-  
+  componentWillUnmount()
+  {}
 
   render() {
+    console.log(this.props.navigation.getParam('otheruid','it broke'))
+    
     if(this.state.otherUser=="")
     {
-      console.log("I want to play borderlands" + this.props.navigation.getParam('uid','it broke'))
+      
 
       return (<SafeAreaView><FlatList
       data={this.state.convoList}
-      renderItem={({ item }) => <View style={{margin:30}}><TouchableOpacity style={{fontSize:30, backgroundColor:'blue'}} onPress={()=>{this.setState({messages:[],ref:item});this.reRef()}}><Text style={{fontSize:30}}>{item}></Text></TouchableOpacity></View>}
+      renderItem={({ item }) => (
+        <ListItem
+        onPress={()=>{
+          this.setState({ref :item.convoid});
+          console.log(this.state.ref+item.convoid)
+          this.reRef(item.convod)
+        }}
+        titleStyle={{fontSize: 22}}
+        title={item.name}
+        leftAvatar={{
+          size: 80,
+          source: {uri: item.avatar},
+        }}
+        bottomDivider
+        chevron={{
+          size: 30,
+        }}
+      />
+    
+      )}
     />
     </SafeAreaView>)
     }
     else {
-      console.log("I want to play borderlands" + this.props.navigation.getParam('uid','it broke'))
-    return(
+      return(
       
       <KeyboardAvoidingView style={{flex:1}}>
           <SafeAreaView style={styles.backButton}>
@@ -805,8 +836,8 @@ class PostingsScreen extends Component {
   )
 
 
-  requestChat=(uid)=>{
-    this.props.navigation.navigate('Chat',{otheruid:uid})
+  requestChat=(uid, avi, nam)=>{
+    this.props.navigation.navigate('Chat',{otheruid:uid, avatar:avi, name:nam})
 
   }
 
@@ -926,7 +957,7 @@ class PostingsScreen extends Component {
         </View>
           <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
-              onPress={()=>this.requestChat(this.state.other.uid)}
+              onPress={()=>this.requestChat(this.state.other.uid,  this.state.other.img, this.state.other.user)}
               title="Request to Chat"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200}}
             />
