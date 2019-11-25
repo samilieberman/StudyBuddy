@@ -135,8 +135,8 @@ class ProfData extends React.Component
       <SafeAreaView style={{backgroundColor: '#ffffff'}}>
 
         <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'center'}}>
-           <SafeAreaView style={{right: 80}}>
-             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} style={{position: 'absolute',right: 80}}/>
+           <SafeAreaView>
+             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} style={{position: 'absolute'}}/>
           </SafeAreaView>
           <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
@@ -162,16 +162,16 @@ class ProfData extends React.Component
             </SafeAreaView>
           </SafeAreaView>
         </SafeAreaView>
-        <SafeAreaView style={styles.bioClass}>
-          <SafeAreaView style={styles.otherBio}>
-            <Text style = {{fontSize: 20}}>Bio:</Text>
-            <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
-          </SafeAreaView>
-          <SafeAreaView style = {{width: 400, marginLeft: 30}}>
-            <Text style = {{fontSize: 20}}>Classes:</Text>
-            <Text style = {{fontSize: 16}}>{classList}</Text>
-          </SafeAreaView>
+
+      <SafeAreaView style={{flexDirection:'row', width: 400, justifyContent: 'center', marginTop: 20}}>
+        <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
+          <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
+          <ScrollView style={{marginBottom:10}}><Text style = {{fontSize: 16}}>{this.state.bio}</Text></ScrollView>
+          <View><Text style = {{fontSize: 20}}>Classes:</Text></View>
+          <View><Text style = {{fontSize: 16}}>{classList}</Text></View>
         </SafeAreaView>
+        </SafeAreaView>
+
       </SafeAreaView>)
       }
     }
@@ -766,14 +766,13 @@ class PostingsScreen extends Component {
         <SafeAreaView>
           <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
 
-          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Button
-              onPress={()=>this.props.navigation.navigate('Chat')}
-              title="Request to Chat"
-              buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center'}}
-            />
-          </SafeAreaView>
-
+        <SafeAreaView style={{flexDirection:'column'}}>
+          <Button
+            onPress={()=>this.props.navigation.navigate('Chat')}
+            title="Request to Chat"
+            buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position: 'absolute'}}
+          />
+        </SafeAreaView>
         </SafeAreaView>
       );
     }
@@ -784,7 +783,7 @@ class PostingsScreen extends Component {
           <SafeAreaView>
             <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} style={{position: 'absolute', right: 110}}/>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} style={{position: 'absolute'}}/>
             </SafeAreaView>
             <SafeAreaView style={{justifyContent: 'center'}}>
               <Text style={styles.paragraph}>New Post</Text>

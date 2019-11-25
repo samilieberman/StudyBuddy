@@ -290,8 +290,8 @@ const styles = StyleSheet.create({
     marginLeft: 20
   },
   otherBio:{
-    marginLeft: 30,
-    marginBottom: 20
+    marginLeft: 20,
+    marginRight: 20,
   },
   bioClass:{
     width: 400,
@@ -306,7 +306,6 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    right: 110
   },
   tagContainer: {
     flex: 1,
