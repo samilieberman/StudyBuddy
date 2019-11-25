@@ -307,7 +307,7 @@ class ChatScreen extends Component {
     };
     return message;
   }
-  refOn = callback => {
+  refOn =async(callback) => {
     console.log(this.state.ref + "this works now")
     firebase.database().ref(this.state.ref)
       .limitToLast(20)
@@ -324,6 +324,7 @@ send = messages => {
     const message = {
       text,
       user,
+      _id:Math.round(Math.random() * 1000000),
       createdAt: this.timestamp,
     };
     console.log(this.state.ref + "sending")
@@ -411,19 +412,19 @@ this.refOn(message =>
     };
 
 
-reRef=async()=>
+reRef=async(convoid)=>
 {
-     this.refOn(message =>
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, message),
-      })),
-    );
-    this.setState({otherUser:"test"})
-    }
+  this.setState({ref :convoid}, ()=>{ console.log(convoid+ "print"); this.refOn(message =>
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, message)
+    }))
+  )}),
+     this.setState({otherUser:"test"})
+  }
 
 
 
-  goBack(){
+  goBack=()=>{
     this.setState({
       otherUser:"",
       messages:[],
@@ -442,9 +443,7 @@ reRef=async()=>
       renderItem={({ item }) => (
         <ListItem
         onPress={()=>{
-          this.setState({ref :item.convoid});
-          console.log(this.state.ref+item.convoid)
-          this.reRef(item.convod)
+          this.reRef(item.convoid)
         }}
         titleStyle={{fontSize: 22}}
         title={item.name}
@@ -640,7 +639,7 @@ class PostingsScreen extends Component {
   }
 
   
-  goBack(){
+  goBack=()=>{
     this.setState({
       isPosting:false,
       seeingProfile:false,
