@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     overflow:'hidden',
+    marginLeft: 15
   },
   bio: {
     width: 400,
