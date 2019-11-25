@@ -350,7 +350,7 @@ send = messages => {
   }
 
   componentDidMount = async() =>{
-    if (this.props.navigation.getParam('otheruid', '')=='')
+    if (this.props.navigation.getParam('otheruid', '')!='')
     {
     let convoRef=firebase.database().ref('users/'+this.props.screenProps.uid).child('convos/');
     convoRef.once('value', (snapshot)=>
