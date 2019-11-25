@@ -993,12 +993,8 @@ class ProfileScreen extends Component {
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
               buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-<<<<<<< HEAD
-            /></SafeAreaView>
-=======
             />
             </SafeAreaView>
->>>>>>> 71528c0f790e4d024293d1c831d3596faaedfdce
 
             <SafeAreaView>
             <Button
