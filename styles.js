@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    marginTop: 50
+    marginTop: 25
   },
   profileSafeArea2: {
     height: 40,
-    marginTop: 30,
+    marginTop: 15,
     alignSelf: "center"
   },
   profileSafeArea3: {

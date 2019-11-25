@@ -3,6 +3,7 @@ import { View, Alert, TouchableOpacity, Image , FlatList, KeyboardAvoidingView, 
 import { Button, Icon, Avatar, Text, SearchBar, ListItem, Input} from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { styles } from './styles.js';
@@ -905,6 +906,10 @@ class ProfileScreen extends Component {
   gradchange=(val)=>{this.setState({grad:val});}
   render() {
     return(
+      <KeyboardAwareScrollView
+      extraScrollHeight	= {110}
+      enableOnAndroid
+      >
         <SafeAreaView style={styles.profileSafeArea1}>
 
           <SafeAreaView style = {styles.profileSafeArea2}>
@@ -942,15 +947,17 @@ class ProfileScreen extends Component {
             </SafeAreaView>
           </SafeAreaView>
 
-          <SafeAreaView style={{flexDirection:'row', marginTop: 40, marginBottom: 40}}>
+          <SafeAreaView style={{flexDirection:'row', marginTop: 40, marginBottom: 0}}>
+
           <SafeAreaView style={{flexDirection:'column', marginLeft:20,marginRight:20}}>
           <View>
               <View style={{marginLeft:20,marginRight:20}}>
-              <Input
-                disabled
-                label = "Classes (seperate by comma):"
-                inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
-              /></View>
+                <Input
+                  disabled
+                  label = "Classes (seperate by comma):"
+                  inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
+                />
+              </View>
               <TagInput
                 updateState={this.updateTagState}
                 tags={this.state.tags}
@@ -970,9 +977,7 @@ class ProfileScreen extends Component {
                 tagTextStyle={{color: '#397BE2'}}
               />
             </View>
-
-            <KeyboardAvoidingView style={{marginBottom:5, padding:20}}>
-            <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+            <SafeAreaView style= {{marginLeft:20,marginRight:20,flex: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between', marginTop:10, marginBottom: 5}}>
               <Input
                 value={this.state.bio}
                 placeholder={this.state.placeholderb}
@@ -986,31 +991,27 @@ class ProfileScreen extends Component {
                 allowFontScaling={false}
                 style={{maxHeight: 200}}
               />
-            </ScrollView>
-            </KeyboardAvoidingView>
-
-
-            <SafeAreaView style={{marginBottom: 50}}>
-            <Button
-              onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
-              title="Save Changes"
-              buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-            />
             </SafeAreaView>
 
-            <View>
-            <Button
-              onPress={() => this.makeSure()}
-             title="Logout"
-              buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center', position:'absolute'}}
-            /></View>
+            <SafeAreaView style={{flex: 1, flexDirection: 'row',marginBottom: 0, marginTop: 20}}>
+              <Button
+                onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
+                title="Save Changes"
+                buttonStyle={{backgroundColor: '#397BE2', width: 150, alignSelf: 'center', marginLeft: 40, marginRight:20}}
+              />
+              <Button
+                onPress={() => this.makeSure()}
+               title="Logout"
+                buttonStyle={{backgroundColor: '#397BE2', marginTop: 0, width: 150, alignSelf: 'center'}}
+              />
+            </SafeAreaView>
 
           {/* </SafeAreaView> */}
-          </SafeAreaView>
 
           </SafeAreaView>
-
+          </SafeAreaView>
         </SafeAreaView>
+        </KeyboardAwareScrollView>
     );
   }
 }
