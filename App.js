@@ -786,7 +786,11 @@ class PostingsScreen extends Component {
     //create posting screen
     else if(this.state.isPosting && !this.state.seeingProfile){
       return(
-        <ScrollView>
+        <KeyboardAwareScrollView
+        extraHeight={200}
+        extraScrollHeight	= {75}
+        enableOnAndroid
+        >
           <SafeAreaView style={{flexDirection: 'column'}}>
             <SafeAreaView style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
               <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
@@ -805,7 +809,7 @@ class PostingsScreen extends Component {
               </View>
             </SafeAreaView>
           </SafeAreaView>
-        </ScrollView>
+        </KeyboardAwareScrollView>
       );
     }
   }
