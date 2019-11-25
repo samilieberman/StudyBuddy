@@ -163,14 +163,18 @@ class ProfData extends React.Component
           </SafeAreaView>
         </SafeAreaView>
 
-      <SafeAreaView style={{flexDirection:'row', width: 400, justifyContent: 'center', marginTop: 20}}>
+      <SafeAreaView style={{flexDirection:'row', marginTop: 20, marginLeft: 20,marginRight: 20, marginBottom: 50}}>
         <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
           <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
-          <ScrollView style={{marginBottom:10}}><Text style = {{fontSize: 16}}>{this.state.bio}</Text></ScrollView>
+          <View style={{height: 80}} >
+          <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+            <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
+          </ScrollView>
+          </View>
           <View><Text style = {{fontSize: 20}}>Classes:</Text></View>
           <View><Text style = {{fontSize: 16}}>{classList}</Text></View>
         </SafeAreaView>
-        </SafeAreaView>
+      </SafeAreaView>
 
       </SafeAreaView>)
       }
