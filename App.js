@@ -142,7 +142,7 @@ class ProfData extends React.Component
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
           </SafeAreaView>
         </SafeAreaView>
-        
+
         <SafeAreaView style={{width: 450, height: 1, backgroundColor: "black", marginTop: 20}} />
         <SafeAreaView style={styles.otherImageRow}>
           <Avatar style={styles.pic}
@@ -163,14 +163,14 @@ class ProfData extends React.Component
           </SafeAreaView>
         </SafeAreaView>
         <SafeAreaView style={styles.bioClass}>
-        <SafeAreaView style={styles.otherBio}>
-          <Text style = {{fontSize: 20}}>Bio:</Text>
-          <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
-        </SafeAreaView>
-        <SafeAreaView style = {{width: 400, marginLeft: 30}}>
-          <Text style = {{fontSize: 20}}>Classes:</Text>
-          <Text style = {{fontSize: 16}}>{classList}</Text>
-        </SafeAreaView>
+          <SafeAreaView style={styles.otherBio}>
+            <Text style = {{fontSize: 20}}>Bio:</Text>
+            <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
+          </SafeAreaView>
+          <SafeAreaView style = {{width: 400, marginLeft: 30}}>
+            <Text style = {{fontSize: 20}}>Classes:</Text>
+            <Text style = {{fontSize: 16}}>{classList}</Text>
+          </SafeAreaView>
         </SafeAreaView>
       </SafeAreaView>)
       }
@@ -759,20 +759,20 @@ class PostingsScreen extends Component {
     }
 //seeing someone else's profile
     else if(this.state.seeingProfile && !this.state.isPosting){
-      var convert = JSON.stringify(this.state.other);
-      var userData = JSON.parse(convert);
-      console.log(userData);
+      //var convert = JSON.stringify(this.state.other);
+      //var userData = JSON.parse(convert);
+      //console.log(userData);
       return(
         <SafeAreaView>
-        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
+          <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
 
-        <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Button
-            onPress={()=>this.props.navigation.navigate('Chat')}
-            title="Request to Chat"
-            buttonStyle={{backgroundColor: '#397BE2', marginTop: 30, width: 200, alignSelf: 'center'}}
-          />
-        </SafeAreaView>
+          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Button
+              onPress={()=>this.props.navigation.navigate('Chat')}
+              title="Request to Chat"
+              buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center'}}
+            />
+          </SafeAreaView>
 
         </SafeAreaView>
       );
@@ -953,7 +953,7 @@ class ProfileScreen extends Component {
               />
             </ScrollView>
           </SafeAreaView>
-          
+
             <SafeAreaView style ={{marginTop:30}} >
               <Input
                 disabled
@@ -987,8 +987,8 @@ class ProfileScreen extends Component {
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
               buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-            /></SafeAreaView>   
-          
+            /></SafeAreaView>
+
             <SafeAreaView>
             <Button
               onPress={() => this.makeSure()}
