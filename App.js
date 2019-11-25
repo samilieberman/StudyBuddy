@@ -135,7 +135,7 @@ class ProfData extends React.Component
       return (
       <SafeAreaView style={{backgroundColor: '#ffffff'}}>
 
-        <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'space-between'}}>
+        <SafeAreaView style = {{marginTop: 40, flexDirection:'row',justifyContent:'space-between'}}>
              <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{left:20}}/>
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center',marginRight:20,alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>{this.props.user}</Text>
           <SafeAreaView></SafeAreaView>
@@ -284,7 +284,7 @@ class ChatScreen extends Component {
   }}
   get user() {
     return {
- 
+
       name: this.props.screenProps.displayName,
       avatar: this.props.screenProps.ppurl,
       _id: firebase.uid
@@ -362,7 +362,7 @@ send = messages => {
     for(var k in snapshot.val())
     {
       console.log(snapshot.val()[k].otherUser+ " " +this.props.navigation.getParam('otheruid', ''))
-      if(snapshot.val()[k].otherUser==this.props.navigation.getParam('otheruid', '')){ 
+      if(snapshot.val()[k].otherUser==this.props.navigation.getParam('otheruid', '')){
         this.setState({ref:snapshot.val()[k].convoid})
         found=true;
     }}
@@ -374,7 +374,7 @@ send = messages => {
         firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
-   
+
   }
   console.log(this.state.ref + "this works now")
 this.refOn(message =>
@@ -394,7 +394,7 @@ this.refOn(message =>
     classRef.once('value',snapshot1 => {
     var x=[]
     var counter=0;
-    
+
     for(var y in snapshot1.val().convos)
     {
       x[counter]={'convoid':snapshot1.val().convos[y].convoid,'avatar':snapshot1.val().convos[y].avatar,'name':snapshot1.val().convos[y].otherName}
@@ -404,7 +404,7 @@ this.refOn(message =>
     this.setState({convoList:x})
     console.log(x)
     })
- // things I need name of other 
+ // things I need name of other
      //console.log(newArr);
       //convoList:snapshot.val()
      // });
@@ -435,10 +435,22 @@ reRef=async(convoid)=>
 
   render() {
     console.log(this.props.navigation.getParam('otheruid','it broke'))
-    
+
     if(this.state.otherUser=="")
     {
-      return (<SafeAreaView><FlatList
+      return (<SafeAreaView>
+        <Text style = {{fontSize: 35,
+        lineHeight: 42,
+        marginLeft: 0,
+        height: 40,
+        marginTop: 40,
+        marginBottom: 0,
+        alignSelf: "center",
+      }}>
+        Messages
+        </Text>
+        <SafeAreaView style={styles.profileSafeArea3} />
+        <FlatList
       data={this.state.convoList}
       renderItem={({ item }) => (
         <ListItem
@@ -456,14 +468,14 @@ reRef=async(convoid)=>
           size: 30,
         }}
       />
-    
+
       )}
     />
     </SafeAreaView>)
     }
     else {
       return(
-      
+
       <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS === 'ios' ? "" : "padding"}>
           <SafeAreaView style={styles.backButton}>
       <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
@@ -638,7 +650,7 @@ class PostingsScreen extends Component {
     }
   }
 
-  
+
   goBack=()=>{
     this.setState({
       isPosting:false,
@@ -955,10 +967,20 @@ class PostingsScreen extends Component {
         enableOnAndroid
         >
           <SafeAreaView style={{flexDirection: 'column'}}>
-            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
-              <Text style={styles.paragraph}>New Post</Text>
+            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'space-between', marginTop:  40}}>
+              <Icon name="arrow-back" iconStyle={{left:20}} size= {40} onPress={()=>this.goBack()}/>
+              <Text style={{fontSize: 35,
+                            lineHeight: 42,
+                            height: 40,
+                            marginBottom: 0,
+                            textAlign:'center',
+                            justifyContent:'center',
+                            alignSelf: 'center',
+                            alignContent: 'center',
+                            marginRight: 136}}>
+            New Post</Text>
             </SafeAreaView>
+            <SafeAreaView style={styles.profileSafeArea3} />
             <View style={styles.form}>
               <Form type={Post} ref={c => this._form = c}/>
             </View>
