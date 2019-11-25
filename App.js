@@ -136,7 +136,7 @@ class ProfData extends React.Component
 
         <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'center'}}>
            <SafeAreaView>
-             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{position: 'absolute', right: 16, top:1}}/>
+             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{position: 'absolute', right: 30, top:1}}/>
           </SafeAreaView>
           <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
@@ -789,7 +789,7 @@ class PostingsScreen extends Component {
           <SafeAreaView>
             <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} iconStyle={{position: 'absolute', right: 16, top:1}}/>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} iconStyle={{position: 'absolute', right: 50, top:1}}/>
             </SafeAreaView>
             <SafeAreaView style={{justifyContent: 'center'}}>
               <Text style={styles.paragraph}>New Post</Text>
