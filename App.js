@@ -163,11 +163,11 @@ class ProfData extends React.Component
           </SafeAreaView>
         </SafeAreaView>
 
-      <SafeAreaView style={{flexDirection:'row', marginTop: 20, marginLeft: 20,marginRight: 20, marginBottom: 50}}>
+      <SafeAreaView style={{flexDirection:'row', marginLeft:30,marginRight: 20, marginBottom: 50}}>
         <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
           <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
-          <View style={{height: 80}} >
-          <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+          <View style={{height: 120}} >
+          <ScrollView>
             <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
           </ScrollView>
           </View>
@@ -606,6 +606,7 @@ class PostingsScreen extends Component {
       refreshing: true,
     }, () => {
       this.componentDidMount();
+      this.SearchTag(this.state.tags.tagsArray);
     });
   }
 
@@ -727,7 +728,7 @@ class PostingsScreen extends Component {
               placeholder="Separate filters by commas.."
               leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
               leftElementContainerStyle={{marginLeft: 3}}
-              containerStyle={{width: 300}}
+              containerStyle={{width: 414}}
               inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
               inputStyle={{}}
               onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -942,30 +943,33 @@ class ProfileScreen extends Component {
             </SafeAreaView>
           </SafeAreaView>
 
-          <SafeAreaView style={styles.bioClass}>
-            <SafeAreaView>
-              <ScrollView>
-                <Input
-                  value={this.state.bio}
-                  placeholder={this.state.placeholderb}
-                  label="Biography: "
-                  returnKeyType="done"
-                  blurOnSubmit={true}
-                  enablesReturnKeyAutomatically={true}
-                  multiline={true}
-                  onChangeText={(big)=>this.biochange(big)}
-                  maxLength={280}
-                  allowFontScaling={false}
-                />
-              </ScrollView>
-          </SafeAreaView>
+          <SafeAreaView style={{flexDirection:'row', marginTop: 40, marginBottom: 40}}>
+          <SafeAreaView style={{flexDirection:'column', marginLeft:20,marginRight:20}}>
+            <View style={{marginBottom:5, padding:20}}>
+            <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+              <Input
+                value={this.state.bio}
+                placeholder={this.state.placeholderb}
+                label="Biography: "
+                returnKeyType="done"
+                blurOnSubmit={true}
+                enablesReturnKeyAutomatically={true}
+                multiline={true}
+                onChangeText={(big)=>this.biochange(big)}
+                maxLength={100}
+                allowFontScaling={false}
+                style={{maxHeight: 200}}
+              />
+            </ScrollView>
+            </View>
 
-            <SafeAreaView style ={{marginTop:30}} >
+            <View>
+              <View style={{marginLeft:20,marginRight:20}}>
               <Input
                 disabled
                 label = "Classes (seperate by comma):"
                 inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
-              />
+              /></View>
               <TagInput
                 updateState={this.updateTagState}
                 tags={this.state.tags}
@@ -975,7 +979,7 @@ class ProfileScreen extends Component {
                 placeholder="Class code.."
                 leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
                 leftElementContainerStyle={{marginLeft: 3}}
-                containerStyle={{width: 400}}
+                containerStyle={{width: 414}}
                 inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
                 inputStyle={{}}
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -984,9 +988,7 @@ class ProfileScreen extends Component {
                 tagStyle={{backgroundColor: '#fff', marginBottom: 10}}
                 tagTextStyle={{color: '#397BE2'}}
               />
-            </SafeAreaView>
-
-            <SafeAreaView style = {{flexDirection: 'column', marginTop:20}}>
+            </View>
 
             <SafeAreaView style={{marginBottom: 50}}>
             <Button
@@ -996,14 +998,14 @@ class ProfileScreen extends Component {
             />
             </SafeAreaView>
 
-            <SafeAreaView>
+            <View>
             <Button
               onPress={() => this.makeSure()}
              title="Logout"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center', position:'absolute'}}
-            />
-            </SafeAreaView>
+            /></View>
 
+          {/* </SafeAreaView> */}
           </SafeAreaView>
 
           </SafeAreaView>

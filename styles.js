@@ -88,16 +88,6 @@ const styles = StyleSheet.create({
     marginTop: 47,
     marginLeft: 37
   },
-  textInput: {
-    width: 271,
-    height: 168,
-    color: "#121212",
-    borderRadius: 13,
-    borderColor: "#000000",
-    borderWidth: 2,
-    //marginTop: 13,
-    marginLeft: 37
-  },
   logOut: {
     color: "#121212",
     fontSize: 30,
@@ -110,19 +100,6 @@ const styles = StyleSheet.create({
     marginTop: 39,
     marginLeft: 36
   },
-  textAdded: {
-    width: 120,
-    height: 27,
-    backgroundColor: "#3c50e8",
-    color: "#121212",
-    borderRadius: 8,
-    borderColor: "#3c50e8",
-    borderWidth: 4,
-    lineHeight: 26,
-    letterSpacing: 1,
-    textAlign: "center",
-    marginTop: 7
-  },
   entoIcon: {
     color: "rgba(128,128,128,1)",
     fontSize: 40,
@@ -134,17 +111,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     marginLeft: 37,
     marginRight: 167
-  },
-  textInput7: {
-    width: 120,
-    height: 27,
-    backgroundColor: "#3c50e8",
-    color: "#121212",
-    borderRadius: 8,
-    borderColor: "#3c50e8",
-    borderWidth: 4,
-    borderStyle: "solid",
-    marginTop: 7
   },
   entoIcon2: {
     color: "rgba(128,128,128,1)",
@@ -281,6 +247,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     overflow:'hidden',
+    marginLeft: 15
   },
   bio: {
     width: 400,
@@ -307,17 +274,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
-  tagContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#3ca897',
-  },
   textInput: {
-    height: 40,
+    height: 38,
     borderColor: 'white',
     borderWidth: 1,
-    marginTop: 8,
+    marginTop: 0,
     borderRadius: 5,
     padding: 3,
   },
