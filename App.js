@@ -163,14 +163,18 @@ class ProfData extends React.Component
           </SafeAreaView>
         </SafeAreaView>
 
-      <SafeAreaView style={{flexDirection:'row', width: 400, justifyContent: 'center', marginTop: 20}}>
+      <SafeAreaView style={{flexDirection:'row', marginTop: 20, marginLeft: 20,marginRight: 20, marginBottom: 50}}>
         <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
           <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
-          <ScrollView style={{marginBottom:10}}><Text style = {{fontSize: 16}}>{this.state.bio}</Text></ScrollView>
+          <View style={{height: 80}} >
+          <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+            <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
+          </ScrollView>
+          </View>
           <View><Text style = {{fontSize: 20}}>Classes:</Text></View>
           <View><Text style = {{fontSize: 16}}>{classList}</Text></View>
         </SafeAreaView>
-        </SafeAreaView>
+      </SafeAreaView>
 
       </SafeAreaView>)
       }
@@ -760,12 +764,12 @@ class PostingsScreen extends Component {
     }
 //seeing someone else's profile
     else if(this.state.seeingProfile && !this.state.isPosting){
-      var convert = JSON.stringify(this.state.other);
-      var userData = JSON.parse(convert);
-      console.log(userData);
+      //var convert = JSON.stringify(this.state.other);
+      //var userData = JSON.parse(convert);
+      //console.log(userData);
       return(
         <SafeAreaView>
-        <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
+          <ProfData img={this.state.other.img} uid={this.state.other.uid} user={this.state.other.user} goBack={this.goBack}/>
 
         <SafeAreaView style={{flexDirection:'column'}}>
           <Button
@@ -904,26 +908,29 @@ class ProfileScreen extends Component {
   render() {
     return(
         <SafeAreaView style={styles.profileSafeArea1}>
+
           <SafeAreaView style = {styles.profileSafeArea2}>
             <Text style = {styles.profileNameStyle}>{this.props.screenProps.data.displayName}</Text>
           </SafeAreaView>
+
           <SafeAreaView style={styles.profileSafeArea3} />
-            <SafeAreaView style={styles.imageRow}>
-              <Avatar style={styles.pic}
-                large
-                rounded
-                source={{uri: this.props.screenProps.ppurl}}
-                activeOpacity={0.7}
-              />
-              <SafeAreaView style={styles.majorRowColumn}>
-                <SafeAreaView style={styles.majorRow}>
-                  <Input
-                    placeholder={this.state.placeholderm}
-                    value={this.state.major}
-                    label="Major: "
-                    onChangeText={(maj) => this.majorchange(maj)}
-                  />
-                </SafeAreaView>
+
+          <SafeAreaView style={styles.imageRow}>
+            <Avatar style={styles.pic}
+              large
+              rounded
+              source={{uri: this.props.screenProps.ppurl}}
+              activeOpacity={0.7}
+            />
+            <SafeAreaView style={styles.majorRowColumn}>
+              <SafeAreaView style={styles.majorRow}>
+                <Input
+                  placeholder={this.state.placeholderm}
+                  value={this.state.major}
+                  label="Major: "
+                  onChangeText={(maj) => this.majorchange(maj)}
+                />
+              </SafeAreaView>
               <SafeAreaView style={styles.gradYearStack2}>
                 <Input
                   value={this.state.grad}
@@ -935,23 +942,22 @@ class ProfileScreen extends Component {
             </SafeAreaView>
           </SafeAreaView>
 
-
           <SafeAreaView style={styles.bioClass}>
             <SafeAreaView>
               <ScrollView>
-              <Input
-                value={this.state.bio}
-                placeholder={this.state.placeholderb}
-                label="Biography: "
-                returnKeyType="done"
-                blurOnSubmit={true}
-                enablesReturnKeyAutomatically={true}
-                multiline={true}
-                onChangeText={(big)=>this.biochange(big)}
-                maxLength={280}
-                allowFontScaling={false}
-              />
-            </ScrollView>
+                <Input
+                  value={this.state.bio}
+                  placeholder={this.state.placeholderb}
+                  label="Biography: "
+                  returnKeyType="done"
+                  blurOnSubmit={true}
+                  enablesReturnKeyAutomatically={true}
+                  multiline={true}
+                  onChangeText={(big)=>this.biochange(big)}
+                  maxLength={280}
+                  allowFontScaling={false}
+                />
+              </ScrollView>
           </SafeAreaView>
 
             <SafeAreaView style ={{marginTop:30}} >
@@ -987,18 +993,25 @@ class ProfileScreen extends Component {
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
               buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
+<<<<<<< HEAD
             /></SafeAreaView>
+=======
+            />
+            </SafeAreaView>
+>>>>>>> 71528c0f790e4d024293d1c831d3596faaedfdce
 
             <SafeAreaView>
             <Button
               onPress={() => this.makeSure()}
              title="Logout"
               buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center', position:'absolute'}}
-            /></SafeAreaView>
+            />
+            </SafeAreaView>
 
           </SafeAreaView>
 
           </SafeAreaView>
+
         </SafeAreaView>
     );
   }
