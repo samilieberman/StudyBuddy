@@ -142,7 +142,7 @@ class ProfData extends React.Component
 
         <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'center'}}>
            <SafeAreaView style={{right: 80}}>
-             <Icon name="arrow-back" size= {40} onPress={this.props.goBack}/>
+             <Icon name="arrow-back" size= {40} onPress={this.props.goBack} style={{position: 'absolute',right: 80}}/>
           </SafeAreaView>
           <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
             <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
@@ -790,7 +790,7 @@ class PostingsScreen extends Component {
           <SafeAreaView>
             <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
             <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} style={{position: 'absolute', right: 110}}/>
             </SafeAreaView>
             <SafeAreaView style={{justifyContent: 'center'}}>
               <Text style={styles.paragraph}>New Post</Text>
@@ -985,23 +985,23 @@ class ProfileScreen extends Component {
                 tagTextStyle={{color: '#397BE2'}}
               />
             </SafeAreaView>
-            <SafeAreaView style = {{flexDirection: 'column',  alignItems: 'center', justifyContent:'space-between', marginTop:20}}>
 
-            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <Button
+            <SafeAreaView style = {{flexDirection: 'column', marginTop:20}}>
+
+            <SafeAreaView style={{marginBottom: 50}}>
+            <Button
               onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
               title="Save Changes"
-              buttonStyle={{backgroundColor: '#397BE2', width: 200}}
-            />
-            </SafeAreaView>
+              buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
+            /></SafeAreaView>   
           
-          <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <SafeAreaView>
             <Button
               onPress={() => this.makeSure()}
              title="Logout"
-              buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center'}}
-            />
-          </SafeAreaView>
+              buttonStyle={{backgroundColor: '#397BE2', marginTop: 10, width: 200, marginBottom: 30, alignSelf: 'center', position:'absolute'}}
+            /></SafeAreaView>
+
           </SafeAreaView>
 
           </SafeAreaView>

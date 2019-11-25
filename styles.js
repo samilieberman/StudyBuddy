@@ -305,8 +305,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     flexDirection: 'row',
-    right: 110,
     justifyContent: 'flex-start',
+    right: 110
   },
   tagContainer: {
     flex: 1,
