@@ -605,6 +605,7 @@ class PostingsScreen extends Component {
       refreshing: true,
     }, () => {
       this.componentDidMount();
+      this.SearchTag(this.state.tags.tagsArray);
     });
   }
 
@@ -726,7 +727,7 @@ class PostingsScreen extends Component {
               placeholder="Separate filters by commas.."
               leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
               leftElementContainerStyle={{marginLeft: 3}}
-              containerStyle={{width: 300}}
+              containerStyle={{width: 414}}
               inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
               inputStyle={{}}
               onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -907,26 +908,29 @@ class ProfileScreen extends Component {
   render() {
     return(
         <SafeAreaView style={styles.profileSafeArea1}>
+
           <SafeAreaView style = {styles.profileSafeArea2}>
             <Text style = {styles.profileNameStyle}>{this.props.screenProps.data.displayName}</Text>
           </SafeAreaView>
+
           <SafeAreaView style={styles.profileSafeArea3} />
-            <SafeAreaView style={styles.imageRow}>
-              <Avatar style={styles.pic}
-                large
-                rounded
-                source={{uri: this.props.screenProps.ppurl}}
-                activeOpacity={0.7}
-              />
-              <SafeAreaView style={styles.majorRowColumn}>
-                <SafeAreaView style={styles.majorRow}>
-                  <Input
-                    placeholder={this.state.placeholderm}
-                    value={this.state.major}
-                    label="Major: "
-                    onChangeText={(maj) => this.majorchange(maj)}
-                  />
-                </SafeAreaView>
+
+          <SafeAreaView style={styles.imageRow}>
+            <Avatar style={styles.pic}
+              large
+              rounded
+              source={{uri: this.props.screenProps.ppurl}}
+              activeOpacity={0.7}
+            />
+            <SafeAreaView style={styles.majorRowColumn}>
+              <SafeAreaView style={styles.majorRow}>
+                <Input
+                  placeholder={this.state.placeholderm}
+                  value={this.state.major}
+                  label="Major: "
+                  onChangeText={(maj) => this.majorchange(maj)}
+                />
+              </SafeAreaView>
               <SafeAreaView style={styles.gradYearStack2}>
                 <Input
                   value={this.state.grad}
@@ -974,7 +978,7 @@ class ProfileScreen extends Component {
                 placeholder="Class code.."
                 leftElement={<Icon name={'tag-multiple'} type={'material-community'} color={'#397BE2'}/>}
                 leftElementContainerStyle={{marginLeft: 3}}
-                containerStyle={{width: 400}}
+                containerStyle={{width: 414}}
                 inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
                 inputStyle={{}}
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
@@ -985,13 +989,13 @@ class ProfileScreen extends Component {
               />
             </View>
 
-            <View style={{marginBottom: 40}}>
-              <Button
-                onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
-                title="Save Changes"
-                buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
-              />
-            </View>
+            <SafeAreaView style={{marginBottom: 50}}>
+            <Button
+              onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
+              title="Save Changes"
+              buttonStyle={{backgroundColor: '#397BE2', width: 200, alignSelf: 'center', position:'absolute'}}
+            />
+            </SafeAreaView>
 
             <View>
             <Button
@@ -1004,6 +1008,7 @@ class ProfileScreen extends Component {
           </SafeAreaView>
 
           </SafeAreaView>
+
         </SafeAreaView>
     );
   }
