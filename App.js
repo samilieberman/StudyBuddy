@@ -135,12 +135,8 @@ class ProfData extends React.Component
       <SafeAreaView style={{backgroundColor: '#ffffff'}}>
 
         <SafeAreaView style = {{marginTop: 10, flexDirection:'row',justifyContent:'space-between'}}>
-           <SafeAreaView>
              <Icon name="arrow-back" size= {40} onPress={this.props.goBack} iconStyle={{left:20}}/>
-          </SafeAreaView>
-          <SafeAreaView style={{alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>
-            <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center'}}>{this.props.user}</Text>
-          </SafeAreaView>
+            <Text style = {{fontSize: 35,lineHeight: 40, textAlign: 'center',marginRight:20,alignSelf:'center',justifyContent:'center',alignItems: 'center'}}>{this.props.user}</Text>
           <SafeAreaView></SafeAreaView>
         </SafeAreaView>
 
@@ -787,19 +783,15 @@ class PostingsScreen extends Component {
     else if(this.state.isPosting && !this.state.seeingProfile){
       return(
         <ScrollView>
-          <SafeAreaView>
+          <SafeAreaView style={{flexDirection: 'column'}}>
             <SafeAreaView style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
-            <SafeAreaView style={styles.backButton}>
-              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()} iconStyle = {{left:20}}/>
-            </SafeAreaView>
-            <SafeAreaView style={{justifyContent: 'center'}}>
+              <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
               <Text style={styles.paragraph}>New Post</Text>
-            </SafeAreaView>
-            <SafeAreaView></SafeAreaView>
             </SafeAreaView>
             <View style={styles.form}>
               <Form type={Post} ref={c => this._form = c}/>
             </View>
+            
             <SafeAreaView style={{flexDirection: 'column', alignItems: 'center'}}>
               <View style={{marginBottom: 10}}>
                 <Button title="Post" buttonStyle={{backgroundColor: '#397BE2', width:150}} onPress={()=>this.addpost()}/>

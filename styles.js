@@ -195,7 +195,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize:30,
     fontWeight:'bold',
-    textAlign:'center'
+    textAlign:'center',
+    justifyContent:'center',
+    alignSelf: 'center',
+    alignContent: 'center',
+    marginRight: 120
   },
   cancel:{
     backgroundColor: 'red',
