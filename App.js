@@ -27,12 +27,10 @@ const {
 /*
 constructor(props) {
     super(props);
-
     this.state = {
         pickerOptions: t.enums({})
     };
 }
-
 componentDidMount() {
     //run your api call and once you have new value and options..
     //you can run your api call and update the state like this at any place - doesn't have to be componentDidMount
@@ -43,7 +41,6 @@ componentDidMount() {
           pickerOptions: t.enums({snapshot.val().classes}),
       });
     });
-
 }
 */
 
@@ -71,7 +68,6 @@ var test = ["hci", "eco", "Ethics"];
 console.log(test);
 test = Object.assign({}, test);
 console.log(test);
-
 var groupSize = t.enums({
   "Study Partner": 'Study Partner (1)',
   "Small": 'Small Group (< 4)',
@@ -84,9 +80,7 @@ var time = t.enums({
   "Evening": 'Evening',
   "Any Time": 'Any Time'
 });
-
 var course = t.enums(test);
-
 const Post = t.struct({
   title: t.String,
   class: course,
@@ -704,7 +698,7 @@ class PostingsScreen extends Component {
               leftElementContainerStyle={{marginLeft: 3}}
               containerStyle={{width: 300}}
               inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
-              inputStyle={{color: '#397BE2'}}
+              inputStyle={{}}
               onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
               onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
               autoCorrect={false}
@@ -953,7 +947,7 @@ class ProfileScreen extends Component {
                 leftElementContainerStyle={{marginLeft: 3}}
                 containerStyle={{width: 300}}
                 inputContainerStyle={[styles.textInput, {backgroundColor: '#fff'}]}
-                inputStyle={{color: '#397BE2'}}
+                inputStyle={{}}
                 onFocus={() => this.setState({tagsColor: '#fff', tagsText: '#397BE2'})}
                 onBlur={() => this.setState({tagsColor: '#397BE2', tagsText: '#fff'})}
                 autoCorrect={false}
