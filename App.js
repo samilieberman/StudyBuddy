@@ -163,11 +163,11 @@ class ProfData extends React.Component
           </SafeAreaView>
         </SafeAreaView>
 
-      <SafeAreaView style={{flexDirection:'row', marginTop: 20, marginLeft: 20,marginRight: 20, marginBottom: 50}}>
+      <SafeAreaView style={{flexDirection:'row', marginLeft:30,marginRight: 20, marginBottom: 50}}>
         <SafeAreaView style={{flexDirection:'column',marginBottom:10}}>
           <View><Text style = {{fontSize: 20}}>Bio:</Text></View>
-          <View style={{height: 80}} >
-          <ScrollView vertical contentContainerStyle={{flexGrow: 1, flexDirection: 'row', flexWrap: 'wrap',justifyContent: 'space-between'}}>
+          <View style={{height: 120}} >
+          <ScrollView>
             <Text style = {{fontSize: 16}}>{this.state.bio}</Text>
           </ScrollView>
           </View>
@@ -955,7 +955,7 @@ class ProfileScreen extends Component {
                 enablesReturnKeyAutomatically={true}
                 multiline={true}
                 onChangeText={(big)=>this.biochange(big)}
-                maxLength={280}
+                maxLength={100}
                 allowFontScaling={false}
                 style={{maxHeight: 200}}
               />
