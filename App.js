@@ -320,7 +320,7 @@ class ChatScreen extends Component {
     return message;
   }
   refOn = callback => {
-    console.log("callback: " +this.state.ref)
+    console.log(this.state.ref + "this works now")
     firebase.database().ref(this.state.ref)
       .limitToLast(20)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
@@ -350,10 +350,10 @@ send = messages => {
   }
 
   componentDidMount = async() =>{
- 
-
+    if (this.props.navigation.getParam('otheruid', '')=='')
+    {
     let convoRef=firebase.database().ref('users/'+this.props.screenProps.uid).child('convos/');
-    convoRef.on('value', (snapshot)=>
+    convoRef.once('value', (snapshot)=>
     {
       this.setState({otherUser:this.props.navigation.getParam('otheruid', '')})
       console.log(snapshot.val()+this.props.navigation.getParam('otheruid', ''))
@@ -379,14 +379,19 @@ send = messages => {
         console.log(firebase.database().ref("/"))
         convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
         firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
-        this.setState({ref:convoId})
+        this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
-      this.refOn(message =>
-        this.setState(previousState => ({
-          messages: GiftedChat.append(previousState.messages, message),
-        })),
-      );
-  }}) 
+   
+  }
+  console.log(this.state.ref + "this works now")
+this.refOn(message =>
+  this.setState(previousState => ({
+    messages: GiftedChat.append(previousState.messages, message),
+  })),
+);
+}
+)
+    }
   };
 
   goBack(){
@@ -400,10 +405,13 @@ send = messages => {
   
 
   render() {
-    if(this.state.otherUser!="")
+    if(this.state.otherUser=="")
     {
       console.log(this.state.otherUser)
+
+      return (<SafeAreaView><Text>conversations</Text></SafeAreaView>)
     }
+    else 
     return(
       <KeyboardAvoidingView style={{flex:1}}>
           <SafeAreaView style={styles.backButton}>
