@@ -361,7 +361,7 @@ send = messages => {
         console.log('here?');
         var convoId=this.ref.push();
         convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').child(this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
     }
     else{
@@ -378,7 +378,7 @@ send = messages => {
         var convoId=this.ref.push();
         console.log(firebase.database().ref("/"))
         convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/').child(this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
    
