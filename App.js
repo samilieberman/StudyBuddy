@@ -954,8 +954,8 @@ class ProfileScreen extends Component {
           <SafeAreaView style={{flexDirection:'row', marginTop: 40, marginBottom: 0}}>
 
           <SafeAreaView style={{flexDirection:'column', marginLeft:20,marginRight:20}}>
-          <View>
-              <View style={{marginLeft:20,marginRight:20}}>
+          <View style={{marginLeft:17}}>
+              <View style={{marginLeft:0,marginRight:20}}>
                 <Input
                   disabled
                   label = "Classes (seperate by comma):"
