@@ -361,7 +361,7 @@ send = messages => {
         console.log(this.props.this.props.navigation.getParam('otheruid', ''));
         var convoId=this.ref.push();
         convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''), 'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
     }
     else{
@@ -378,7 +378,7 @@ send = messages => {
         var convoId=this.ref.push();
         console.log(firebase.database().ref("/"))
         convoRef.child(this.props.navigation.getParam('otheruid', '')).set({"otherUser":this.props.navigation.getParam('otheruid', ''), "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''),'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl})
-        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),''), 'otherName': this.props.screenProps.data.displayName, 'avatar':this.props.screenProps.ppurl});
+        firebase.database().ref('users/'+this.props.navigation.getParam('otheruid', '')).child('convos/'+this.props.screenProps.uid).set({"otherUser":this.props.screenProps.uid, "convoid":convoId.toString().replace(firebase.database().ref("/").toString(),'')});
         this.setState({ref:convoId.toString().replace(firebase.database().ref("/").toString(),'')})
       }
    
@@ -438,16 +438,18 @@ reRef=async()=>
   render() {
     if(this.state.otherUser=="")
     {
-      console.log(this.state.otherUser)
+      console.log("I want to play borderlands" + this.props.navigation.getParam('uid','it broke'))
 
       return (<SafeAreaView><FlatList
       data={this.state.convoList}
-      renderItem={({ item }) => <View style={{margin:30}}><Text style={{fontSize:30}} onPress={()=>{this.setState({messages:[],ref:item});this.reRef()}}>{item}</Text><Text style={{fontSize:30}}> gap</Text></View>}
+      renderItem={({ item }) => <View style={{margin:30}}><TouchableOpacity style={{fontSize:30, backgroundColor:'blue'}} onPress={()=>{this.setState({messages:[],ref:item});this.reRef()}}><Text style={{fontSize:30}}>{item}></Text></TouchableOpacity></View>}
     />
     </SafeAreaView>)
     }
-    else 
+    else {
+      console.log("I want to play borderlands" + this.props.navigation.getParam('uid','it broke'))
     return(
+      
       <KeyboardAvoidingView style={{flex:1}}>
           <SafeAreaView style={styles.backButton}>
       <Icon name="arrow-back" size= {40} onPress={()=>this.goBack()}/>
@@ -464,6 +466,7 @@ reRef=async()=>
       />
       </KeyboardAvoidingView>
     );
+      }
   }
 }
 
