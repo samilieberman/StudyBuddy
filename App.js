@@ -351,10 +351,8 @@ send = messages => {
 
   componentDidMount = async() =>{
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
-
-    
-
-
+      this.setState({
+        messages: [],})
     if (this.props.navigation.getParam('otheruid', '')!='')
     {
     let convoRef=firebase.database().ref('users/'+this.props.screenProps.uid).child('convos/');
