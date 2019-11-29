@@ -42,7 +42,6 @@ class ProfData extends React.Component
 
   componentDidMount = async () =>{
     let postsRef = firebase.database().ref("users/"+this.props.uid);
-    console.log(this.props.uid);
     postsRef.on('value',snapshot => {
       this.setState({
         bio:snapshot.val().bio,
@@ -145,7 +144,6 @@ export default class App extends Component {
 
         firebase.auth().onAuthStateChanged(user => {
           if (user != null) {
-            console.log(user);
             this.setState({data:user.providerData[0], uid:user.uid});
             this.setState({isLoggedIn: true});
             let postsRef = firebase.database().ref("users/");
@@ -182,7 +180,6 @@ export default class App extends Component {
 
   signOutWithFacebook = async () => {
     this.setState({isLoggedIn: false});
-    console.log("logged out...");
   }
 
   getCurrentUser(){
@@ -537,10 +534,7 @@ class PostingsScreen extends Component {
 
   addpost(){
     var value = this._form.getValue();
-    //console.log(value);
     if(value){
-      console.log("adding to DB...");
-      console.log(value);
       let postsRef = firebase.database().ref("posts/");
       postsRef.push({
         title:value.title,
