@@ -675,6 +675,7 @@ class PostingsScreen extends Component {
   };
 
   SearchFilterFunction(text) {
+
     const textData = text.toUpperCase();
     console.log("Text is  " + textData + ": the un-filtered data is " + this.tagholder);
     const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
@@ -710,10 +711,10 @@ class PostingsScreen extends Component {
 
 
   SearchTag(tags){
-
     var searchText = this.state.textInSearch;
     // If there are no tags
     if(tags.length == 0){
+      this.tagholder = this.state.posts;
       // If there is no text in the search bar
       if(searchText == ''){
         this.setState({
@@ -722,7 +723,6 @@ class PostingsScreen extends Component {
       }
       // If there is text in the search bar
       else{
-        this.tagholder = this.state.posts;
         this.SearchFilterFunction(searchText)
       }
       return;
@@ -895,7 +895,7 @@ class PostingsScreen extends Component {
     else if (!this.state.isPosting && !this.state.seeingProfile){
       return (
         <Fragment>
-          <SafeAreaView>
+          <SafeAreaView style={{marginTop:20}}>
             <SearchBar lightTheme round
               platform = 'ios'
               placeholder='Search...'
@@ -1190,7 +1190,7 @@ class ProfileScreen extends Component {
               />
             </SafeAreaView>
 
-            <SafeAreaView style={{flex: 1, flexDirection: 'row',marginBottom: 0, marginTop: 20}}>
+            <SafeAreaView style={{flex: 1, flexDirection: 'row',marginBottom: 0, marginTop: 20, marginLeft: 15}}>
               <Button
                 onPress={()=>this.updateProfile(this.state.major, this.state.grad , this.state.bio, this.state.tags.tagsArray)}
                 title="Save Changes"
