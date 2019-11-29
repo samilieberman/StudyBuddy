@@ -24,76 +24,6 @@ const {
   GraphRequestManager,
 } = FBSDK;
 
-//class formData extends React.Component{
-/*
-constructor(props) {
-    super(props);
-    this.state = {
-        pickerOptions: t.enums({})
-    };
-}
-componentDidMount() {
-    //run your api call and once you have new value and options..
-    //you can run your api call and update the state like this at any place - doesn't have to be componentDidMount
-    let usersRef = firebase.database().ref("users/"+this.props.uid);
-    console.log(this.props.uid);
-    usersRef.on('value',snapshot => {
-      this.setState({
-          pickerOptions: t.enums({snapshot.val().classes}),
-      });
-    });
-}
-*/
-
-
-//var test = {"hci": 'HCI', "eco": 'ECO'};
-//console.log(test);
-//test.hci = "diff";
-
-//componentDidMount = async () =>{
-//  let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
-//  console.log(this.props.uid);
-//  postsRef.on('value',snapshot => {
-//console.log(snapshot.val());
-//  });
-//}
-//constructor(props) {
-//  super(props);
-//  this.state = {
-//    test:"test"
-//  };
-
-//}
-/*
-var test = ["hci", "eco", "Ethics"];
-console.log(test);
-test = Object.assign({}, test);
-console.log(test);
-var groupSize = t.enums({
-  "Study Partner": 'Study Partner (1)',
-  "Small": 'Small Group (< 4)',
-  "Big": 'Big Group (≥ 4)',
-  "No Preference": 'No Preference'
-});
-var time = t.enums({
-  "Morning": 'Morning',
-  "Afternoon": 'Afternoon',
-  "Evening": 'Evening',
-  "Any Time": 'Any Time'
-});
-var course = t.enums(test);
-const Post = t.struct({
-  title: t.String,
-  class: course,
-  professor: t.String,
-  days: t.String,
-  time: time,
-  groupSize: groupSize,
-  meetingSpot: t.String,
-  description: t.maybe(t.String),
-});
-*/
-//}
 var options = {
 
 };
@@ -666,9 +596,7 @@ class PostingsScreen extends Component {
     });
   }
 
-  search = text => {
-    console.log(text+ "told you so muthafaka");
-  };
+  search = text => {  };
 
   clear = () => {
     this.search.clear();
@@ -677,7 +605,6 @@ class PostingsScreen extends Component {
   SearchFilterFunction(text) {
 
     const textData = text.toUpperCase();
-    console.log("Text is  " + textData + ": the un-filtered data is " + this.tagholder);
     const newData = this.tagholder.filter(function(item) { // Passing the inserted text in textinput
       // Applying filter for the inserted text in search bar
       const itemData  = (item.class       ? item.class.toUpperCase()       : ''.toUpperCase());
@@ -701,7 +628,6 @@ class PostingsScreen extends Component {
 
     // Setting the filtered newData on datasource
     // After setting the data it will automatically re-render the view
-    console.log("The filtered data is now " + newData);
     this.setState({
       textInSearch: text,
       dataSource: newData,
@@ -754,7 +680,6 @@ class PostingsScreen extends Component {
               (itemData7.indexOf(textData) > -1) ||
               (itemData8.indexOf(textData) > -1);
         });
-        console.log("Filter " + i + ", " + textData + ": the filtered data is now " + filteredData);
       }
       this.tagholder = filteredData;
       if(searchText != ''){
@@ -855,7 +780,6 @@ class PostingsScreen extends Component {
       obj[this.state.courseChoice[poop]]=this.state.courseChoice[poop].toString();
     }
 
-    console.log(obj);
 
     var groupSize = t.enums({
       "Study Partner": 'Study Partner (1)',
@@ -1012,7 +936,6 @@ class ProfileScreen extends Component {
 
   componentDidMount = async () =>{
     let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
-    console.log(this.props.uid);
     postsRef.on('value',snapshot => {
       if(snapshot.val().bio!="")
         this.setState({
@@ -1065,16 +988,13 @@ class ProfileScreen extends Component {
 
   }
   updateTagState = (state) => {
-    console.log("hi"+state)
     this.setState({
       tags: state
     })
   };
   updateProfile=(maj, gradient, bio, courses)=>
   {
-    console.log(courses.length);
     let postsRef = firebase.database().ref("users/"+this.props.screenProps.uid);
-    console.log(this.state.major)
     postsRef.once('value', function(snapshot) {
       if(bio!=""){
         postsRef.update({
