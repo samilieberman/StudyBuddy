@@ -1065,7 +1065,7 @@ class ProfileScreen extends Component {
               <View style={{marginLeft:0,marginRight:20}}>
                 <Input
                   disabled
-                  label = "Classes (seperate by comma):"
+                  label = "Classes (put a comma after each):"
                   inputContainerStyle={{borderBottomWidth: 0, display:"none"}}
                 />
               </View>
