@@ -29,7 +29,7 @@ ________________________________________________________________________________
 
 ## Features Implemented: 
 
-### •	Implemented a postings page with fully functioning search and filter systems that update in real time
+### •	A postings page with fully functioning search and filter systems that update in real time
 
 #### `Postings without search`
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854596481187840/78938830_559975138119856_7349411237911855104_n.png" height = "40%" width = "40%">
@@ -40,14 +40,18 @@ ________________________________________________________________________________
 #### `Postings with filter applied`
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854596124934144/78255999_2524415264321291_8417806115391143936_n.png" height = "40%" width = "40%" >
 
-### • 
+### • A post creation interface with fields that link to your profile information
+#### `Initial post creation page`
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854572884033556/77159517_484841195488303_7580121548019728384_n.png" height = "40%" width = "40%" >
 
-### • Allows for entry of UUID, which is stored and used as a folder to encase files:
+#### `Class selection for post`
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854582204039178/78567905_2566572733425486_8217837660769615872_n.png" height = "40%" width = "40%" >
 
-### •	File restriction to .png, .yml, .ROS:
+#### `Post information filled in`
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854583114072076/77257970_426109634965714_8304305235157843968_n.png" height = "40%" width = "40%" >
+
+#### `Successful post confirmation`
+<img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854590030479361/76948663_471004803523180_964632333078495232_n.png" height = "40%" width = "40%" >
 
 ### •	File upload functionality to Amazon S3 Bucket,
 ### •	Fully functional viewing of previous files in a given UUID:
