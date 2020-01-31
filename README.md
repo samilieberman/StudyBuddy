@@ -29,11 +29,15 @@ ________________________________________________________________________________
 
 ## Features Implemented: 
 
-### •	Implemented a postings page
+### •	Implemented a postings page with fully functioning search and filter systems that update in real time
+
+#### - Postings without search
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854596481187840/78938830_559975138119856_7349411237911855104_n.png" height = "40%" width = "40%">
 
+#### - Postings with search applied
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854595147530270/76972848_735699116933141_3113288489970434048_n.png" height = "40%" width = "40%">
 
+#### - Postings with filter applied
 <img src = "https://cdn.discordapp.com/attachments/640652684248219699/672854596124934144/78255999_2524415264321291_8417806115391143936_n.png" height = "40%" width = "40%" >
 
 ### • 
