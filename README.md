@@ -1,6 +1,10 @@
 # Study Buddy
 
 ### Created by: Samantha Lieberman, Steven Polk, Zander Krasny, Luke Herczeg
+_______________________________________________________________________________________________________________________________________
+
+## Demo
+### • https://youtu.be/TmbUX4Znvn
 
 _____________________________________________________________________________________________________________________________________
 
@@ -20,14 +24,11 @@ ________________________________________________________________________________
   prefer to study with others, but find it difficult
   to network with people in their classes. Thus, we decided to
   design our app around finding study partners.
-  
-_______________________________________________________________________________________________________________________________________
-## Demo
-### • https://youtu.be/TmbUX4Znvn
-
 _______________________________________________________________________________________________________________________________________
 
 ## Features Implemented: 
+
+### •	Login/Logout integrated with Facebook
 
 ### •	A postings page with fully functioning search and filter systems that update in real time
 
